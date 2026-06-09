@@ -41,7 +41,7 @@ Le module a un double objectif. D'abord **guide contributeur** : si tu veux ajou
 
 Le pipeline expose **un seul agent invocable par un humain** : `handbook-chapter-orchestrator`. C'est l'unique porte d'entrée. Les trois sous-agents — `handbook-chapter-architect`, `handbook-chapter-writer`, `handbook-chapter-reviewer` — ne sont pas invoqués directement par l'utilisateur ; ils sont *spawnés* par l'orchestrateur en mode forcé.
 
-> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](../../../.github/agents/handbook-chapter-orchestrator.agent.md)
+> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
 > Citation : « You are the only entry point — the user must not invoke `handbook-chapter-architect`, `handbook-chapter-writer`, or `handbook-chapter-reviewer` directly. »
 > Fetched : 2026-05-28
 
@@ -64,7 +64,7 @@ C'est exactement l'application du pattern *outside-in* du module 208 : l'orchest
 
 Tous les artefacts d'un chapitre vivent sous `.spec-handbook-copilot/runtime/<slug>/`. Un seul agent y écrit : l'orchestrateur. Les sous-agents *retournent* leur sortie comme message final, et c'est l'orchestrateur qui la persiste.
 
-> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](../../../.github/agents/handbook-chapter-orchestrator.agent.md)
+> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
 > Citation : « You are the **only** writer under `.spec-handbook-copilot/runtime/<slug>/`. Sub-agents return artifacts as their final message; you persist them to disk yourself. »
 > Fetched : 2026-05-28
 
@@ -72,13 +72,13 @@ Cette discipline a un nom : *single-writer interlock*. Elle élimine deux classe
 
 L'architect et le reviewer sont d'ailleurs explicitement contraints à *ne pas écrire de fichiers eux-mêmes*.
 
-> Source : [.github/agents/handbook-chapter-architect.agent.md](../../../.github/agents/handbook-chapter-architect.agent.md)
+> Source : [.github/agents/handbook-chapter-architect.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-architect.agent.md)
 > Citation : « return your placement plan as your final message. The orchestrator persists it ... You do not write files yourself. »
 > Fetched : 2026-05-28
 
 Seul le writer, par exception, écrit lui-même dans `docs/learning-path/<bloc>/<slug>.md` — car le draft n'est pas un artefact d'état mais le produit publié final.
 
-> Source : [.github/agents/handbook-chapter-writer.agent.md](../../../.github/agents/handbook-chapter-writer.agent.md)
+> Source : [.github/agents/handbook-chapter-writer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-writer.agent.md)
 > Citation : « Writes allowed: `docs/learning-path/<bloc>/<slug>.md` (create or overwrite only). »
 > Fetched : 2026-05-28
 
@@ -86,19 +86,19 @@ Seul le writer, par exception, écrit lui-même dans `docs/learning-path/<bloc>/
 
 Le reviewer est *adversarial*. Sa règle de démarrage est dure : il **doit** ignorer les sorties des rounds précédents, les notes du writer, et tout commentaire passé par l'orchestrateur au-delà du slug et du numéro de round.
 
-> Source : [.github/agents/handbook-chapter-reviewer.agent.md](../../../.github/agents/handbook-chapter-reviewer.agent.md)
+> Source : [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
 > Citation : « You start cold. You MUST NOT read: `review-round-{N-1}.md` or any prior review of this slug. »
 > Fetched : 2026-05-28
 
 Pourquoi ? Parce que la valeur du fact-check vient de l'indépendance. Si le reviewer lit les notes du writer, il hérite des biais du writer : il « voit » la quote dans le contexte voulu par l'auteur au lieu de la chercher dans le contexte réel de la source. Le re-fetch d'une URL devient une formalité au lieu d'un test.
 
-> Source : [.github/agents/handbook-chapter-reviewer.agent.md](../../../.github/agents/handbook-chapter-reviewer.agent.md)
+> Source : [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
 > Citation : « Warm-context review is the failure mode this agent exists to prevent. »
 > Fetched : 2026-05-28
 
 Concrètement, pour chaque citation du draft, le reviewer **re-fetche** la source, localise le verbatim, et compare avec ce qu'affirme le draft. Cinq verdicts possibles par claim : `VERIFIED`, `CHERRY-PICKED`, `UNSUPPORTED`, `UNFETCHABLE`, `OUTDATED`. C'est cette table qui fonde le verdict global.
 
-> Source : [.github/agents/handbook-chapter-reviewer.agent.md](../../../.github/agents/handbook-chapter-reviewer.agent.md)
+> Source : [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
 > Citation : « Re-fetch the cited URL or path ... Use a fresh tool call; do not trust the writer's quoted snippet without re-fetching. »
 > Fetched : 2026-05-28
 
@@ -106,7 +106,7 @@ Concrètement, pour chaque citation du draft, le reviewer **re-fetche** la sourc
 
 Writer et reviewer ne dialoguent pas directement. Ils alternent, médiés par l'orchestrateur, dans une boucle bornée à **3 rounds maximum**.
 
-> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](../../../.github/agents/handbook-chapter-orchestrator.agent.md)
+> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
 > Citation : « Writer ↔ Reviewer alignment loop (bounded, max 3 rounds) ... For each round N from 1 to 3 »
 > Fetched : 2026-05-28
 
@@ -117,7 +117,7 @@ La sortie dépend du verdict reviewer :
 - `REVISE` avec N == 3 → sortie en **B10 HUMAN CHECKPOINT** : on demande à l'humain quoi faire.
 - `REJECT` → sortie immédiate en HUMAN CHECKPOINT.
 
-> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](../../../.github/agents/handbook-chapter-orchestrator.agent.md)
+> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
 > Citation : « `REJECT` -> exit loop immediately. Go to Phase 4 REJECT path. »
 > Fetched : 2026-05-28
 
@@ -177,7 +177,7 @@ L'orchestrateur a *spawné* l'architect avec pour seule consigne : « plan place
 
 Note la **discipline de scope** : l'architect a refusé d'écrire le moindre paragraphe du chapitre. Il a seulement décidé *où* et *avec quels prérequis*. Le slug, le numéro et le chemin sont **gelés** ; le writer n'a pas le droit de les changer.
 
-> Source : [.github/agents/handbook-chapter-architect.agent.md](../../../.github/agents/handbook-chapter-architect.agent.md)
+> Source : [.github/agents/handbook-chapter-architect.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-architect.agent.md)
 > Citation : « Any request to edit a module or to draft chapter content -> refusal: "Out of scope. I only emit placement plans. Use `handbook-chapter-writer` to draft." »
 > Fetched : 2026-05-28
 
@@ -185,7 +185,7 @@ Note la **discipline de scope** : l'architect a refusé d'écrire le moindre par
 
 L'orchestrateur a alors *spawné* le writer en lui disant : « round 1 pour le slug `pipeline-agents-handbook` ». Le writer a rechargé `plan.md` et `placement.md`, listé son corpus (les quatre `.agent.md`, le design packet, le module 208), fait des `read_file` pour chaque source, puis écrit la prose. Chaque affirmation factuelle est suivie d'un bloc `> Source: / > Citation: / > Fetched:`. La page que tu lis est l'output de ce round.
 
-> Source : [.github/agents/handbook-chapter-writer.agent.md](../../../.github/agents/handbook-chapter-writer.agent.md)
+> Source : [.github/agents/handbook-chapter-writer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-writer.agent.md)
 > Citation : « No claim ships without a fetched source. Training recall is permitted to suggest what to look up — never to assert a fact. »
 > Fetched : 2026-05-28
 
@@ -202,7 +202,7 @@ Une fois le draft écrit, l'orchestrateur *spawne* le reviewer dans un **context
 | U1 | uncited  | ## Démo          | -                       | UNCITED     |
 ```
 
-> Source : [.github/agents/handbook-chapter-reviewer.agent.md](../../../.github/agents/handbook-chapter-reviewer.agent.md)
+> Source : [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
 > Citation : « 0 `UNSUPPORTED` AND 0 `CHERRY-PICKED` AND 0 `UNCITED` AND ≤ 2 `PEDAGOGICAL-GAP` AND ≤ 1 `OUTDATED` -> CERTIFY. »
 > Fetched : 2026-05-28
 
@@ -312,10 +312,10 @@ Tu peux passer au module suivant si :
 
 ## Sources
 
-- [.github/agents/handbook-chapter-orchestrator.agent.md](../../../.github/agents/handbook-chapter-orchestrator.agent.md)
-- [.github/agents/handbook-chapter-architect.agent.md](../../../.github/agents/handbook-chapter-architect.agent.md)
-- [.github/agents/handbook-chapter-writer.agent.md](../../../.github/agents/handbook-chapter-writer.agent.md)
-- [.github/agents/handbook-chapter-reviewer.agent.md](../../../.github/agents/handbook-chapter-reviewer.agent.md)
+- [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
+- [.github/agents/handbook-chapter-architect.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-architect.agent.md)
+- [.github/agents/handbook-chapter-writer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-writer.agent.md)
+- [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
 - [.spec-handbook-copilot/2026-05-27-initial-design/plan.md](../../../.spec-handbook-copilot/2026-05-27-initial-design/plan.md)
 - [.spec-handbook-copilot/runtime/pipeline-agents-handbook/plan.md](../../../.spec-handbook-copilot/runtime/pipeline-agents-handbook/plan.md)
 - [.spec-handbook-copilot/runtime/pipeline-agents-handbook/placement.md](../../../.spec-handbook-copilot/runtime/pipeline-agents-handbook/placement.md)
