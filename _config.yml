@@ -1,0 +1,42 @@
+title: "GitHub Copilot — Learning Path"
+description: "Guide francophone pour maîtriser GitHub Copilot"
+url: "https://SebastienDegodez.github.io"
+baseurl: "/learning-path-copilot"
+
+theme: jekyll-theme-primer
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-redirect-from
+
+# ============================================================
+# Front matter defaults — give every module page a layout
+# WITHOUT editing the module markdown files.
+# ============================================================
+defaults:
+  - scope:
+      path: "docs"
+    values:
+      layout: "default"
+
+exclude:
+  - apm.yml
+  - apm.lock.yaml
+  - apm_modules
+  - evals
+  - docs/specs
+  - docs/plans
+  - docs/ressources
+  - "**/_category.json"
+  - .spec-handbook-copilot
+  - .agents
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - .github

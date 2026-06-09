@@ -1,0 +1,96 @@
+# Trigger evals for handbook-module-orchestrator
+# Source of truth: docs/superpowers/specs/2026-05-27-copilot-learning-site/17-agent-handbook-module-orchestrator.md §6
+# Total: 20 triggers (12 should / 8 should-not) = 60/40 train/val split
+agent: handbook-module-orchestrator
+
+should_trigger:
+  - id: T-S-01
+    split: train
+    prompt: "produis le module 03 complet"
+    rationale: "Canonical dispatch phrase listed in spec 17 §1 description."
+  - id: T-S-02
+    split: train
+    prompt: "pipeline complet sur le module APM"
+    rationale: "Slug given by topic (APM); orchestrator resolves it via catalog."
+  - id: T-S-03
+    split: train
+    prompt: "drafte et lint le module skills puis maj le glossaire"
+    rationale: "Names all 3 chain stages — clear end-to-end intent."
+  - id: T-S-04
+    split: train
+    prompt: "construis le module 07 de bout en bout"
+    rationale: "Numeric slug + 'de bout en bout' = full chain."
+  - id: T-S-05
+    split: train
+    prompt: "lance la chaîne sur le module 02"
+    rationale: "Word 'chaîne' = pipeline orchestration."
+  - id: T-S-06
+    split: train
+    prompt: "full handbook pipeline pour le module 09"
+    rationale: "English/French mix; 'pipeline' is unambiguous."
+  - id: T-S-07
+    split: train
+    prompt: "écris le module 11 et fais tout le suivi"
+    rationale: "'Tout le suivi' = the linter + checkpoint + keeper after writer."
+  - id: T-S-08
+    split: train
+    prompt: "bootstrap module 04 jusqu'au glossaire"
+    rationale: "End-state explicitly named (glossaire) = full chain."
+  - id: T-S-09
+    split: val
+    prompt: "construis le module 03 de bout en bout"
+    rationale: "Canonical phrase from spec 17 description, val split."
+  - id: T-S-10
+    split: val
+    prompt: "drafte et lint le module skills"
+    rationale: "Canonical dispatch phrase from spec 17 description, val split."
+  - id: T-S-11
+    split: val
+    prompt: "produis le module N complet"
+    rationale: "Template-form canonical phrase, val split."
+  - id: T-S-12
+    split: val
+    prompt: "génère le module 05 du draft au glossaire"
+    rationale: "Alt phrasing covering full pipeline end-state."
+
+should_not_trigger:
+  - id: T-N-01
+    split: train
+    prompt: "drafte juste le module 03"
+    rationale: "Restrictive 'juste' → handbook-module-writer alone, not the chain."
+    expected_agent: handbook-module-writer
+  - id: T-N-02
+    split: train
+    prompt: "audite le module 07"
+    rationale: "Pure audit verb → handbook-linter alone."
+    expected_agent: handbook-linter
+  - id: T-N-03
+    split: train
+    prompt: "scan le glossaire après mes corrections manuelles"
+    rationale: "Glossary-only workflow → handbook-glossary-keeper alone."
+    expected_agent: handbook-glossary-keeper
+  - id: T-N-04
+    split: train
+    prompt: "construis un chapitre sur les MCP transports"
+    rationale: "'Chapitre' family + free topic → handbook-chapter-orchestrator."
+    expected_agent: handbook-chapter-orchestrator
+  - id: T-N-05
+    split: train
+    prompt: "génère les evals de copilot-mentor"
+    rationale: "Eval generation on agent spec → handbook-eval-builder (out of scope §1)."
+    expected_agent: handbook-eval-builder
+  - id: T-N-06
+    split: val
+    prompt: "refactor le module 03"
+    rationale: "Edit-existing intent, not from-scratch production."
+    expected_agent: none
+  - id: T-N-07
+    split: val
+    prompt: "publie le module 03"
+    rationale: "Publish = mv to docs/learning-path/ → human action only, orchestrator refuses auto-mv."
+    expected_agent: none
+  - id: T-N-08
+    split: val
+    prompt: "explique-moi comment marche APM"
+    rationale: "Teaching intent on a topic → copilot-mentor (public agent), not authoring."
+    expected_agent: copilot-mentor

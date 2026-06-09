@@ -1,0 +1,8 @@
+{
+  "label": "Bloc 1 — Fondations",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Primitives individuelles : instructions, prompts, agents, skills, hooks, MCP."
+  }
+}

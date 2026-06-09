@@ -1,0 +1,8 @@
+{
+  "label": "Bloc 2 — Composition",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Distribution et orchestration : APM, plugins, workflows, CLI."
+  }
+}

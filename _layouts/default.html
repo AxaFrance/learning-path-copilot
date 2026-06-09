@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "fr" }}">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% seo %}
+    <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
+    {% include head-custom.html %}
+  </head>
+  <body>
+    {% assign is_home = false %}
+    {% if page.url == '/' or page.url == '/index.html' %}
+      {% assign is_home = true %}
+    {% endif %}
+    {% assign all_docs = site.pages
+      | where_exp: "p", "p.path contains 'docs/'"
+      | where_exp: "p", "p.name != '_category.json'"
+      | sort: "sidebar_position" %}
+    {% assign bloc1 = all_docs | where_exp: "p", "p.path contains 'docs/01-fondations/'" %}
+    {% assign bloc2 = all_docs | where_exp: "p", "p.path contains 'docs/02-composition/'" %}
+    {% assign bloc3 = all_docs | where_exp: "p", "p.path contains 'docs/03-ingenierie-de-contexte/'" %}
+
+    <header class="axa-header">
+      <a class="axa-header__brand" href="{{ "/" | relative_url }}">
+        <img
+          class="axa-logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/9/94/AXA_Logo.svg"
+          alt="AXA"
+          width="72"
+          height="40"
+        >
+        <span class="axa-header__title">{{ site.title }}</span>
+      </a>
+      <a class="axa-header__source" href="https://github.com/AxaFrance/learning-path-copilot" target="_blank" rel="noopener">GitHub</a>
+      <button class="axa-nav-toggle" id="axaNavToggle" aria-label="Menu">☰</button>
+    </header>
+
+    <div class="axa-layout{% if is_home %} axa-layout--home{% endif %}">
+      {% unless is_home %}
+      <aside class="axa-sidebar" id="axaSidebar">
+        <nav aria-label="Navigation du handbook">
+          <p class="axa-sidebar__home">
+            <a href="{{ '/' | relative_url }}" class="{% if is_home %}is-active{% endif %}">Accueil</a>
+          </p>
+
+          <p class="axa-sidebar__section">Fondations</p>
+          <ul class="axa-sidebar__list">
+            {% for item in bloc1 %}
+              <li>
+                <a href="{{ item.url | relative_url }}" class="{% if page.url == item.url %}is-active{% endif %}">{{ item.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <p class="axa-sidebar__section">Composition</p>
+          <ul class="axa-sidebar__list">
+            {% for item in bloc2 %}
+              <li>
+                <a href="{{ item.url | relative_url }}" class="{% if page.url == item.url %}is-active{% endif %}">{{ item.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <p class="axa-sidebar__section">Ingénierie de contexte</p>
+          <ul class="axa-sidebar__list">
+            {% for item in bloc3 %}
+              <li>
+                <a href="{{ item.url | relative_url }}" class="{% if page.url == item.url %}is-active{% endif %}">{{ item.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      </aside>
+      {% endunless %}
+
+      <main class="axa-content markdown-body{% if is_home %} axa-content--home{% endif %}">
+        {% if is_home %}
+          <section class="landing-hero">
+            <h1>Copilot <span>Learning Path</span></h1>
+            <p>Guide francophone pour maîtriser GitHub Copilot: des fondations aux patterns avancés d'ingénierie de contexte.</p>
+          </section>
+
+          <div class="track-grid">
+            <div class="track-card">
+              <h2>Bloc 1 — Fondations</h2>
+              <p>Primitives individuelles: instructions, prompts, agents, skills, hooks, MCP, choix de modèles.</p>
+              <ul class="track-card__modules">
+                {% for doc in bloc1 %}
+                <li><a href="{{ doc.url | relative_url }}">{{ doc.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="track-card">
+              <h2>Bloc 2 — Composition</h2>
+              <p>Distribution et orchestration: APM, plugins, workflows, CLI, LSP, pipeline d'agents.</p>
+              <ul class="track-card__modules">
+                {% for doc in bloc2 %}
+                <li><a href="{{ doc.url | relative_url }}">{{ doc.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="track-card">
+              <h2>Bloc 3 — Ingénierie de contexte</h2>
+              <p>Tokens, patterns de sobriété, évaluations et outils de réduction du contexte.</p>
+              <ul class="track-card__modules">
+                {% for doc in bloc3 %}
+                <li><a href="{{ doc.url | relative_url }}">{{ doc.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% else %}
+          {{ content }}
+        {% endif %}
+      </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+      document.getElementById('axaNavToggle')?.addEventListener('click', function () {
+        document.getElementById('axaSidebar')?.classList.toggle('is-open');
+      });
+    </script>
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+        var pre = code.parentNode;
+        var wrapper = document.createElement('div');
+        wrapper.className = 'mermaid';
+        wrapper.textContent = code.textContent;
+        pre.replaceWith(wrapper);
+      });
+      mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+      await mermaid.run();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,349 @@
+---
+---
+
+@import "jekyll-theme-primer";
+
+/* ============================================================
+   AXA brand tokens
+   ============================================================ */
+:root {
+  --axa-blue: #00008f;
+  --axa-blue-dark: #00006b;
+  --axa-red: #ff1721;
+  --axa-ink: #111b1d;
+  --axa-sidebar-bg: #f7f7fb;
+  --axa-border: #e3e3ee;
+  --axa-header-h: 56px;
+  --axa-sidebar-w: 300px;
+}
+
+body {
+  margin: 0;
+  color: var(--axa-ink);
+}
+
+/* ============================================================
+   Header (AXA bar)
+   ============================================================ */
+.axa-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--axa-header-h);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.25rem;
+  background: var(--axa-blue);
+  color: #fff;
+  z-index: 100;
+}
+.axa-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #fff;
+  text-decoration: none;
+  margin-right: auto;
+}
+.axa-logo {
+  display: block;
+  width: 72px;
+  height: 40px;
+  object-fit: contain;
+}
+.axa-header__title { font-weight: 600; font-size: 0.95rem; }
+.axa-header__source {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 0.25rem 0.7rem;
+  border-radius: 4px;
+}
+.axa-header__source:hover { opacity: 1; background: rgba(255, 255, 255, 0.12); }
+.axa-nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* ============================================================
+   Layout: sidebar + content
+   ============================================================ */
+.axa-layout {
+  display: grid;
+  grid-template-columns: var(--axa-sidebar-w) 1fr;
+  padding-top: var(--axa-header-h);
+}
+
+.axa-layout--home {
+  grid-template-columns: 1fr;
+}
+
+.axa-sidebar {
+  position: sticky;
+  top: var(--axa-header-h);
+  align-self: start;
+  height: calc(100vh - var(--axa-header-h));
+  overflow-y: auto;
+  background: var(--axa-sidebar-bg);
+  border-right: 1px solid var(--axa-border);
+  padding: 1.25rem 0.75rem 3rem;
+}
+.axa-sidebar__home a,
+.axa-sidebar__section a {
+  display: block;
+  font-weight: 700;
+  color: var(--axa-blue);
+  text-decoration: none;
+  padding: 0.4rem 0.6rem;
+}
+.axa-sidebar__section {
+  margin: 1.25rem 0 0.25rem;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+}
+.axa-sidebar__list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+.axa-sidebar__list li a {
+  display: block;
+  padding: 0.3rem 0.6rem 0.3rem 0.9rem;
+  font-size: 0.85rem;
+  color: #3a3a47;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  border-radius: 0 4px 4px 0;
+}
+.axa-sidebar__list li a:hover {
+  background: #ececf5;
+  color: var(--axa-blue);
+}
+.axa-sidebar__list li a.is-active {
+  background: #e7e7f6;
+  color: var(--axa-blue);
+  border-left-color: var(--axa-red);
+  font-weight: 600;
+}
+
+/* ============================================================
+   Content (keeps Primer markdown-body)
+   ============================================================ */
+.axa-content {
+  max-width: 1080px;
+  padding: 2rem 3rem 4rem;
+}
+
+.axa-content--home {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+.axa-content h1,
+.axa-content h2 { color: var(--axa-blue); }
+.axa-content h2 { border-bottom: 1px solid var(--axa-border); padding-bottom: 0.3rem; }
+.axa-content a { color: var(--axa-blue); }
+.axa-content a:hover { color: var(--axa-red); }
+
+/* ============================================================
+   Intro citation (blockquote)
+   ============================================================ */
+.axa-content blockquote {
+  margin: 1.25rem 0;
+  padding: 0.9rem 1.1rem;
+  background: #eef0fb;
+  border-left: 4px solid var(--axa-blue);
+  border-radius: 0 8px 8px 0;
+  color: #1f2147;
+}
+.axa-content blockquote > :first-child { margin-top: 0; }
+.axa-content blockquote > :last-child { margin-bottom: 0; }
+.axa-content blockquote p { font-size: 1rem; line-height: 1.55; }
+
+/* ============================================================
+   Admonitions (:::note / :::tip / :::caution / :::danger ...)
+   ============================================================ */
+.axa-content .admonition {
+  margin: 1.25rem 0;
+  padding: 0.85rem 1.1rem;
+  border-left: 4px solid #8a8aa8;
+  border-radius: 0 8px 8px 0;
+  background: #f3f4f8;
+}
+.axa-content .admonition > :first-child { margin-top: 0; }
+.axa-content .admonition > :last-child { margin-bottom: 0; }
+.axa-content .admonition .admonition-title {
+  font-weight: 700;
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-size: 0.85rem;
+}
+.axa-content .admonition-note,
+.axa-content .admonition-info {
+  border-left-color: var(--axa-blue);
+  background: #eef0fb;
+}
+.axa-content .admonition-note .admonition-title,
+.axa-content .admonition-info .admonition-title { color: var(--axa-blue); }
+.axa-content .admonition-tip {
+  border-left-color: #1f8a4c;
+  background: #e9f6ee;
+}
+.axa-content .admonition-tip .admonition-title { color: #1f8a4c; }
+.axa-content .admonition-caution,
+.axa-content .admonition-warning {
+  border-left-color: #c77700;
+  background: #fdf3e3;
+}
+.axa-content .admonition-caution .admonition-title,
+.axa-content .admonition-warning .admonition-title { color: #b56a00; }
+.axa-content .admonition-danger {
+  border-left-color: var(--axa-red);
+  background: #fdecee;
+}
+.axa-content .admonition-danger .admonition-title { color: var(--axa-red); }
+
+/* ============================================================
+   Task lists (quiz checkboxes)
+   ============================================================ */
+.axa-content ul.task-list {
+  list-style: none;
+  padding-left: 0.25rem;
+}
+.axa-content ul.task-list .task-list-item {
+  list-style: none;
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+.axa-content ul.task-list .task-list-item::marker {
+  content: "";
+}
+.axa-content ul.task-list .task-list-item-checkbox {
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  margin: 0;
+  transform: translateY(0.15em);
+  accent-color: var(--axa-blue);
+  cursor: default;
+}
+
+/* ============================================================
+   Home (hero + track cards)
+   ============================================================ */
+.landing-hero {
+  position: relative;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.25rem 1.25rem 2rem;
+}
+.landing-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--axa-blue);
+  line-height: 1.1;
+  margin: 0;
+}
+.landing-hero h1 span { color: var(--axa-red); }
+.landing-hero p {
+  font-size: 1.05rem;
+  color: #2f2f3a;
+  margin-top: 0.95rem;
+  max-width: 760px;
+  font-style: italic;
+}
+
+.track-grid {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 1.25rem 4.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.2rem;
+}
+.track-card {
+  background: #fff;
+  border: 1px solid #d9d9e6;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 8, 143, 0.08);
+  padding: 1.35rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.track-card:hover {
+  border-color: #b8bedf;
+  box-shadow: 0 12px 26px rgba(0, 8, 143, 0.12);
+  transform: translateY(-2px);
+}
+.track-card h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--axa-blue);
+  margin: 0 0 0.45rem;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.track-card p {
+  font-size: 0.92rem;
+  color: #484860;
+  line-height: 1.5;
+  margin-bottom: 0.85rem;
+}
+.track-card__modules {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.track-card__modules li a {
+  display: block;
+  font-size: 0.84rem;
+  color: #2f2f3a;
+  padding: 0.3rem 0.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color 0.15s ease, background 0.15s ease, border-left-color 0.15s ease;
+}
+.track-card__modules li a:hover {
+  color: var(--axa-blue);
+  background: #f2f4fb;
+  border-left-color: var(--axa-red);
+}
+
+/* ============================================================
+   Mobile
+   ============================================================ */
+@media (max-width: 860px) {
+  .axa-nav-toggle { display: block; }
+  .axa-layout { grid-template-columns: 1fr; }
+  .axa-sidebar {
+    position: fixed;
+    top: var(--axa-header-h);
+    left: 0;
+    width: var(--axa-sidebar-w);
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    z-index: 90;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  .axa-sidebar.is-open { transform: translateX(0); }
+  .axa-content { padding: 1.5rem 1.25rem 3rem; }
+}

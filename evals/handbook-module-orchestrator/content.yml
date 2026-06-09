@@ -1,0 +1,102 @@
+# Content evals for handbook-module-orchestrator
+# Source of truth: docs/superpowers/specs/2026-05-27-copilot-learning-site/17-agent-handbook-module-orchestrator.md §6
+# Each fixture must demonstrate a measurable delta between `with_skill` and `without_skill` runs.
+agent: handbook-module-orchestrator
+
+fixtures:
+  - id: C-01-happy-path-round-1
+    name: "Happy path — clean draft, PASS at round 1, keeper runs after checkpoint"
+    user_prompt: "produis le module 03 complet"
+    seed_context:
+      module_slug: "03-skills"
+      module_topic: "Skills — packager des compétences réutilisables pour Copilot"
+      catalog_excerpt: "Row from spec 02 confirming `03-skills` exists with template ⭐⭐ (medium strictness)."
+    expected_steps:
+      - "Bootstrap : read 02-modules-catalog.md, resolve `03-skills`, create .spec-handbook-copilot/runtime/03-skills/plan.md (round=0, stage=writer)."
+      - "Round 1 writer spawn → writes docs/_drafts/learning-path/03-skills.md with 7 canonical sections."
+      - "Gate S4 PASS (file exists, 7 headings detected)."
+      - "Round 1 linter spawn FRESH CONTEXT → returns PASS 9/9."
+      - "Persist lint-round-1.md."
+      - "Exit loop. B10 checkpoint: user prompted 'oui/non/stop'."
+      - "User says 'oui' → keeper spawn → glossary updated."
+      - "Final recap: 3 files written (plan.md, lint-round-1.md, draft), 1 spawn each (writer/linter/keeper), reminder to `mv` draft manually."
+    expected_artifacts:
+      - ".spec-handbook-copilot/runtime/03-skills/plan.md"
+      - ".spec-handbook-copilot/runtime/03-skills/lint-round-1.md"
+      - "docs/_drafts/learning-path/03-skills.md"
+      - "docs/ressources/glossaire-fr.md (modified)"
+    forbidden:
+      - "Auto-mv of draft to docs/learning-path/"
+      - "Keeper spawn before user confirmation"
+      - "Orchestrator writing handbook prose itself"
+      - "More than 1 lint round"
+    delta_vs_no_skill: >-
+      Without the skill: agent would call writer, then ask the user to manually
+      copy-paste lint findings back into a follow-up writer prompt, then ask
+      again before glossary. No plan persisted, no audit trail, no bounded loop.
+
+  - id: C-02-convergence-round-3
+    name: "Convergence — round 1 FAIL (2 findings), round 2 FAIL (1 finding), round 3 PASS"
+    user_prompt: "construis le module 07 de bout en bout"
+    seed_context:
+      module_slug: "07-autoresearch"
+      module_topic: "Auto-Research — recherche autonome dans un repo Copilot"
+      catalog_excerpt: "Row from spec 02; template ⭐⭐⭐ (high strictness)."
+      round_1_findings: ["Missing 'Sources' section", "Section 'Pour aller plus loin' has 0 citations"]
+      round_2_findings: ["One citation in 'Concepts clés' is dead URL"]
+    expected_steps:
+      - "Bootstrap creates plan.md."
+      - "Round 1: writer → draft → linter FAIL 7/9. Persist lint-round-1.md."
+      - "Round 2: writer re-spawn with lint-round-1.md as input → draft updated → linter FAIL 8/9. Persist lint-round-2.md."
+      - "Round 3: writer re-spawn with lint-round-2.md → draft updated → linter PASS 9/9. Persist lint-round-3.md."
+      - "Exit loop on PASS. B10 checkpoint normal."
+      - "On 'oui' → keeper spawn."
+    expected_artifacts:
+      - ".spec-handbook-copilot/runtime/07-autoresearch/plan.md"
+      - ".spec-handbook-copilot/runtime/07-autoresearch/lint-round-1.md"
+      - ".spec-handbook-copilot/runtime/07-autoresearch/lint-round-2.md"
+      - ".spec-handbook-copilot/runtime/07-autoresearch/lint-round-3.md"
+      - "docs/_drafts/learning-path/07-autoresearch.md"
+    forbidden:
+      - "Skipping fresh-context for linter spawns (linter must not see prior rounds)"
+      - "Exiting loop early before round 3"
+      - "B10 checkpoint bypassed because 'we tried hard'"
+    delta_vs_no_skill: >-
+      Without the skill: agent would either give up after round 1 (no iteration),
+      or loop forever (no bound). Plan store + bounded loop = predictable
+      cost and predictable termination.
+
+  - id: C-03-exhaustion-reject
+    name: "REJECT path — 3 rounds FAIL, B10 escalation with top-3 findings + 3 options"
+    user_prompt: "pipeline complet sur le module 11"
+    seed_context:
+      module_slug: "11-conventions"
+      module_topic: "Conventions du handbook — structurel/méta-module"
+      catalog_excerpt: "Row from spec 02; template ⭐⭐⭐ but this module is reference-only, not pedagogical → naturally fails 'Mise en pratique' section requirements."
+      persistent_findings:
+        - "Mise en pratique : module is structural, no hands-on possible"
+        - "Pour aller plus loin : only points back into the handbook (self-reference)"
+        - "Concepts clés : conventions are not 'concepts' in the pedagogical sense"
+    expected_steps:
+      - "Bootstrap creates plan.md."
+      - "Rounds 1, 2, 3 all FAIL with same 3 persistent findings."
+      - "Exit loop on N==3 FAIL."
+      - "REJECT path: no auto-keeper, no auto-relaunch."
+      - "Report to user: top 3 findings from lint-round-3.md."
+      - "Present 3 options: (a) manual fix + relaunch, (b) loosen spec 01 template, (c) escalate module as out-of-scope."
+      - "Wait for user choice. Do nothing else."
+    expected_artifacts:
+      - ".spec-handbook-copilot/runtime/11-conventions/plan.md"
+      - ".spec-handbook-copilot/runtime/11-conventions/lint-round-1.md"
+      - ".spec-handbook-copilot/runtime/11-conventions/lint-round-2.md"
+      - ".spec-handbook-copilot/runtime/11-conventions/lint-round-3.md"
+      - "docs/_drafts/learning-path/11-conventions.md (still present, not deleted)"
+    forbidden:
+      - "Auto-spawn keeper after FAIL"
+      - "Auto-relaunch round 4 (would violate the 3-round bound)"
+      - "Deletion of the draft (the user may want to salvage)"
+      - "Silent give-up without presenting the 3 options"
+    delta_vs_no_skill: >-
+      Without the skill: agent would either keep iterating indefinitely or
+      silently abandon. The structured 3-option escalation gives the user
+      diagnostic info (top findings) AND actionable next steps.

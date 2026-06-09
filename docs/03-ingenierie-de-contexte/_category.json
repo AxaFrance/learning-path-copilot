@@ -1,0 +1,8 @@
+{
+  "label": "Bloc 3 — Ingénierie de Contexte",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Optimisation et mesure : tokens, sobriété, outils de réduction, autoresearch, evals."
+  }
+}
