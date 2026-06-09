@@ -1,0 +1,18 @@
+# CODEOWNERS — GitHub Copilot Learning Path
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @SebastienDegodez
+
+# Handbook modules
+docs/ @SebastienDegodez
+
+# Site infrastructure
+_config.yml @SebastienDegodez
+_layouts/ @SebastienDegodez
+assets/ @SebastienDegodez
+_plugins/ @SebastienDegodez
+Gemfile @SebastienDegodez
+
+# CI/CD
+.github/ @SebastienDegodez
