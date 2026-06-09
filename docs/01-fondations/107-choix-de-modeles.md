@@ -200,7 +200,7 @@ Et un agent architecte qui a besoin de raisonnement profond :
   ---
 ```
 
-> Source: docs/learning-path/01-fondations/104-agents.md
+> Source: docs/01-fondations/104-agents.md
 > Citation: "Spécifier un modèle est utile quand le rôle de l'agent exige un modèle particulier"
 > Fetched: 2026-05-28
 
@@ -352,5 +352,5 @@ Tu peux passer au module suivant si :
 2. https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model
 3. https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 4. https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
-5. docs/learning-path/01-fondations/104-agents.md
+5. docs/01-fondations/104-agents.md
 6. Retour d'expérience d'Ousmane BARRY (MVP Microsoft Foundry) — [publication LinkedIn](https://www.linkedin.com/posts/ousmanebarry_depuis-le-1er-juin-on-a-tous-vu-et-senti-ugcPost-7468560023623901184-K69e/) (règle « un seul modèle par session »)
