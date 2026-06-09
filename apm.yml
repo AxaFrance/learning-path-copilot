@@ -1,0 +1,10 @@
+name: documentation
+version: 1.0.0
+description: APM project for documentation
+author: SebastienDegodez
+dependencies:
+  apm:
+  - danielmeppiel/genesis/skills/genesis
+  mcp: []
+includes: auto
+scripts: {}
