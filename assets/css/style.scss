@@ -139,14 +139,14 @@ body {
    Content (keeps Primer markdown-body)
    ============================================================ */
 .axa-content {
-  max-width: 1080px;
+  width: 100%;
+  min-width: 0;
   padding: 2rem 3rem 4rem;
 }
 
 .axa-content--home {
-  max-width: 1200px;
-  margin: 0 auto;
   width: 100%;
+  margin: 0 auto;
 }
 .axa-content h1,
 .axa-content h2 { color: var(--axa-blue); }
@@ -270,11 +270,11 @@ body {
 }
 
 .track-grid {
-  max-width: 1160px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 1.25rem 4.5rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.2rem;
 }
 .track-card {
@@ -345,5 +345,5 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   }
   .axa-sidebar.is-open { transform: translateX(0); }
-  .axa-content { padding: 1.5rem 1.25rem 3rem; }
+  .axa-content { padding: 1.5rem 1rem 3rem; }
 }
