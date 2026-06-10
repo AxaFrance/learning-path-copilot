@@ -28,7 +28,7 @@ Deux outils répondent à ce vide, et ce module les enseigne tous les deux : les
 À la fin de ce module, tu sais :
 
 - décider quand une dimension de qualité justifie un score gradué plutôt qu'une assertion binaire ;
-- écrire une `rubric` (grille de notation) sur une échelle 1–5 et fixer un seuil de réussite ;
+- écrire une **grille de notation** (`rubric`) sur une échelle 1–5 et fixer un seuil de réussite ;
 - configurer un LLM-juge pointwise et comprendre les variantes pairwise et reference-guided ;
 - nommer et neutraliser les biais connus du juge (position, verbosité, self-preference, non-déterminisme) ;
 - calibrer ton juge contre un *golden set* de labels humains avant de lui faire confiance.
@@ -62,7 +62,7 @@ Une métrique graduée attribue un score sur une échelle continue ou ordinale a
 > Citation: "instruct the LLM to output only 'correct' or 'incorrect', or to judge from a scale of 1-5."
 > Fetched: 2026-06-10
 
-Ce qui fait la qualité d'une grille, ce n'est pas l'échelle — c'est la **description de chaque niveau**. Une rubric vague (« note la clarté de 1 à 5 ») produit des scores instables : le juge n'a aucun point d'ancrage. Une bonne rubric ancre chaque palier dans un comportement observable. La documentation de promptfoo illustre ce principe avec une grille où chaque niveau est défini par un repère concret.
+Ce qui fait la qualité d'une grille, ce n'est pas l'échelle — c'est la **description de chaque niveau**. Une grille vague (« note la clarté de 1 à 5 ») produit des scores instables : le juge n'a aucun point d'ancrage. Une bonne grille ancre chaque palier dans un comportement observable. La documentation de promptfoo illustre ce principe avec une grille où chaque niveau est défini par un repère concret.
 
 > Source: https://www.promptfoo.dev/docs/configuration/expected-outputs/model-graded/llm-rubric/
 > Citation: "Grade it on a scale of 0.0 to 1.0, where: Score of 0.1: Only a slight smile. Score of 0.5: Laughing out loud."
