@@ -252,7 +252,7 @@ Tu peux passer au module suivant si :
 - [Module 103 — Skills](./103-skills.md) : les skills s'activent sur demande — les hooks s'activent sur événement. Les deux sont complémentaires.
 - [Module 209 — Plugins](../02-composition/209-plugins.md) : les plugins peuvent embarquer des hooks pré-configurés pour une équipe.
 - [Module 208 — Workflows](../02-composition/208-workflows.md) : combiner hooks + skills + agents dans un flux orchestré.
-- [Module 315 — Tester ses primitives](../03-ingenierie-de-contexte/315-evals.md) : tester qu'un hook se déclenche correctement avec des evals binaires.
+- [Module 310 — Tester ses primitives](../03-ingenierie-de-contexte/310-evals.md) : tester qu'un hook se déclenche correctement avec des evals binaires.
 
 ## Sources
 

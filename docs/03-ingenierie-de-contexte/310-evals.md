@@ -1,11 +1,13 @@
 ---
 id: evals
-title: "315 — Tester ses primitives (evals binaires)"
-sidebar_position: 315
+title: "310 — Tester ses primitives (evals binaires)"
+sidebar_position: 310
+redirect_from:
+  - /docs/03-ingenierie-de-contexte/315-evals.html
 description: "Industrialiser le test de tes skills et agents avec des assertions booléennes versionnées."
 ---
 
-# 315 — Tester ses primitives (evals binaires)
+# 310 — Tester ses primitives (evals binaires)
 
 Durée estimée : 60 min · Complexité : ⭐⭐⭐ · Pré-requis : [Module 103 — Skills](../01-fondations/103-skills.md)
 
@@ -294,10 +296,10 @@ Tu peux passer au module suivant si :
 ## Pour aller plus loin
 
 - [Module 103 — Skills](../01-fondations/103-skills.md) : revoir la construction du skill `writing-commit-message` si tes evals révèlent des faiblesses dans la procédure.
-- [Module 315 — Evals avancées](./315-evals.md) : passer des assertions binaires aux évaluations par LLM-juge et aux métriques de qualité graduées.
+- **Evals avancées** (module à venir) : passer des assertions binaires aux évaluations par LLM-juge et aux métriques de qualité graduées.
 - [Module 104 — Agents personnalisés](../01-fondations/104-agents.md) : appliquer la même méthode d'evals à un fichier `.agent.md`.
 - `docs/reference/eval-anatomy.md` — page de référence à créer.
 
 ## Module suivant
 
-**Suivant** : [316 — Déplacer le contexte entre modèles](./316-deplacer-contexte-modeles.md)
+**Suivant** : [311 — Tokens & fenêtre de contexte](./311-tokens-contexte.md)

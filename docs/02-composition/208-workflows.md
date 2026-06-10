@@ -355,11 +355,11 @@ Tu peux passer au module suivant si :
 
 ## Pour aller plus loin
 
-- [Module 315 — Tester ses primitives](../03-ingenierie-de-contexte/315-evals.md) : mesurer objectivement que chaque sous-agent produit le bon résultat avec des `eval` binaires.
+- [Module 310 — Tester ses primitives](../03-ingenierie-de-contexte/310-evals.md) : mesurer objectivement que chaque sous-agent produit le bon résultat avec des `eval` binaires.
 - [Module 311 — Tokens, hallucinations et sobriété LLM](../03-ingenierie-de-contexte/311-tokens-contexte.md) : comprendre pourquoi la décomposition en sous-agents réduit la consommation de tokens.
 - [Module 314 — Autoresearch](../03-ingenierie-de-contexte/314-autoresearch.md) : appliquer la discipline d'évaluation itérative à chaque sous-agent du workflow.
 - Explore les patterns de workflow plus avancés : boucles de feedback (le relecteur renvoie au codeur), branchements conditionnels (si les tests échouent, relancer l'étape 3), parallélisation (specs et plan en parallèle quand ils sont indépendants).
 
 ## Module suivant
 
-**Suivant** : [315 — Tester ses primitives (evals binaires)](../03-ingenierie-de-contexte/315-evals.md)
+**Suivant** : [310 — Tester ses primitives (evals binaires)](../03-ingenierie-de-contexte/310-evals.md)

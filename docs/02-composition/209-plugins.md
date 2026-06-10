@@ -331,7 +331,7 @@ Tu peux passer au module suivant si :
 
 ## Pour aller plus loin
 
-- [Module 315 — Evals](../03-ingenierie-de-contexte/315-evals.md) : tester automatiquement que les skills apportés par un plugin fonctionnent comme attendu.
+- [Module 310 — Evals](../03-ingenierie-de-contexte/310-evals.md) : tester automatiquement que les skills apportés par un plugin fonctionnent comme attendu.
 - [Module 311 — Tokens, hallucinations et sobriété LLM](../03-ingenierie-de-contexte/311-tokens-contexte.md) : comprendre comment les plugins `minimal-context-tools` réduisent la consommation de tokens.
 - [Module 207 — APM](./207-apm.md) : revoir la distribution de primitives individuelles vs plugins.
 - [Module 208 — Workflows](./208-workflows.md) : revoir comment orchestrer les primitives qu'un plugin apporte.

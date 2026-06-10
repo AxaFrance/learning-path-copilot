@@ -119,7 +119,7 @@ Chaque `skill` chargé dans l'espace de travail ajoute du bruit au routeur séma
 
 3. **Le skill dégrade les résultats.** Un skill mal calibré peut forcer le modèle dans une direction sous-optimale.
 
-L'heuristique est simple. Si tu mesures le delta `with_skill` / `without_skill` avec la méthode des evals ([Module 315](./315-evals.md)) et que le score `without_skill` atteint 80 % ou plus, le skill est probablement inutile. Le modèle fait déjà bien le travail sans lui.
+L'heuristique est simple. Si tu mesures le delta `with_skill` / `without_skill` avec la méthode des evals ([Module 310](./310-evals.md)) et que le score `without_skill` atteint 80 % ou plus, le skill est probablement inutile. Le modèle fait déjà bien le travail sans lui.
 
 ## Mise en pratique
 

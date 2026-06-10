@@ -251,7 +251,7 @@ Tu peux passer au module suivant si :
 ## Pour aller plus loin
 
 - [Module 104 — Agents personnalisés](./104-agents.md) : quand un skill ne suffit plus et qu'il faut packager un rôle complet avec identité et outils restreints.
-- [Module 315 — Tester ses primitives](../03-ingenierie-de-contexte/315-evals.md) : mesurer objectivement si un skill se déclenche au bon moment avec des `eval` binaires.
+- [Module 310 — Tester ses primitives](../03-ingenierie-de-contexte/310-evals.md) : mesurer objectivement si un skill se déclenche au bon moment avec des `eval` binaires.
 - `docs/reference/skill-anatomy.md` — page de référence à créer.
 
 ## Module suivant

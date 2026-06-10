@@ -7,7 +7,7 @@ description: "Comprendre pourquoi les tokens comptent, choisir le bon modèle se
 
 # 311 — Tokens & fenêtre de contexte
 
-Durée estimée : 45 min · Complexité : ⭐⭐⭐ · Pré-requis : [Module 103](../01-fondations/103-skills.md), [Module 208](../02-composition/208-workflows.md)
+Durée estimée : 45 min · Complexité : ⭐⭐⭐ · Pré-requis : [Module 103](../01-fondations/103-skills.md), [Module 208](../02-composition/208-workflows.md), [Module 310](./310-evals.md)
 
 > Chaque token que tu envoies a un coût, une latence et un effet sur la qualité de la réponse. Ce module t'apprend à raisonner en tokens avant d'optimiser.
 
@@ -28,6 +28,7 @@ La sobriété LLM n'est pas une contrainte budgétaire — c'est une discipline 
 
 - [Module 103 — Skills](../01-fondations/103-skills.md) — tu dois savoir créer et déclencher un skill.
 - [Module 208 — Workflows](../02-composition/208-workflows.md) — tu dois maîtriser l'orchestration par sous-agents.
+- [Module 310 — Tester ses primitives](./310-evals.md) — tu dois savoir écrire des `eval` binaires et mesurer le delta `with_skill` / `without_skill`.
 - VS Code avec l'extension GitHub Copilot activée.
 - Un dépôt Git contenant au moins deux agents et trois skills fonctionnels.
 
@@ -98,7 +99,7 @@ Pour chaque skill trouvé, note sa description (première ligne) et estime sa fr
 
 ### Étape 2 — Mesurer le delta d'un skill suspect
 
-Choisis un skill dont tu doutes de l'utilité. Exécute tes fixtures en mode `with_skill` puis `without_skill` (voir [Module 315](./315-evals.md)) :
+Choisis un skill dont tu doutes de l'utilité. Exécute tes fixtures en mode `with_skill` puis `without_skill` (voir [Module 310](./310-evals.md)) :
 
 ```yaml
 # Résultat attendu

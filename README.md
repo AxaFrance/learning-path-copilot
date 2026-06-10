@@ -34,11 +34,11 @@
 
 | # | Module |
 |---|--------|
+| 310 | Evals |
 | 311 | Tokens & contexte |
 | 312 | Patterns de sobriété |
 | 313 | Outils de réduction |
 | 314 | Auto-research |
-| 315 | Evals |
 | 316 | Déplacer le contexte entre modèles |
 | 317 | Orchestrer des subagents |
 | 318 | Mesurer & optimiser sa consommation |

@@ -292,7 +292,7 @@ Tu peux passer au module suivant si :
 ## Pour aller plus loin
 
 - [Module 208 — Workflows](../02-composition/208-workflows.md) : combiner plusieurs agents dans un workflow complexe avec des points de décision.
-- [Module 315 — Tester ses primitives](../03-ingenierie-de-contexte/315-evals.md) : vérifier automatiquement qu'un agent refuse ou accepte les bonnes requêtes avec des `eval` binaires.
+- [Module 310 — Tester ses primitives](../03-ingenierie-de-contexte/310-evals.md) : vérifier automatiquement qu'un agent refuse ou accepte les bonnes requêtes avec des `eval` binaires.
 - `docs/reference/agent-anatomy.md` — page de référence à créer.
 - La documentation officielle VS Code sur les agents personnalisés : recherche « custom chat modes » dans la doc VS Code.
 
