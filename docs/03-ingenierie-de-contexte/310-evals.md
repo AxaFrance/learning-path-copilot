@@ -296,7 +296,7 @@ Tu peux passer au module suivant si :
 ## Pour aller plus loin
 
 - [Module 103 — Skills](../01-fondations/103-skills.md) : revoir la construction du skill `writing-commit-message` si tes evals révèlent des faiblesses dans la procédure.
-- **Evals avancées** (module à venir) : passer des assertions binaires aux évaluations par LLM-juge et aux métriques de qualité graduées.
+- [Module 315 — Evals avancées](./315-evals-llm-juge.md) : passer des assertions binaires aux évaluations par LLM-juge et aux métriques de qualité graduées.
 - [Module 104 — Agents personnalisés](../01-fondations/104-agents.md) : appliquer la même méthode d'evals à un fichier `.agent.md`.
 - `docs/reference/eval-anatomy.md` — page de référence à créer.
 
