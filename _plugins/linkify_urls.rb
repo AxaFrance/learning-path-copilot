@@ -16,6 +16,8 @@ module Jekyll
     # is linkified.
     SEGMENT_PATTERN = %r{
       (
+        <script\b[^>]*>.*?</script> |  # inline/external scripts (JS)
+        <style\b[^>]*>.*?</style>   |  # inline styles (CSS)
         <pre\b[^>]*>.*?</pre>      |  # code blocks
         <code\b[^>]*>.*?</code>   |  # inline code
         <a\b[^>]*>.*?</a>         |  # existing links

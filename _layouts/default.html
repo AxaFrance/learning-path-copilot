@@ -129,15 +129,25 @@
 
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      var nodes = [];
       document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
         var pre = code.parentNode;
         var wrapper = document.createElement('div');
         wrapper.className = 'mermaid';
         wrapper.textContent = code.textContent;
         pre.replaceWith(wrapper);
+        nodes.push(wrapper);
       });
-      mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
-      await mermaid.run();
+      mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+      // Render each diagram in isolation so a single parse error can never
+      // leave the other diagrams on the page displayed as raw code.
+      for (var i = 0; i < nodes.length; i++) {
+        try {
+          await mermaid.run({ nodes: [nodes[i]], suppressErrors: true });
+        } catch (e) {
+          console.error('Mermaid render failed for diagram', i, e);
+        }
+      }
     </script>
   </body>
 </html>
