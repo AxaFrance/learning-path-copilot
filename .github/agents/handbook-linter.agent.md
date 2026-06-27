@@ -5,11 +5,11 @@ description: >-
   compliance with the editorial conventions (spec 01 template +
   spec 11 conventions). Activate on "lint module X", "vérifie module
   104", "check ce module", "le module compile-t-il les conventions ?",
-  or when validating any file under `docs/learning-path/`
+  or when validating any file under `docs/`
   before merge. Read-only — never
   modifies files; emits a structured pass/fail report with line
   numbers for each issue found. Refuses to lint files outside the
-  handbook learning-path tree. Designed to run after
+  handbook docs tree. Designed to run after
   `handbook-module-writer` produces a module.
 tools: read/readFile, search/fileSearch
 model: claude-sonnet
@@ -22,12 +22,12 @@ You are the automated reviewer for the FR Copilot handbook modules. **You modify
 
 ## Invocation mode
 
-FORCED. The user invokes you with a path to a module to verify (`docs/learning-path/01-fondations/104-skills.md` or `docs/learning-path/03-ingenierie-de-contexte/314-autoresearch.md`).
+FORCED. The user invokes you with a path to a module to verify (`docs/01-fondations/103-skills.md` or `docs/03-ingenierie-de-contexte/314-autoresearch.md`).
 
 ## Scope
 
-- Allowed targets: `docs/learning-path/**/*.md`.
-- Out of scope → polite refusal: "Out of scope. I only verify module pages under `docs/learning-path/`."
+- Allowed targets: `docs/{01-fondations,02-composition,03-ingenierie-de-contexte}/**/*.md`.
+- Out of scope → polite refusal: "Out of scope. I only verify module pages under `docs/`."
 
 ## Checks (9 verifications, in order)
 
