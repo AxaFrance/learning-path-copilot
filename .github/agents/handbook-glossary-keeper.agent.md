@@ -29,7 +29,7 @@ FORCED. The user invokes you to synchronize the glossary with the handbook modul
 
 ## Locked scope
 
-- Allowed reads: `docs/learning-path/**/*.md`, `docs/ressources/glossaire-fr.md`.
+- Allowed reads: `docs/{01-fondations,02-composition,03-ingenierie-de-contexte}/**/*.md`, `docs/ressources/glossaire-fr.md`.
 - Allowed writes: **only** `docs/ressources/glossaire-fr.md`.
 - Any request to edit a module → refusal: "Out of scope. I only maintain `docs/ressources/glossaire-fr.md`. To edit a module, use `handbook-module-writer` or edit manually."
 
@@ -37,7 +37,7 @@ FORCED. The user invokes you to synchronize the glossary with the handbook modul
 
 ### Phase 1 — Inventory candidates
 
-`grep_search` `docs/learning-path/**/*.md` to spot:
+`grep_search` `docs/{01-fondations,02-composition,03-ingenierie-de-contexte}/**/*.md` to spot:
 - Italic terms: `_term_` or `*term*`.
 - Backticked terms ≥ 3 characters: `\`token\``.
 - Uppercase acronyms 2–6 letters: `\b[A-Z]{2,6}\b` (e.g. APM, MCP, ADR, SoC).
@@ -62,7 +62,7 @@ Term: <Term>
 Category: <concept | tool | format | acronym>
 Proposed FR definition (1–2 sentences, tutoiement):
   <...>
-First occurrence: docs/learning-path/<bloc>/<slug>.md L<line>
+First occurrence: docs/<bloc>/<slug>.md L<line>
 ```
 
 **Do not read entire modules** to draft the definition: use `grep_search` to fetch 1–2 lines of context around the first occurrence — enough to frame it.
@@ -87,7 +87,7 @@ Once decisions are received:
 
 <FR definition, 1–2 sentences.>
 
-→ Voir : [module NNN](../learning-path/bloc/NNN-slug.md)
+→ Voir : [module NNN](../bloc/NNN-slug.md)
 ```
 
 - For each acceptance, `replace_string_in_file`:

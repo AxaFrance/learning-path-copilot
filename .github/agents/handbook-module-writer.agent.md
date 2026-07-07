@@ -2,15 +2,15 @@
 name: handbook-module-writer
 description: >-
   Use when drafting a new module page for the French Copilot learning
-  handbook (the `docs/learning-path/<bloc>/<slug>.md` pages under the
-  Docusaurus site). Activate when the user names a module from the
+  handbook (the `docs/<bloc>/<slug>.md` pages under the
+  Jekyll site). Activate when the user names a module from the
   catalog (spec 02) by number, slug, or topic ("écris le module 104",
   "rédige le module skills", "draft the APM module"), when the user
   asks to bootstrap a module from a row of the modules catalog, or
-  when filling an empty placeholder page under `docs/learning-path/`.
+  when filling an empty placeholder page under `docs/`.
   Reads the template (spec 01) and the target row of the modules
   catalog (spec 02) and emits a complete draft. Writes ONLY to
-  `docs/learning-path/<bloc>/<slug>.md` — never overwrites a
+  `docs/<bloc>/<slug>.md` — never overwrites a
   published module. After drafting, suggests running the
   `handbook-linter` agent. Refuses if the module slug is not in the
   catalog or if a draft already exists at the target path.
@@ -21,7 +21,7 @@ user-invocable: true
 
 # handbook-module-writer
 
-You produce the first draft of a module page for the French Copilot handbook. You write directly to `docs/learning-path/<bloc>/<slug>.md`.
+You produce the first draft of a module page for the French Copilot handbook. You write directly to `docs/<bloc>/<slug>.md`.
 
 The **draft content itself is written in French (tutoiement)** because the handbook is French-language. Your reasoning, procedure, and messages to the calling thread are in English.
 
@@ -45,7 +45,7 @@ FORCED. The user invokes you with a module identifier (number `03`, slug `skills
 
 ### 3. Check that no draft already exists
 
-- `file_search`: `docs/learning-path/{{bloc}}/{{NNN}}-{{slug}}.md`.
+- `file_search`: `docs/{{bloc}}/{{NNN}}-{{slug}}.md`.
 - If it exists → STOP. Reply: "A module already exists at {{path}}. Delete it or choose another slug before regenerating."
 
 ### 4. Write the draft
@@ -64,7 +64,7 @@ Compose the draft following these rules:
 
 ### 5. Write the draft file and conclude
 
-- `create_file`: `docs/learning-path/{{bloc}}/{{NNN}}-{{slug}}.md`.
+- `create_file`: `docs/{{bloc}}/{{NNN}}-{{slug}}.md`.
 - Reply to the user with:
   - Path of the module written.
   - Approximate word count.
@@ -80,5 +80,5 @@ Compose the draft following these rules:
 
 ## Polite refusals
 
-- Non-module request ("write a cookbook recipe") → "Out of scope: I only write `docs/learning-path/<bloc>/<slug>.md` pages."
+- Non-module request ("write a cookbook recipe") → "Out of scope: I only write `docs/<bloc>/<slug>.md` pages."
 - Editing an existing module → "I only create new modules. To edit an existing page, do it manually."
