@@ -42,6 +42,7 @@
 | 316 | Déplacer le contexte entre modèles |
 | 317 | Orchestrer des subagents |
 | 318 | Mesurer & optimiser sa consommation |
+| 319 | Chronicle expérimental — tirer parti de son historique de sessions |
 
 ---
 
