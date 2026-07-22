@@ -50,7 +50,7 @@ Cinq fournisseurs principaux alimentent Copilot :
 | OpenAI | GPT-4.1, GPT-5 mini, GPT-5.2, GPT-5.5 | Du *lightweight* au raisonnement profond |
 | Anthropic | Claude Haiku 4.5, Claude Sonnet 4.5/4.6, Claude Opus 4.6/4.7 | Raisonnement sophistiqué et tâches agentiques |
 | Google | Gemini 2.5 Pro, Gemini 3 Flash, Gemini 3.1 Pro, Gemini 3.5 Flash | Contexte long (taille de la fenêtre de texte que le modèle peut traiter) et debugging |
-| Microsoft | MAI-DS-R1 | Raisonnement avancé, développé par Microsoft AI |
+| Microsoft | MAI-Code-1-Flash | Raisonnement avancé, développé par Microsoft AI |
 | Moonshot AI | Kimi K2.7 | Compréhension et génération de code, fenêtre de contexte longue |
 
 > Source: https://docs.github.com/en/copilot/reference/ai-models/model-comparison
@@ -83,7 +83,7 @@ Cas d'usage : éditer de petites fonctions, questions de syntaxe, prototypage ra
 
 **3. Deep reasoning and debugging** — les modèles conçus pour le raisonnement étape par étape et la prise de décision complexe.
 
-Modèles recommandés : GPT-5 mini, GPT-5.5, Claude Sonnet 4.6, Claude Opus 4.7, Gemini 3.1 Pro, MAI-DS-R1.
+Modèles recommandés : GPT-5 mini, GPT-5.5, Claude Sonnet 4.6, Claude Opus 4.7, Gemini 3.1 Pro, MAI-Code-1-Flash.
 
 Cas d'usage : debugger des problèmes complexes multi-fichiers, refactorer un codebase interconnecté, planifier des features ou de l'architecture, analyser des logs ou des performances.
 
@@ -253,7 +253,7 @@ Voici un extrait de la grille tarifaire (prix par million de tokens) :
 > Citation: "Each token is priced based on the model used, and the total is converted into AI credits, where 1 AI credit = $0.01 USD."
 > Fetched: 2026-05-28
 
-Pour le détail tarifaire des modèles Microsoft (`MAI-DS-R1`) et Moonshot AI (`Kimi K2.7`), consulte directement la [grille tarifaire officielle](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing) — les tarifs de ces modèles peuvent évoluer.
+Pour le détail tarifaire des modèles Microsoft (`MAI-Code-1-Flash`) et Moonshot AI (`Kimi K2.7`), consulte directement la [grille tarifaire officielle](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing) — les tarifs de ces modèles peuvent évoluer.
 
 > Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
 > Fetched: 2026-07-22
