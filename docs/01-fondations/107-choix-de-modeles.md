@@ -2,7 +2,7 @@
 id: choix-de-modeles
 title: "107 — Choix de modèles"
 sidebar_position: 107
-description: "Comment choisir entre GPT-4.1, Claude, Gemini dans GitHub Copilot — critères de sélection, configuration dans VS Code, et impact sur les coûts."
+description: "Comment choisir entre GPT-4.1, Claude, Gemini, MAI ou Kimi dans GitHub Copilot — critères de sélection, configuration dans VS Code, et impact sur les coûts."
 ---
 
 # 107 — Choix de modèles
@@ -15,7 +15,7 @@ description: "Comment choisir entre GPT-4.1, Claude, Gemini dans GitHub Copilot 
 
 À la fin de ce module, tu sais :
 
-- Identifier les familles de modèles disponibles dans Copilot (OpenAI, Anthropic, Google) et leurs forces respectives.
+- Identifier les familles de modèles disponibles dans Copilot (OpenAI, Anthropic, Google, Microsoft, Moonshot AI) et leurs forces respectives.
 - Choisir un modèle adapté à ta tâche grâce à la grille officielle par catégorie.
 - Changer de modèle dans le *model picker* de VS Code et configurer le mode *Auto*.
 - Forcer un modèle spécifique dans un agent personnalisé via la clé `model` du frontmatter `.agent.md`.
@@ -41,7 +41,7 @@ GitHub Copilot donne accès à plusieurs modèles de langage intégrés, chacun 
 > Citation: "Visual Studio Code gives you access to multiple built-in language models, each optimized for different tasks."
 > Fetched: 2026-05-28
 
-Trois fournisseurs principaux alimentent Copilot :
+Cinq fournisseurs principaux alimentent Copilot :
 
 <!-- round 2 response — P2: gloss "contexte long" on first use -->
 
@@ -50,18 +50,12 @@ Trois fournisseurs principaux alimentent Copilot :
 | OpenAI | GPT-4.1, GPT-5 mini, GPT-5.2, GPT-5.5 | Du *lightweight* au raisonnement profond |
 | Anthropic | Claude Haiku 4.5, Claude Sonnet 4.5/4.6, Claude Opus 4.6/4.7 | Raisonnement sophistiqué et tâches agentiques |
 | Google | Gemini 2.5 Pro, Gemini 3 Flash, Gemini 3.1 Pro, Gemini 3.5 Flash | Contexte long (taille de la fenêtre de texte que le modèle peut traiter) et debugging |
+| Microsoft | MAI-DS-R1 | Raisonnement avancé, développé par Microsoft AI |
+| Moonshot AI | Kimi K2.7 | Compréhension et génération de code, fenêtre de contexte longue |
 
 > Source: https://docs.github.com/en/copilot/reference/ai-models/model-comparison
 > Citation: "GPT-4.1 — General-purpose coding and writing — Fast, accurate code completions and explanations"
-> Fetched: 2026-05-28
-
-<!-- round 2 response — P1: define "fine-tuned" on first use -->
-
-Deux modèles *fine-tuned* (affinés sur des données spécifiques) par GitHub complètent le catalogue : **Raptor mini** (suggestions *inline* rapides) et **Goldeneye** (raisonnement complexe).
-
-> Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
-> Citation: "Raptor mini — Public preview — Versatile"
-> Fetched: 2026-05-28
+> Fetched: 2026-07-22
 
 ### Les quatre catégories de tâches
 
@@ -69,7 +63,7 @@ La documentation officielle classe les modèles en quatre catégories de tâches
 
 **1. General-purpose coding and writing** — le choix par défaut quand tu n'as pas de besoin spécifique. Ces modèles équilibrent qualité, vitesse et coût.
 
-Modèles recommandés : GPT-5.3-Codex, GPT-5 mini, Raptor mini.
+Modèles recommandés : GPT-5.3-Codex, GPT-5 mini.
 
 Cas d'usage : écrire ou relire des fonctions, générer de la documentation, expliquer des erreurs rapidement.
 
@@ -89,7 +83,7 @@ Cas d'usage : éditer de petites fonctions, questions de syntaxe, prototypage ra
 
 **3. Deep reasoning and debugging** — les modèles conçus pour le raisonnement étape par étape et la prise de décision complexe.
 
-Modèles recommandés : GPT-5 mini, GPT-5.5, Claude Sonnet 4.6, Claude Opus 4.7, Gemini 3.1 Pro, Goldeneye.
+Modèles recommandés : GPT-5 mini, GPT-5.5, Claude Sonnet 4.6, Claude Opus 4.7, Gemini 3.1 Pro, MAI-DS-R1.
 
 Cas d'usage : debugger des problèmes complexes multi-fichiers, refactorer un codebase interconnecté, planifier des features ou de l'architecture, analyser des logs ou des performances.
 
@@ -258,6 +252,11 @@ Voici un extrait de la grille tarifaire (prix par million de tokens) :
 > Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
 > Citation: "Each token is priced based on the model used, and the total is converted into AI credits, where 1 AI credit = $0.01 USD."
 > Fetched: 2026-05-28
+
+Pour le détail tarifaire des modèles Microsoft (`MAI-DS-R1`) et Moonshot AI (`Kimi K2.7`), consulte directement la [grille tarifaire officielle](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing) — les tarifs de ces modèles peuvent évoluer.
+
+> Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
+> Fetched: 2026-07-22
 
 <!-- round 2 response — U1: fix 120× to 15× ($30/$2) and add citation -->
 
