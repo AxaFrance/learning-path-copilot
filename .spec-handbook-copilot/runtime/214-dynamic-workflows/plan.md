@@ -1,9 +1,9 @@
 ---
 slug: 214-dynamic-workflows
 topic: "Dynamic workflows de GitHub Copilot — module 214 « Dynamic workflows — orchestrer en code », Bloc 02 — Composition"
-round: 2
+round: 4
 stage: done
-status: CERTIFIED
+status: CERTIFIED-WITH-HUMAN-FIXES
 created_at: 2026-10-11T09:50:49Z
 ---
 
@@ -37,3 +37,5 @@ Contraintes de placement imposées par l'utilisateur (non négociables) :
 - 2026-10-11T10:00:00Z — Déblocage : le thread parent invoque directement architect → writer → reviewer. placement.md enregistré (INSERT, docs/02-composition/214-dynamic-workflows.md). Corpus pré-téléchargé dans /tmp/dw-sources/.
 - round 1 review: REVISE (2 UNSUPPORTED, 4 UNCITED, 3 PEDAGOGICAL-GAP, E1).
 - round 2 review: CERTIFY. Polish appliqué par le parent (commentaires de round retirés, « quinzaine » de ports, ADR-010 Proposed, glose DecisionStore). Commits 07214d4e/e21ffbc4 vérifiés via GitHub MCP par le parent.
+- 2026-10-11 — Retour mainteneur : module autonome, SKRAFT seulement en Sources. Round 3 réécriture (démo sur issue-to-code du 208) → review REVISE (U1, X1, R1, R2).
+- round 4 review: REVISE (U1 .agents/ location, U2, U3, P1, P2). Rounds exhausted; fixes applied by parent thread per maintainer mandate (self-contained module). Jekyll build OK.
