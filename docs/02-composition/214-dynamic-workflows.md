@@ -2,7 +2,7 @@
 id: dynamic-workflows
 title: "214 — Dynamic workflows — orchestrer en code"
 sidebar_position: 214
-description: "Passer d'un orchestrateur en prose à un dynamic workflow Copilot : la séquence en code, les agents là où il faut du jugement, des checkpoints humains."
+description: "Convertir l'orchestrateur issue-to-code du module 208 en dynamic workflow Copilot : séquence et gardes en code, agents pour le jugement, pause humaine."
 ---
 
 # 214 — Dynamic workflows — orchestrer en code
@@ -13,31 +13,22 @@ Durée estimée : 60 min
 
 ## Pourquoi ce module
 
-Reprends l'orchestrateur `issue-to-code` du [module 208](./208-workflows.md). Sa séquence est fixe : `spec-writer`, puis `plan-writer`, puis `coder`. Pourtant, à chaque run, c'est un modèle de langage qui relit ces consignes, décide de l'étape suivante, et recopie la sortie d'un sous-agent dans le prompt du suivant. Tu paies du raisonnement pour exécuter quelque chose qui ne demande aucun jugement.
+Reprends l'orchestrateur `issue-to-code` du [module 208](./208-workflows.md). Sa séquence est fixe : `spec-writer`, puis `plan-writer`, puis `coder`. Pourtant, à chaque run, c'est un modèle de langage qui relit ces consignes, décide de l'étape suivante et recopie la sortie d'un sous-agent dans le prompt du suivant.
 
-L'ADR-010 de SKRAFT (branche `integration/v2`, statut *Proposed* au moment de la rédaction) décrit ce coût : le pipeline tenait dans un agent en prose de 29 Ko, et chaque run payait la relecture de ce protocole.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "Every run spent reasoning tokens re-reading its protocol, calling `state.mjs` one subcommand at a time, and pasting handoff blocks."
+> Source: [208 — Workflows](./208-workflows.md)
+> Citation: "C'est l'orchestrateur qui fait le pont : il récupère la sortie du sous-agent précédent et la transmet en entrée au sous-agent suivant."
 > Fetched: 2026-10-11
 
-La conclusion de l'ADR-010 est nette : une séquence déterministe n'a pas besoin d'un modèle pour s'exécuter.
+Autrement dit, tu paies du raisonnement pour exécuter quelque chose qui ne demande aucun jugement : l'ordre `spec → plan → code` ne change jamais. Et comme rien n'empêche un modèle de sauter une étape ou d'oublier de transmettre le plan, on finit souvent par ajouter des hooks qui surveillent l'orchestrateur de l'extérieur.
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "A deterministic sequence no longer needs a language model to execute it."
-> Fetched: 2026-10-11
-
-Une fois la séquence passée en code, le modèle ne travaille plus que dans les agents de phase.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "The sequence costs no reasoning tokens; the language model works only inside the phase agents."
-> Fetched: 2026-10-11
+Un dynamic workflow inverse la logique. La séquence, les transmissions et les vérifications deviennent du code, exécuté à l'identique à chaque run. Les agents ne sont appelés que pour ce qui demande vraiment de l'analyse : écrire la spec, concevoir le plan, coder.
 
 À la fin de ce module, tu sais :
 
 - expliquer ce qu'est un dynamic workflow et le distinguer d'Autopilot et de `/fleet` ;
 - dire **où** il tourne (et où il ne tourne pas) ;
-- extraire la séquence d'un orchestrateur en prose vers une extension Copilot (`defineWorkflow`, `ctx.agent`, `ctx.pause`) ;
+- convertir l'orchestrateur en prose `issue-to-code` en une extension Copilot (`defineWorkflow`, `ctx.agent`, `ctx.pause`) ;
+- séparer la logique de pilotage de l'hôte qui l'exécute, pour la tester sans Copilot ;
 - identifier quels hooks un dynamic workflow rend inutiles, et lesquels restent indispensables ;
 - lancer un workflow depuis le chat ou depuis le terminal avec `copilot workflow run`.
 
@@ -45,9 +36,9 @@ Une fois la séquence passée en code, le modèle ne travaille plus que dans les
 
 - [Module 104 — Agents personnalisés](../01-fondations/104-agents.md) — les agents que le workflow va piloter.
 - [Module 105 — Hooks](../01-fondations/105-hooks.md) — tu vas voir quels hooks disparaissent.
-- [Module 208 — Workflows](./208-workflows.md) — l'orchestrateur en prose, point de départ de la conversion.
-- [Module 210 — Copilot CLI](./210-copilot-cli.md) — la surface d'exécution principale.
-- Copilot CLI installé.
+- [Module 208 — Workflows](./208-workflows.md) — l'orchestrateur en prose `issue-to-code` et ses trois sous-agents, point de départ de la conversion.
+- [Module 210 — Copilot CLI](./210-copilot-cli.md) — le terminal comme surface de travail avec Copilot. Attention : ce module lance les workflows avec la CLI agentique `copilot` (installation : [Installing GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)), qui n'est pas l'extension `gh copilot` présentée en 210.
+- Copilot CLI installé, Node.js disponible pour lancer les tests de l'étape 3.
 
 ## Concepts clés
 
@@ -94,13 +85,13 @@ Les trois font travailler des agents, mais ils ne répartissent pas le contrôle
 | Déroulement | Selon la tâche et les décisions de Copilot | Le travail indépendant peut être délégué en parallèle | Séquentiel, parallèle ou les deux, avec un ou plusieurs agents |
 
 > Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "A dynamic workflow carries out a process defined in code. The workflow's author defines the steps, conditions, and handoffs."
+> Citation: "The workflow's author defines the steps, conditions, and handoffs."
 > Fetched: 2026-10-11
 
 Retiens aussi que le chat ne lance jamais un workflow de sa propre initiative : il faut le lui demander, ou qu'un skill ou une commande slash le fasse.
 
 > Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "Your chat agent only creates or runs a dynamic workflow when you explicitly ask it to, or when a skill or slash command instructs it to do so."
+> Citation: "only creates or runs a dynamic workflow when you explicitly ask it to, or when a skill or slash command instructs it"
 > Fetched: 2026-10-11
 
 ### Prose (module 208) vs code (ce module)
@@ -111,7 +102,7 @@ Dans le module 208, l'orchestrateur est un `.agent.md` dont l'outil clé est `ru
 > Citation: "L'orchestrateur n'a qu'un seul outil spécifique : `runSubagent`. Il coordonne la séquence et transmet le résultat d'un sous-agent au suivant."
 > Fetched: 2026-10-11
 
-Le dynamic workflow déplace exactement cette responsabilité dans du JavaScript. Le SDK fournit `ctx.agent(prompt, options)` pour lancer un sous-agent, et ses options permettent de cibler un agent nommé (`agent`), un modèle (`model`) ou d'exiger une sortie structurée (`schema`).
+Le dynamic workflow déplace exactement cette responsabilité dans du JavaScript. Le SDK fournit `ctx.agent(prompt, options)` pour lancer un sous-agent ; ses options permettent de cibler un agent nommé (`agent`), un modèle (`model`) ou d'exiger une sortie structurée (`schema`).
 
 > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
 > Citation: "Runs one workflow-owned subagent. Options are exactly `label`, `schema`, `model`, `agent`, `reasoningEffort`, and `contextTier`."
@@ -119,9 +110,9 @@ Le dynamic workflow déplace exactement cette responsabilité dans du JavaScript
 
 | | Orchestrateur en prose (208) | Dynamic workflow (214) |
 |---|---|---|
-| Où vit la séquence | Corps du `.agent.md` | `run(ctx)` dans `extension.mjs` |
+| Où vit la séquence | Corps de `issue-to-code.agent.md` | Un module JavaScript (`pipeline.mjs`) |
 | Qui l'exécute | Un modèle, à chaque run | Le runtime de l'extension |
-| Lancer un sous-agent | `runSubagent` décidé par le modèle | `await ctx.agent(...)` |
+| Lancer un sous-agent | `runSubagent`, décidé par le modèle | `await ctx.agent(...)` |
 | Passer le résultat | Le modèle recopie la sortie dans le prompt suivant | Une variable JavaScript |
 | Validation humaine | Une consigne « demande confirmation » | `await ctx.pause(key)`, durable et reprenable |
 | Surveiller l'ordre | Un hook externe (ex. `PreToolUse`) | Un `if` avant chaque `ctx.agent` |
@@ -131,10 +122,10 @@ Le dynamic workflow déplace exactement cette responsabilité dans du JavaScript
 **La documentation officielle liste trois surfaces de disponibilité : la Copilot app, Copilot CLI et le Copilot SDK.**
 
 - **Déduction : non compatible avec Claude Code.** Ce n'est pas une phrase de la documentation GitHub, mais une conclusion tirée de deux prémisses sourcées ci-dessous :
-  1. la liste officielle de disponibilité se limite à la Copilot app, Copilot CLI et le Copilot SDK — Claude Code n'y figure pas ;
-  2. pour faire tourner le même pipeline sous Claude Code, SKRAFT compose **un second adaptateur**, un *mod Claude Code* séparé (`hooks/skraft-mod.mjs`), autour du même cas d'usage hôte-neutre `RunPipeline` : l'extension Copilot n'y est donc pas exécutée.
+  1. la liste officielle de disponibilité ne cite que la Copilot app, Copilot CLI et le Copilot SDK — Claude Code n'y figure pas ;
+  2. une extension s'appuie sur `@github/copilot-sdk/extension` (`defineWorkflow`, `joinSession`), un runtime propre à Copilot.
 
-  Un *mod Claude Code* est un module de plugin exécuté à l'intérieur de la session Claude Code, qui pilote les agents par du code via des API comme `$.agent.spawn` ou `$.ui.ask`.
+  Si ton équipe utilise aussi Claude Code, il te faudra **un second adaptateur** écrit avec les mécanismes de Claude Code, autour de la **même fonction de pilotage**. C'est tout l'intérêt de l'étape 3 de la démonstration : la logique ne dépend pas de l'hôte, seul l'adaptateur change.
 - **VS Code :** au moment de la rédaction (octobre 2026), VS Code n'apparaît pas dans la liste de disponibilité officielle. Ne compte pas dessus tant que la documentation ne le mentionne pas.
 - **Preview :** la fonctionnalité est en *public preview*, et l'API du SDK est déclarée expérimentale. Sous Copilot CLI, il faut activer les fonctionnalités expérimentales (`--experimental` ou `/experimental on`).
 - **Plans :** les abonnés Copilot Pro et Pro+ restés sur un plan annuel à facturation par *premium requests* (ancien modèle) n'y ont pas accès.
@@ -144,20 +135,12 @@ Le dynamic workflow déplace exactement cette responsabilité dans du JavaScript
 > Citation: "Dynamic workflows are available in the Copilot app, Copilot CLI, and Copilot SDK."
 > Fetched: 2026-10-11
 
+> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+> Citation: "import { defineWorkflow, joinSession } from \"@github/copilot-sdk/extension\";"
+> Fetched: 2026-10-11
+
 > Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
 > Citation: "except Copilot Pro and Copilot Pro+ subscribers on existing annual plans who remain on legacy premium request-based billing."
-> Fetched: 2026-10-11
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "Claude Code mods (`$.agent.spawn`, `$.ui.ask`, `$.fs`, `$.process.run`, `$.state`) run plugin modules inside the session"
-> Fetched: 2026-10-11
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "The hosts only compose: the Claude Code mod (`hooks/skraft-mod.mjs`) and the Copilot extension"
-> Fetched: 2026-10-11
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "Le même cas d'usage sert deux hôtes : un mod Claude Code et un workflow dynamique GitHub Copilot."
 > Fetched: 2026-10-11
 
 > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
@@ -170,131 +153,236 @@ Le dynamic workflow déplace exactement cette responsabilité dans du JavaScript
 
 ### Un dynamic workflow peut remplacer certains hooks
 
-Le [module 105](../01-fondations/105-hooks.md) t'a montré les hooks comme garde-fous déterministes. Dans SKRAFT, plusieurs hooks n'existaient **que pour surveiller l'orchestrateur en prose** : rien d'autre ne l'empêchait de se tromper d'ordre ou d'oublier une entrée.
+Le [module 105](../01-fondations/105-hooks.md) t'a montré les hooks comme garde-fous déterministes. Avec un orchestrateur en prose, certains hooks n'existent **que pour surveiller l'orchestrateur** : rien d'autre ne l'empêche de lancer `coder` avant que le plan existe, ou d'oublier de recopier le plan dans le prompt.
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "G1 refused a phase agent dispatched out of order, G9 refused a dispatch whose prompt dropped a recorded input"
+Quand c'est le code qui dispatche, ces vérifications deviennent de simples tests exécutés **avant** chaque `ctx.agent`, sur des variables que le code a lui-même remplies. Le comportement reste *fail-closed* : en cas de refus, le run s'arrête et rien n'est envoyé à l'agent. Trois familles de gardes passent ainsi dans le code :
+
+- **l'ordre des étapes** — `coder` ne part pas tant que `plan-writer` n'a rien produit ;
+- **la complétude du handoff** — le prompt envoyé contient bien l'artefact de l'étape précédente ;
+- **le rappel « qu'enregistrer ensuite »** — inutile : le code range lui-même le résultat de chaque agent dans une variable.
+
+**La limite est importante.** Le workflow ne voit que ce qu'il fait lui-même : choisir l'agent, composer le prompt, lire la réponse. Sans `schema`, `ctx.agent` lui rend seulement le texte final du sous-agent, pas le détail de son tour.
+
+> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+> Citation: "Without a schema it resolves to the subagent's final text."
 > Fetched: 2026-10-11
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "G6 reminded the orchestrator, after each agent returned, what to record next."
-> Fetched: 2026-10-11
-
-Quand c'est le code qui dispatche, ces vérifications deviennent de simples tests exécutés **avant** chaque `ctx.agent`, sur l'état que le code a lui-même écrit. Le comportement *fail-closed* est conservé : en cas de refus, le run s'arrête et rien n'est envoyé. Plus besoin de hook.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "A refusal stops the run `blocked`; nothing is sent. The checks stay fail-closed, as ADR-004 required, without a hook."
-> Fetched: 2026-10-11
-
-G6, lui, disparaît purement et simplement : il n'y a plus personne à qui rappeler quoi enregistrer, puisque le code enregistre lui-même.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/site/fr/explanation/hooks.md
-> Citation: "G6 (le rappel PostToolUse des étapes à enregistrer) a disparu : le code enregistre artefacts et verdicts."
-> Fetched: 2026-10-11
-
-**La limite est importante.** Le workflow ne voit que ce qu'il fait lui-même : choisir l'agent, composer le prompt. Il ne voit pas ce que l'agent fait **à l'intérieur** de son tour — quels fichiers il écrit, quels skills il charge. Ces gardes-là restent des hooks.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/site/fr/explanation/hooks.md
-> Citation: "Les hooks gardent ce qu'aucun chemin de code ne voit — les écritures des agents (G7/G8), les skills qu'ils chargent (G2/G3), qui dispatche qui (provenance)."
-> Fetched: 2026-10-11
+Ce qui se passe **à l'intérieur** du tour de l'agent — quels fichiers il écrit, quels skills il charge, quels autres agents il lance — échappe donc au code du workflow. Ces gardes-là restent des hooks, déclenchés au moment de l'appel d'outil.
 
 ## Démonstration
 
-Cette démonstration suit **la démarche de la branche v2 de SKRAFT, pas à pas**. Les extraits sont simplifiés pour tenir sur une page, mais ils respectent l'API du SDK. Quand un extrait est une simplification pédagogique et non le code réel du dépôt, il est marqué `// pseudo-code`.
+On convertit pas à pas l'orchestrateur `issue-to-code` du module 208. Le **contenu** des trois sous-agents (`spec-writer.agent.md`, `plan-writer.agent.md`, `coder.agent.md`) ne change pas, mais leur **emplacement**, si : le module 208 les range dans `.agents/`, alors que Copilot CLI ne cherche les agents personnalisés que dans `~/.copilot/agents/`, `.github/agents/` et `.claude/agents/`. Déplace-les dans `.github/agents/`, sinon `ctx.agent(prompt, { agent: 'spec-writer' })` ne les trouvera pas.
 
-### Étape 1 — Point de départ : un orchestrateur en prose, gardé par des hooks
-
-Le pipeline SKRAFT enchaîne quatre phases (RESEARCH → DESIGN → DISTILL → DELIVER). Avant la v2, un agent en prose, `skraft-orchestrator`, portait la séquence, et des hooks la surveillaient de l'extérieur :
-
-- **G1** (`PreToolUse`) : refuse un agent de phase lancé hors ordre ;
-- **G9** (`PreToolUse`) : refuse un dispatch dont le prompt a perdu une entrée enregistrée ;
-- **G6** (`PostToolUse`) : rappelle à l'orchestrateur ce qu'il doit enregistrer après chaque agent.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "The pipeline was carried by a 29 KB prose agent, `skraft-orchestrator`."
+> Source: [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
+> Citation: "2 | Project | `.github/agents/`, from the current working directory upward to the Git root"
 > Fetched: 2026-10-11
 
-```jsonc
-// pseudo-code — forme simplifiée du câblage, pas le hooks.json réel de SKRAFT
+Tout le code est montré en entier ; à la fin, ton dépôt contient :
+
+```text
+.github/agents/
+  spec-writer.agent.md          # contenu du module 208, déplacé depuis .agents/
+  plan-writer.agent.md          # contenu du module 208, déplacé depuis .agents/
+  coder.agent.md                # contenu du module 208, déplacé depuis .agents/
+  issue-to-code.agent.md        # réduit à un lanceur (étape 6), ou supprimé
+.github/extensions/issue-to-code/
+  pipeline.mjs                  # étape 2 — la séquence déclarée
+  run-issue-to-code.mjs         # étape 3 — la fonction de pilotage
+  run-issue-to-code.test.mjs    # étape 3 — ses tests
+  extension.mjs                 # étape 4 — l'adaptateur Copilot
+  guards.mjs                    # étape 5 — les gardes d'ordre et de handoff
+```
+
+### Étape 1 — Point de départ : l'orchestrateur en prose, surveillé par un hook
+
+Voici l'orchestrateur du module 208. Sa séquence n'existe que dans du texte :
+
+```markdown
+<!-- .github/agents/issue-to-code.agent.md (contenu du module 208) -->
+---
+name: issue-to-code
+description: "Workflow complet : issue GitHub → specs → plan → code."
+tools:
+  - runSubagent
+  - githubRepo
+---
+
+Tu es un orchestrateur de workflow. Quand on te donne un numéro
+d'issue GitHub, tu coordonnes trois sous-agents dans l'ordre :
+
+## Workflow
+
+1. Récupère le contenu de l'issue via `githubRepo`.
+2. Délègue la rédaction des specs à l'agent `spec-writer`
+   en lui transmettant le contenu de l'issue.
+   Récupère les specs produites.
+3. Délègue la rédaction du plan à l'agent `plan-writer`
+   en lui transmettant les specs.
+   Récupère le plan produit.
+4. Délègue l'implémentation à l'agent `coder`
+   en lui transmettant le plan.
+5. Résume le travail accompli : specs, plan, fichiers modifiés.
+
+## Règles
+
+- Tu ne modifies jamais de fichier toi-même.
+- Tu ne codes jamais toi-même.
+- Si un sous-agent échoue, rapporte l'erreur et arrête le workflow.
+```
+
+Rien ne garantit que le modèle respecte l'étape 3 avant l'étape 4. Pour s'en assurer, une équipe ajoute typiquement un hook `PreToolUse` (voir module 105) qui inspecte chaque délégation et refuse `coder` si son prompt ne contient pas de plan. L'exemple ci-dessous est **pédagogique** : les noms exacts des champs de `tool_input` (nom de l'agent, prompt) dépendent de l'hôte — journalise d'abord le JSON reçu sur `stdin` pour les vérifier.
+
+```bash
+#!/usr/bin/env bash
+# .github/hooks/guard-issue-to-code.sh — exemple pédagogique
+payload="$(cat)"
+tool="$(printf '%s' "$payload" | jq -r '.tool_name // empty')"
+agent="$(printf '%s' "$payload" | jq -r '.tool_input.agentName // empty')"
+prompt="$(printf '%s' "$payload" | jq -r '.tool_input.prompt // empty')"
+
+if [ "$tool" = "runSubagent" ] && [ "$agent" = "coder" ] \
+   && ! printf '%s' "$prompt" | grep -q '^## Plan'; then
+  cat <<'JSON'
+{
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "coder refusé : aucun plan dans le prompt. Lance plan-writer d'abord."
+  }
+}
+JSON
+fi
+```
+
+```json
+// .github/hooks/issue-to-code.json
 {
   "hooks": {
-    "PreToolUse":  [{ "type": "command", "command": "node src/cli/hook.mjs" }],
-    "PostToolUse": [{ "type": "command", "command": "node src/cli/hook.mjs" }]
+    "PreToolUse": [
+      { "type": "command", "command": ".github/hooks/guard-issue-to-code.sh", "timeout": 5 }
+    ]
   }
 }
 ```
 
-Le point clé : ces hooks n'existent que parce qu'**aucun code** ne se trouve entre la prose et un mauvais dispatch.
-
-### Étape 2 — Extraire la définition du pipeline en code
-
-Premier geste : sortir l'ordre des phases de la prose. Dans la v2, il vit dans un module du domaine, sans aucune dépendance, et l'agent lanceur ne le déclare plus.
-
-```diff
-+ // plugins/skraft-framework/src/domain/pipeline/pipeline-definition.mjs
-+ export const PIPELINE_PHASES = Object.freeze(['RESEARCH', 'DESIGN', 'DISTILL', 'DELIVER'])
-+ export const PIPELINE_DISPATCHER = 'skraft-pipeline'
-+ export const PIPELINE_LAUNCHER = 'skraft-orchestrator'
-+
-+ export const isPipelineDispatcher = (reference) => reference === PIPELINE_DISPATCHER
-```
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/plugins/skraft-framework/src/domain/pipeline/pipeline-definition.mjs
-> Citation: "The SKRAFT engineering pipeline, declared where it runs: in code"
+> Source: [105 — Hooks](../01-fondations/105-hooks.md)
+> Citation: "`permissionDecision` vaut `allow` (autorise), `deny` (refuse) ou `ask` (demande confirmation à l'utilisateur)."
 > Fetched: 2026-10-11
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/plugins/skraft-framework/src/domain/pipeline/pipeline-definition.mjs
-> Citation: "Agents no longer declare it — the launcher agent only starts it."
+Remarque le point clé : ce hook existe uniquement parce qu'**aucun code** ne se trouve entre la prose et un mauvais dispatch. Or un `PreToolUse` se déclenche avant l'exécution d'un outil, et la configuration ci-dessus ne le restreint à aucun outil : c'est le script lui-même qui écarte, après coup, tout ce qui n'est pas `runSubagent`. Conséquence directe de cette configuration : il est lancé avant chaque appel d'outil de la session, pour ne surveiller qu'une seule décision.
+
+> Source: [105 — Hooks](../01-fondations/105-hooks.md)
+> Citation: "Se déclenche *avant* l'exécution d'un outil (terminal, édition de fichier…)."
 > Fetched: 2026-10-11
 
-Ce fichier a été introduit par le commit [`07214d4`](https://github.com/SebastienDegodez/skraft-plugin/commit/07214d4e1c8898fd6182e60f2ad21a89d3f20b32). Côté prose, l'agent de phase ne déclare plus « dispatché par l'orchestrateur », mais `dispatched_by: skraft-pipeline` : c'est le code qui dispatche.
+### Étape 2 — Déclarer la séquence en code
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "Le pipeline est déclaré dans le code"
-> Fetched: 2026-10-11
-
-### Étape 3 — Un cas d'usage hôte-neutre, derrière des ports
-
-Trois mots de vocabulaire d'abord. Un **port** est un contrat (une interface) dont le cas d'usage a besoin pour agir sur le monde extérieur ; un **adaptateur** est l'implémentation de ce contrat propre à un hôte donné ; un **cas d'usage hôte-neutre** est le code qui porte les règles et ne connaît que les ports, jamais l'hôte qui l'exécute.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "Chaque hôte ne fait que brancher ses adaptateurs sur les ports ; toutes les décisions sont prises dans le domaine et les cas d'usage"
-> Fetched: 2026-10-11
-
-Avant de toucher au SDK Copilot, la v2 écrit la boucle **sans dépendre d'aucun hôte**. `RunPipeline` séquence les phases et parle au monde à travers des *ports* : `AgentRunner` pour lancer un agent, `HumanInteraction` pour poser une question, `PipelineProgress` pour signaler l'avancement, et une quinzaine d'autres pour l'état, git ou les fichiers.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "Écrire un adaptateur par port propre à l'hôte : en général `AgentRunner`, `HumanInteraction` et `PipelineProgress`"
-> Fetched: 2026-10-11
+Premier geste : sortir l'ordre des étapes de la prose. Un petit module, sans aucune dépendance, liste les étapes dans l'ordre, l'agent qui s'en charge, l'artefact qu'il doit produire et celui dont il a besoin. La fonction `brief` compose le prompt de chaque étape à partir des artefacts déjà produits.
 
 ```js
-// pseudo-code — esquisse simplifiée de RunPipeline (le vrai fichier est
-// src/application/pipeline/run-pipeline.mjs)
-import { PIPELINE_PHASES } from '../../domain/pipeline/pipeline-definition.mjs'
+// .github/extensions/issue-to-code/pipeline.mjs
+export const STEPS = Object.freeze([
+  Object.freeze({ id: 'spec', phase: 'Spec', agent: 'spec-writer', needs: null, produces: 'spec' }),
+  Object.freeze({ id: 'plan', phase: 'Plan', agent: 'plan-writer', needs: 'spec', produces: 'plan' }),
+  Object.freeze({ id: 'code', phase: 'Code', agent: 'coder', needs: 'plan', produces: 'summary', checkpoint: 'plan-approved' }),
+])
 
-export const createRunPipeline = ({ agentRunner, humanInteraction, progress, state }) => ({
-  async run({ slug, story }) {
-    for (const phase of PIPELINE_PHASES) {
-      progress.phase(phase)
-      const agent = specialistFor(phase)
-      const result = await agentRunner.run({ agent, label: `${phase}-specialist`, prompt: brief(phase, state) })
-      if (!result.ok) return { status: 'blocked', phase, reason: result.error }
-      // … reviewer, retries, checkpoints via humanInteraction.ask(...)
+export function brief(step, issue, artifacts) {
+  switch (step.id) {
+    case 'spec':
+      return `Lis l'issue #${issue} du dépôt courant et rédige sa spécification technique.`
+    case 'plan':
+      return `Transforme cette spécification en plan d'implémentation.\n\n## Spec\n\n${artifacts.spec}`
+    case 'code':
+      return `Implémente ce plan, puis lance les tests.\n\n## Plan\n\n${artifacts.plan}`
+    default:
+      throw new Error(`Étape inconnue : ${step.id}`)
+  }
+}
+```
+
+Deux écarts assumés par rapport au module 208 : ici, c'est `spec-writer` qui lit l'issue lui-même (il dispose déjà d'un outil GitHub dans le module 208), au lieu que l'orchestrateur la lui transmette ; et l'étape « Résume le travail accompli » disparaît, car le résumé produit par `coder` (`summary`) devient la valeur de retour du workflow.
+
+Ce que l'orchestrateur en prose exprimait par « délègue… puis récupère… puis transmets… » tient maintenant dans un tableau gelé. Le champ `checkpoint` indique qu'un humain doit valider **avant** l'étape `code`, c'est-à-dire avant toute modification de fichier.
+
+### Étape 3 — Une fonction de pilotage indépendante de l'hôte
+
+Avant de toucher au SDK Copilot, on écrit la boucle **sans dépendre d'aucun hôte**. Deux mots de vocabulaire, au sens le plus simple :
+
+- un **port** est ce dont la fonction a besoin pour agir sur le monde, décrit comme un simple paramètre : « donne-moi une fonction `runAgent` qui lance un agent et me rend son texte ». La fonction ne sait pas qui la fournit ;
+- un **adaptateur** est l'implémentation concrète de ce port pour un hôte donné : sous Copilot, `runAgent` appellera `ctx.agent` ; dans un test, une fonction en mémoire qui rend un texte fixe.
+
+Ici, quatre ports suffisent : `runAgent` (lancer un agent), `setPhase` (annoncer l'étape en cours), `askHuman` (faire valider un humain) et `log` (signaler l'avancement). `setPhase` est volontairement séparé de `runAgent` : la fonction de pilotage l'appelle elle-même, dans sa boucle principale, et jamais depuis une tâche concurrente (tu verras pourquoi à l'étape 4).
+
+```js
+// .github/extensions/issue-to-code/run-issue-to-code.mjs (version initiale)
+import { STEPS, brief } from './pipeline.mjs'
+
+const isFilled = (value) => typeof value === 'string' && value.trim() !== ''
+
+export async function runIssueToCode({ runAgent, setPhase, askHuman, log }, args) {
+  const artifacts = {}
+
+  for (const step of STEPS) {
+    const prompt = brief(step, args.issue, artifacts)
+
+    if (step.checkpoint) {
+      await askHuman(step.checkpoint, `Relis le plan de l'issue #${args.issue}, puis reprends le run.\n\n${artifacts.plan}`)
     }
-    return { status: 'done' }
-  },
+
+    setPhase(step.phase)
+    const output = await runAgent({ agent: step.agent, label: step.id, prompt })
+    artifacts[step.produces] = output
+    log(`${step.agent} : ${isFilled(output) ? 'terminé' : 'aucun résultat'}`)
+  }
+
+  if (!isFilled(artifacts.summary)) {
+    return { status: 'blocked', step: 'code', reason: "coder n'a rien produit." }
+  }
+  return { status: 'done', issue: args.issue, summary: artifacts.summary }
+}
+```
+
+Le bénéfice est immédiat : la fonction se teste avec des **doubles en mémoire**, sans Copilot, sans réseau, sans crédit consommé. Le test ci-dessous utilise uniquement le *test runner* intégré à Node.js (`node --test`).
+
+```js
+// .github/extensions/issue-to-code/run-issue-to-code.test.mjs
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { runIssueToCode } from './run-issue-to-code.mjs'
+
+function fakeHost(outputs) {
+  const calls = []
+  return {
+    calls,
+    runAgent: async ({ agent, prompt }) => {
+      calls.push({ agent, prompt })
+      return outputs[agent] ?? null
+    },
+    setPhase: () => {},
+    askHuman: async (key) => { calls.push({ pause: key }) },
+    log: () => {},
+  }
+}
+
+test('enchaîne spec, plan, pause, puis code', async () => {
+  const host = fakeHost({ 'spec-writer': 'SPEC', 'plan-writer': 'PLAN', coder: 'FAIT' })
+  const result = await runIssueToCode(host, { issue: 42 })
+
+  assert.equal(result.status, 'done')
+  assert.deepEqual(
+    host.calls.map((c) => c.agent ?? `pause:${c.pause}`),
+    ['spec-writer', 'plan-writer', 'pause:plan-approved', 'coder'],
+  )
+  assert.match(host.calls.at(-1).prompt, /PLAN/)
 })
 ```
 
-Le bénéfice : ce cas d'usage se teste avec des doubles en mémoire, et **chaque hôte n'a plus qu'à brancher ses adaptateurs**. Le mod et l'extension ne portent aucune règle.
+```bash
+cd .github/extensions/issue-to-code && node --test run-issue-to-code.test.mjs
+```
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "One implementation for two hosts, unit-tested with in-memory doubles and an integration test per host."
-> Fetched: 2026-10-11
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "Le mod et l'extension ne contiennent aucune règle : ils construisent les dépendances et appellent un cas d'usage."
-> Fetched: 2026-10-11
+Ce test passe dès maintenant. Il fixe le contrat : l'ordre des agents, la pause avant `coder`, et le plan transmis dans le prompt de `coder`.
 
 ### Étape 4 — L'adaptateur Copilot : `defineWorkflow` + `joinSession`
 
@@ -304,207 +392,311 @@ Côté SDK, le principe tient en deux appels : `defineWorkflow` déclare le work
 > Citation: "Use `defineWorkflow` and pass the returned handle to `joinSession`"
 > Fetched: 2026-10-11
 
-Voici l'extension réelle de la v2, raccourcie. Elle enregistre en un seul `joinSession` le workflow, deux outils (`skraft_decide`, `skraft_close_phase`) et un *canvas* — une interface custom fournie par une extension dans la Copilot app :
+Les métadonnées contiennent un `name` stable, une `description`, les `phases` déclarées et, si le workflow lit `ctx.args`, un `argsSchema`.
 
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "In the Copilot app, an extension can provide a canvas—a custom interface—with controls to start the workflow."
+> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+> Citation: "Workflow metadata contains a stable `name`, a human-readable `description`, declared `phases`, an optional `argsSchema`, and optional `limits`."
 > Fetched: 2026-10-11
 
+L'extension n'est qu'un **adaptateur** : elle traduit les quatre ports en appels au SDK, puis délègue tout à `runIssueToCode`.
 
 ```js
-// plugins/skraft-framework/com.github.copilot/extensions/skraft-pipeline/extension.mjs (extrait)
-import { CanvasError, createCanvas, defineWorkflow, joinSession } from '@github/copilot-sdk/extension'
+// .github/extensions/issue-to-code/extension.mjs
+import { defineWorkflow, joinSession } from '@github/copilot-sdk/extension'
+import { runIssueToCode } from './run-issue-to-code.mjs'
 
-const skraftPipeline = defineWorkflow({
-  meta: SKRAFT_PIPELINE_META,
-  run: (ctx) => runSkraftPipelineWorkflow(ctx, host),
-})
+const issueToCode = defineWorkflow({
+  meta: {
+    name: 'issue-to-code',
+    description: 'Issue GitHub → spec → plan → code, avec une pause avant le code. args: { issue: integer }',
+    phases: [{ title: 'Spec' }, { title: 'Plan' }, { title: 'Code' }],
+    argsSchema: {
+      type: 'object',
+      required: ['issue'],
+      properties: { issue: { type: 'integer' } },
+    },
+  },
+  run: async (ctx) => {
+    if (!Number.isInteger(ctx.args.issue) || ctx.args.issue <= 0) {
+      return { status: 'blocked', reason: 'args.issue doit être un entier positif.' }
+    }
 
-session = await joinSession({
-  workflows: [skraftPipeline],
-  tools: [
-    createSkraftDecideTool({ ...host, cwd: () => process.cwd() }),
-    createSkraftClosePhaseTool({ ...host, cwd: () => process.cwd() }),
-  ],
-  canvases: [skraftCanvas],
-})
-```
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/plugins/skraft-framework/com.github.copilot/extensions/skraft-pipeline/extension.mjs
-> Citation: "registers with the SDK the `skraft-pipeline` dynamic workflow, the `skraft_decide` and `skraft_close_phase` tools, and the `skraft-pipeline` canvas"
-> Fetched: 2026-10-11
-
-`runSkraftPipelineWorkflow` construit les adaptateurs Copilot des ports. Les deux qui comptent pour toi : `AgentRunner` s'appuie sur `ctx.agent`, `HumanInteraction` sur `ctx.pause`. En simplifié :
-
-```js
-// pseudo-code — adaptateurs simplifiés (les vrais sont dans
-// src/adapters/infrastructure/copilot-workflow/)
-const agentRunner = (ctx) => ({
-  async run({ agent, label, prompt }) {
-    const text = await ctx.agent(prompt, { agent, label })
-    return text === null ? { ok: false, error: `${label}: no result` } : { ok: true, text }
+    return runIssueToCode(
+      {
+        runAgent: ({ agent, label, prompt }) => ctx.agent(prompt, { agent, label }),
+        setPhase: (title) => ctx.phase(title),
+        askHuman: async (key, message) => {
+          ctx.log(message)
+          await ctx.pause(key)
+        },
+        log: (message) => ctx.log(message),
+      },
+      ctx.args,
+    )
   },
 })
 
-const humanInteraction = (ctx) => ({
-  async ask({ key, question }) {
-    ctx.log(`${question} (clé : ${key})`)
-    await ctx.pause(key) // 1re tentative : le run se met en pause ici
-    return null          // à la reprise : la réponse est relue dans le DecisionStore (le port qui enregistre les réponses humaines)
-  },
-})
+await joinSession({ workflows: [issueToCode] })
 ```
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "HI->>W: ctx.log(question, clé) puis ctx.pause(clé)"
+Quatre comportements du SDK expliquent ce code.
+
+**1. `argsSchema` ne valide pas tout.** Le schéma contrôle la structure (types, propriétés requises), mais pas les contraintes fines ; le SDK recommande donc de revalider `ctx.args`. D'où le test `Number.isInteger(...) && > 0` en tête de `run`.
+
+> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+> Citation: "A workflow that reads `ctx.args` should still validate it rather than assume a shape"
 > Fetched: 2026-10-11
 
-Trois comportements du SDK expliquent ce code :
-
-1. **Un échec ordinaire de `ctx.agent` ne lève pas d'exception, il rend `null`.** D'où le test avant tout usage du résultat.
-2. **`ctx.pause` est durable.** À la reprise, le workflow repart du début, mais les étapes journalisées ne sont pas ré-exécutées : leur résultat est relu depuis le journal.
-3. **`ctx.pause` ne s'appelle que depuis le flux principal**, jamais dans `ctx.parallel()` ou `ctx.pipeline()`.
+**2. Un échec ordinaire de `ctx.agent` ne lève pas d'exception, il rend `null`.** Il faut donc toujours tester le résultat avant de l'utiliser — c'est ce que fera la garde de l'étape 5.
 
 > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
 > Citation: "An ordinary failure resolves to `null` — it does not throw."
 > Fetched: 2026-10-11
 
+**3. `ctx.pause` est durable.** Au premier passage, le run enregistre le checkpoint et se met en pause. À la reprise, le workflow repart du début et le même checkpoint rend la main. Ne capture pas l'erreur levée par la pause dans un `try/catch` : c'est elle qui arrête proprement la première tentative.
+
 > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "On resume, the workflow starts from the beginning, reuses the journaled step, returns from the checkpoint, and continues."
+> Citation: "When the run resumes, the workflow starts again and the same checkpoint returns so execution can continue."
 > Fetched: 2026-10-11
+
+Repartir du début ne relance pas `spec-writer` ni `plan-writer` : chaque appel à `ctx.agent` est journalisé selon son prompt et ses options, et un appel identique rend le résultat déjà enregistré.
+
+> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+> Citation: "Each call is journaled by its canonical prompt and options, including `label`."
+> Fetched: 2026-10-11
+
+**4. `ctx.pause` ne s'appelle que depuis le flux principal**, jamais dans `ctx.parallel()` (plusieurs tâches lancées en même temps) ou `ctx.pipeline()` (une liste d'éléments qui traversent une suite d'étapes, chacun à son rythme). C'est le cas ici : `askHuman` est appelé dans la boucle de `runIssueToCode`, pas dans une tâche concurrente.
 
 > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
 > Citation: "Call it only from the main workflow flow, not inside `ctx.parallel()` or `ctx.pipeline()`."
 > Fetched: 2026-10-11
 
-Pour les agents déjà terminés avant la pause, SKRAFT s'appuie sur le journal du SDK : ils ne sont pas relancés.
+Enfin, `ctx.phase` alimente l'affichage de la progression. C'est une valeur unique pour tout le run : on l'appelle à chaque changement d'étape, depuis le flux principal — d'où le port `setPhase`, distinct de `runAgent`. Le travail concurrent se distingue par son `label`, pas par une phase.
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "Les `ctx.agent` déjà terminés ne sont pas relancés à la reprise : le SDK rejoue leur résultat journalisé (même prompt et même `label`)."
+> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+> Citation: "Call it at run-level transitions and distinguish concurrent work by `label` instead."
 > Fetched: 2026-10-11
 
-Et côté Claude Code ? Le même `RunPipeline` est branché sur un mod Claude Code, avec `$.ui.ask` à la place de `ctx.pause` : c'est le second adaptateur sur lequel repose la déduction de l'encadré *Compatibilité* plus haut.
+### Étape 5 — Les gardes quittent le hook
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "Claude Code : boîte de dialogue. `HumanInteraction` ouvre la question avec `$.ui.ask` et le pipeline continue dans la même exécution."
-> Fetched: 2026-10-11
+Maintenant que c'est le code qui dispatche, la vérification d'ordre et celle de complétude du handoff s'exécutent juste avant chaque `ctx.agent`. On les isole dans un module pur, testable comme le reste :
 
-### Étape 5 — Déplacer G1/G9 dans le cas d'usage, supprimer les hooks
+```js
+// .github/extensions/issue-to-code/guards.mjs
+import { STEPS } from './pipeline.mjs'
 
-Maintenant que c'est le code qui dispatche, la vérification d'ordre et celle de complétude du handoff s'exécutent juste avant l'appel :
+const filled = (value) => typeof value === 'string' && value.trim() !== ''
 
-```diff
-  // pseudo-code — RunPipeline, avant chaque dispatch
-+ const order = evaluateDispatch(state, { phase, agent })        // G1
-+ if (!order.ok) return { status: 'blocked', phase, reason: order.reason }
-  const prompt = composeDispatchBrief(state, phase)
-+ const handoff = evaluateHandoff(state, prompt)                  // G9
-+ if (!handoff.ok) return { status: 'blocked', phase, reason: handoff.reason }
-  const result = await agentRunner.run({ agent, label: `${phase}-specialist`, prompt })
-+ recordArtifacts(state, result)                                  // remplace le rappel G6
+export function checkDispatch(step, artifacts, prompt) {
+  const index = STEPS.indexOf(step)
+  if (index === -1) return { ok: false, reason: `Étape inconnue : ${step?.id}` }
+
+  // Ordre : chaque étape précédente a produit un artefact non vide.
+  for (const previous of STEPS.slice(0, index)) {
+    if (!filled(artifacts[previous.produces])) {
+      return { ok: false, reason: `${step.agent} refusé : ${previous.agent} n'a rien produit.` }
+    }
+  }
+
+  // Handoff : l'artefact attendu figure bien dans le prompt envoyé.
+  if (step.needs && !prompt.includes(artifacts[step.needs])) {
+    return { ok: false, reason: `${step.agent} refusé : le prompt ne contient pas « ${step.needs} ».` }
+  }
+
+  return { ok: true }
+}
+
+export const isFilled = filled
 ```
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "Avant chaque dispatch : `evaluateDispatch` (G1 — l'agent appartient à la phase ouverte, le reviewer seulement après un artefact)"
-> Fetched: 2026-10-11
-
-Puis on retire les hooks devenus inutiles du câblage :
+Puis on branche la garde dans la fonction de pilotage. En cas de refus, le run s'arrête avec le statut `blocked` : **fail-closed**, rien n'est envoyé à l'agent, et la pause humaine n'est même pas proposée sur un plan vide.
 
 ```diff
-  // pseudo-code — câblage des hooks après ADR-010
-  "PreToolUse": [
--   G1  ordre de dispatch
--   G9  complétude du handoff
-    provenance du dispatch
-    G7  état suivi protégé
-    G8  écritures DELIVER
-  ],
-  "PostToolUse": [
--   G6  rappel des étapes à enregistrer
-    G3  trace des chargements de skills
-  ]
+  // .github/extensions/issue-to-code/run-issue-to-code.mjs
+  import { STEPS, brief } from './pipeline.mjs'
++ import { checkDispatch, isFilled } from './guards.mjs'
+
+- const isFilled = (value) => typeof value === 'string' && value.trim() !== ''
+-
+  export async function runIssueToCode({ runAgent, setPhase, askHuman, log }, args) {
+    const artifacts = {}
+
+    for (const step of STEPS) {
+      const prompt = brief(step, args.issue, artifacts)
+
++     const check = checkDispatch(step, artifacts, prompt)
++     if (!check.ok) {
++       log(check.reason)
++       return { status: 'blocked', step: step.id, reason: check.reason }
++     }
++
+      if (step.checkpoint) {
 ```
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "Provenance, G7/G8, G2/G3 and housekeeping stay: they watch what agents do, which no code path sees."
-> Fetched: 2026-10-11
+Ajoute le test du cas refusé ; il remplace le test manuel du hook :
 
-Le tableau avant/après croise deux sources : la colonne « Avant » reprend l'ADR-010 (section *Context* et point 3 de la *Decision*), la colonne « Après » la documentation des hooks SKRAFT, modifiée par le commit [`e21ffbc`](https://github.com/SebastienDegodez/skraft-plugin/commit/e21ffbc4a1b352fa6581285aa6772aa973f6ae12) :
+```diff
+  // .github/extensions/issue-to-code/run-issue-to-code.test.mjs
++
++ test('refuse coder quand plan-writer ne rend rien', async () => {
++   const host = fakeHost({ 'spec-writer': 'SPEC', 'plan-writer': '   ' })
++   const result = await runIssueToCode(host, { issue: 42 })
++
++   assert.equal(result.status, 'blocked')
++   assert.equal(result.step, 'code')
++   assert.ok(!host.calls.some((c) => c.agent === 'coder'))
++   assert.ok(!host.calls.some((c) => c.pause))
++ })
+```
+
+Les deux tests passent avec `node --test`. Le hook d'ordre n'a plus de raison d'être : supprime-le.
+
+```diff
+- .github/hooks/guard-issue-to-code.sh
+- .github/hooks/issue-to-code.json
+```
+
+Le bilan, en termes génériques :
 
 | Garde | Avant (orchestrateur en prose) | Après (dynamic workflow) |
 |---|---|---|
-| G1 — ordre de dispatch | Hook `PreToolUse`, fail-closed | `RunPipeline`, avant chaque dispatch ; fail-closed, le run s'arrête `blocked` |
-| G9 — complétude du handoff | Hook `PreToolUse` | `RunPipeline`, sur le prompt composé ; fail-closed |
-| G6 — rappel de continuation | Hook `PostToolUse` | Supprimé : le code enregistre ce que rend l'agent |
-| Provenance du dispatch | Hook `PreToolUse` | Reste un hook |
-| G2/G3 — skills obligatoires et chargés | Hooks `SubagentStart`, `PostToolUse`, `SubagentStop` | Restent des hooks |
-| G7/G8 — état suivi, écritures DELIVER | Hook `PreToolUse` | Restent des hooks |
+| Ordre des étapes | Hook `PreToolUse`, à chaque appel d'outil | `checkDispatch`, avant chaque `ctx.agent` ; fail-closed, le run s'arrête `blocked` |
+| Complétude du handoff (artefact présent, non vide, transmis) | Hook `PreToolUse` qui inspecte le prompt | `checkDispatch`, sur le prompt composé par le code ; fail-closed |
+| Rappel « qu'enregistrer ensuite » | Hook `PostToolUse` qui relance l'orchestrateur | Supprimé : le code range lui-même le résultat dans `artifacts` |
+| Écritures de fichiers sensibles | Hook `PreToolUse` | Reste un hook : le code ne voit pas les outils appelés pendant le tour de l'agent |
+| Chargement de skills obligatoires | Hooks | Restent des hooks, pour la même raison |
+| Qui a le droit de dispatcher qui | Hook `PreToolUse` | Reste un hook : un agent peut aussi être lancé hors du workflow |
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "ADR-004 made G1 a fail-closed `PreToolUse(Agent)` hook because nothing else stood between the prose and a wrong dispatch."
-> Fetched: 2026-10-11
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/site/fr/explanation/hooks.md
-> Citation: "G1 (ordre de dispatch) et G9 (complétude du handoff) tournent dans le cas d'usage avant chaque dispatch, sur l'état qu'il a lui-même écrit"
-> Fetched: 2026-10-11
-
-L'ADR résume le gain en une phrase : ce qui était un conseil autour de la prose devient un invariant du code.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "Guards that were advisory around prose are invariants of the code that dispatches."
-> Fetched: 2026-10-11
+Ce qui était un garde-fou autour de la prose devient un invariant du code, testé comme n'importe quelle fonction.
 
 ### Étape 6 — Lancer : l'orchestrateur devient un lanceur
+
+Active les fonctionnalités expérimentales (`/experimental on`), redémarre la session, puis vérifie que le workflow est chargé :
+
+```text
+What dynamic workflows are available?
+```
+
+> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
+> Citation: "Start a new session, or restart an existing session. When the session finishes loading, ask Copilot to list the available dynamic workflows"
+> Fetched: 2026-10-11
 
 Deux façons de démarrer le même workflow. Dans le chat, en langage naturel :
 
 ```text
-Run the skraft-pipeline dynamic workflow for slug checkout, issue 42
+Run the issue-to-code dynamic workflow for issue 42
 ```
 
 Ou directement depuis le terminal, avec les entrées en JSON :
 
 ```bash
-copilot workflow run skraft-pipeline --args '{"slug":"checkout","issue":42}'
+copilot workflow run issue-to-code \
+   --args '{"issue":42}' \
+   --allow-tool='read, write, shell, github'
 ```
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/plugins/skraft-framework/com.github.copilot/extensions/skraft-pipeline/extension.mjs
-> Citation: "copilot workflow run skraft-pipeline --args '{"slug":"checkout","issue":42}'"
-> Fetched: 2026-10-11
 
 > Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
 > Citation: "Use `--args` to supply inputs for the workflow as JSON."
 > Fetched: 2026-10-11
 
-Le run se suit avec `/workflows` dans une session Copilot CLI : tu y vois la phase courante, les sous-agents actifs et les crédits consommés. `P` met en pause, `R` reprend un run en pause.
+Attention : en ligne de commande, aucune demande d'autorisation ne s'affiche. Accorde **avant** le lancement les permissions dont les agents ont besoin, avec `--allow-tool` (plusieurs valeurs : une liste entre guillemets, séparée par des virgules) :
+
+- `read` — lire les fichiers, pour `plan-writer` et `coder` ;
+- `write` et `shell` — modifier les fichiers et lancer les tests, pour `coder` ;
+- `github` — si ton `spec-writer` lit l'issue via le serveur MCP GitHub, autorise ce serveur sous son nom configuré (ici `github`). Le module 208 déclare l'outil VS Code `githubRepo` : vérifie avec `/agent` quel outil ton agent obtient réellement sous la CLI, et ajuste cette valeur.
+
+Une demande qui ne peut pas être approuvée automatiquement est refusée. Pour serrer la vis, `shell` et `write` acceptent un filtre entre parenthèses, par exemple `shell(npm test)` pour n'autoriser que cette commande exacte.
+
+> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
+> Citation: "Grant the permissions the workflow's agents need before starting, for example with `--allow-tool` or `--allow-url`."
+> Fetched: 2026-10-11
+
+> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
+> Citation: "Requests that cannot be approved automatically are denied."
+> Fetched: 2026-10-11
+
+> Source: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference
+> Citation: "Selectively grant permission for a specific tool. For multiple tools, use a quoted, comma-separated list."
+> Fetched: 2026-10-11
+
+> Source: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference
+> Citation: "MCP-SERVER | Invoking tools from a specific MCP server. Use the server's configured name as the identifier—for example, `github`."
+> Fetched: 2026-10-11
+
+> Source: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference
+> Citation: "`shell(npm test)` | Allow the exact command `npm test`."
+> Fetched: 2026-10-11
+
+Ton extension est une extension **de projet** (dans `.github/extensions/`). Si tu lances la commande dans un dossier que Copilot CLI n'a pas encore marqué comme approuvé, l'extension n'est pas chargée : ajoute `GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true` pour cette invocation. Cela autorise l'exécution du code d'extension du dépôt — **à n'utiliser que pour du code de confiance** — et ne dispense pas d'accorder les permissions des agents.
+
+```bash
+GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true copilot workflow run issue-to-code \
+   --args '{"issue":42}' \
+   --allow-tool='read, write, shell, github'
+```
+
+> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
+> Citation: "set `GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true` for that invocation. This allows repository extension code to run. Only use it for code you trust."
+> Fetched: 2026-10-11
+
+En ligne de commande, quand le run se met en pause ou s'arrête sans terminer, la commande rend la main en affichant le **statut** du run et son **run ID**. La documentation ne décrit pas de commande pour reprendre ce run depuis le terminal : ne compte pas dessus.
+
+> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
+> Citation: "If it pauses or stops without completing, the command reports the run's status and run ID."
+> Fetched: 2026-10-11
+
+**Pour la démo du checkpoint, lance le run depuis le chat** d'une session interactive. C'est dans cette session que tu le suis et le reprends avec `/workflows` : tu y vois la phase courante, les sous-agents actifs et les crédits IA consommés (*AI credits*, l'unité de mesure d'usage commune à tout GitHub Copilot). Quand le run s'arrête au checkpoint `plan-approved`, relis le plan dans les messages de progression, ouvre `/workflows`, sélectionne le run en pause et appuie sur `R` pour le reprendre.
+
+> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
+> Citation: "In an interactive session, enter `/workflows`."
+> Fetched: 2026-10-11
+
+> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+> Citation: "AI credits are GitHub Copilot's universal usage metric."
+> Fetched: 2026-10-11
 
 > Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
 > Citation: "In an active run, press P to pause, X to cancel the run."
 > Fetched: 2026-10-11
 
-Et l'ancien `skraft-orchestrator` ? Il ne disparaît pas : il devient un **lanceur**. Il démarre le workflow et relaie les checkpoints, sans plus rien décider du pipeline.
-
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md
-> Citation: "L'agent `skraft-orchestrator` n'est plus qu'un lanceur : il appelle l'entrée de son hôte et relaie les checkpoints."
+> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
+> Citation: "Press R to resume the run."
 > Fetched: 2026-10-11
+
+Et l'orchestrateur `issue-to-code.agent.md` ? Il ne décide plus rien. Le plus simple est de le supprimer. Si ton équipe a l'habitude de sélectionner cet agent, garde-le comme simple **lanceur** :
+
+```diff
+  ---
+  name: issue-to-code
+- description: "Workflow complet : issue GitHub → specs → plan → code."
+- tools:
+-   - runSubagent
+-   - githubRepo
++ description: "Lance le dynamic workflow issue-to-code pour une issue donnée."
+  ---
+
+- Tu es un orchestrateur de workflow. Quand on te donne un numéro
+- d'issue GitHub, tu coordonnes trois sous-agents dans l'ordre :
+- …
++ Quand on te donne un numéro d'issue, lance le dynamic workflow
++ `issue-to-code` avec `{ "issue": <numéro> }`. Ne délègue à aucun
++ sous-agent toi-même. Quand le run se met en pause, rappelle à
++ l'utilisateur de relire le plan puis de reprendre le run.
+```
 
 ## Pièges et anti-patterns
 
-- **Oublier que c'est une preview.** Fonctionnalité en *public preview*, API du SDK déclarée expérimentale : signatures et comportements peuvent changer. Épingle ta version de Copilot CLI et garde un test d'intégration de ton extension.
+- **Oublier que c'est une preview.** Fonctionnalité en *public preview*, API du SDK déclarée expérimentale : signatures et comportements peuvent changer. Épingle ta version de Copilot CLI et garde les tests de ta fonction de pilotage, qui eux ne dépendent pas du SDK.
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "Copilot dynamic workflows and extensions are in public preview"
+> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+> Citation: "The API is experimental."
 > Fetched: 2026-10-11
 
-- **Croire que le workflow sera portable.** Ni Claude Code ni (au moment de la rédaction) VS Code ne figurent dans la liste officielle de disponibilité ; l'encadré *Compatibilité* plus haut en déduit qu'il faut un second adaptateur pour Claude Code. Si ton équipe l'utilise, prévois donc un cas d'usage hôte-neutre, comme `RunPipeline`, pour ne pas dupliquer la logique.
+- **Croire que le workflow sera portable.** Ni Claude Code ni (au moment de la rédaction) VS Code ne figurent dans la liste officielle de disponibilité ; l'encadré *Compatibilité* en déduit qu'il faut un second adaptateur pour Claude Code. Garde toute la logique dans `runIssueToCode` et `guards.mjs` pour que ce second adaptateur reste mince.
 
-- **Lancer un agent à la main, hors workflow.** Les gardes déplacées dans le code ne protègent que les dispatchs qui passent par le code. Un agent de phase lancé directement depuis le chat échappe à G1/G9 ; seules la provenance et G7/G8, restées en hooks, s'appliquent encore.
+- **Lancer un agent à la main, hors workflow.** Les gardes déplacées dans le code ne protègent que les dispatchs qui passent par le code. Si quelqu'un sélectionne `coder` directement dans le chat, `checkDispatch` ne s'exécute pas : seuls les hooks restants (écritures sensibles, provenance) s'appliquent encore.
 
-> Source: https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md
-> Citation: "A user who dispatches phase agents by hand, outside RunPipeline, is no longer stopped by G1/G9; provenance and G7/G8 still apply."
-> Fetched: 2026-10-11
-
-- **Sous-estimer les permissions.** Les sous-agents du workflow héritent des autorisations de ta session : ce que tu as déjà accordé s'applique à eux. Et `copilot workflow run` n'affiche aucune demande d'approbation : accorde les permissions (`--allow-tool`, `--allow-url`) **avant** de lancer, sinon les demandes sont refusées.
+- **Sous-estimer les permissions.** Les sous-agents du workflow héritent des autorisations de ta session : ce que tu as déjà accordé s'applique à eux. Et `copilot workflow run` n'affiche aucune demande d'approbation.
 
 > Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
 > Citation: "A dynamic workflow's subagents use the CLI's permission system and inherit the permission grants of the session that started them."
@@ -514,7 +706,7 @@ Et l'ancien `skraft-orchestrator` ? Il ne disparaît pas : il devient un **lance
 > Citation: "This command does not display permission approval prompts, even when you run it in a terminal."
 > Fetched: 2026-10-11
 
-- **Appeler deux fois `ctx.agent` avec le même prompt en attendant deux agents.** Les appels identiques sont mémoïsés en **un seul** sous-agent. Donne un `label` unique à chaque appel indépendant.
+- **Appeler deux fois `ctx.agent` avec le même prompt en attendant deux agents.** Les appels identiques sont mémoïsés en **un seul** sous-agent. Donne un `label` unique à chaque appel indépendant — c'est pourquoi l'adaptateur passe `label: step.id`.
 
 > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
 > Citation: "Identical calls are memoized into one subagent."
@@ -530,92 +722,89 @@ Et l'ancien `skraft-orchestrator` ? Il ne disparaît pas : il devient un **lance
 
 ## Exercice ⭐⭐
 
-**Énoncé** — Convertis l'orchestrateur `issue-to-code` du [module 208](./208-workflows.md) (`spec-writer` → `plan-writer` → `coder`) en dynamic workflow, avec un checkpoint humain **avant** l'étape de code.
+**Énoncé** — Étends le workflow `issue-to-code` avec une étape de **relecture** après `coder` : deux relectures indépendantes lancées en parallèle (sécurité et lisibilité), une garde en code qui exige deux verdicts `OK`, un seul renvoi au `coder` en cas d'échec (boucle bornée), et une pause humaine si le second passage échoue encore.
 
 **Étapes guidées** :
 
-1. Garde tes trois sous-agents `.agent.md` du module 208 tels quels.
-2. Active les fonctionnalités expérimentales de Copilot CLI (`/experimental on`).
-3. Crée `.github/extensions/issue-to-code/extension.mjs`. Pars de ce squelette et complète les `TODO` :
+1. Crée `.github/agents/reviewer.agent.md` sur le modèle des sous-agents du module 208 : outil `codebase` uniquement, aucune modification de fichier, et une sortie qui commence par `OK` ou `KO` suivie des remarques.
+2. Dans `run-issue-to-code.mjs`, après l'étape `code`, appelle **une fois** `setPhase('Review')` dans le flux principal (ajoute `{ title: 'Review' }` aux `phases` de l'extension), puis lance les deux relectures avec `ctx.parallel` (expose-le comme un cinquième port, par exemple `runInParallel`). Les *thunks* (des fonctions sans argument qui lancent chacune une tâche, par exemple `() => runAgent(…)`) passés à `runInParallel` n'appellent que `runAgent`, qui ne touche pas à la phase : appeler `ctx.phase` depuis des tâches concurrentes crée une course sur une valeur unique du run. Donne un `label` distinct à chaque appel (`review-securite`, `review-lisibilite`), sinon les deux appels seront mémoïsés en un seul agent.
 
-   ```js
-   import { defineWorkflow, joinSession } from '@github/copilot-sdk/extension'
-
-   const issueToCode = defineWorkflow({
-     meta: {
-       name: 'issue-to-code',
-       description: 'Issue → spec → plan → code. args: { issue: number }',
-       phases: [{ title: 'Spec' }, { title: 'Plan' }, { title: 'Review' }, { title: 'Code' }],
-       argsSchema: { type: 'object', required: ['issue'], properties: { issue: { type: 'integer' } } },
-     },
-     run: async (ctx) => {
-       ctx.phase('Spec')
-       const spec = await ctx.agent(`Rédige la spec de l'issue #${ctx.args.issue}`,
-         { agent: 'spec-writer', label: 'spec' })
-       if (spec === null) return { status: 'blocked', reason: 'spec vide' }
-
-       ctx.phase('Plan')
-       // TODO : appelle plan-writer avec la spec, garde le résultat, teste null
-
-       ctx.phase('Review')
-       // TODO : ctx.log(...) le plan, puis await ctx.pause('plan-approved')
-
-       ctx.phase('Code')
-       // TODO : appelle coder avec le plan, retourne un résumé JSON
-     },
-   })
-
-   await joinSession({ workflows: [issueToCode] })
-   ```
-
-4. Redémarre la session, puis demande : « What dynamic workflows are available? ». `issue-to-code` doit apparaître.
-
-   > Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-   > Citation: "Start a new session, or restart an existing session. When the session finishes loading, ask Copilot to list the available dynamic workflows"
+   > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+   > Citation: "This sets a single run-global value, so calling it from inside concurrent `parallel`/`pipeline` stages races."
    > Fetched: 2026-10-11
 
-5. Lance-le sur une issue de test : `Run the issue-to-code dynamic workflow for issue 12`.
-6. Quand le run se met en pause, ouvre `/workflows`, relis le plan dans les messages de progression, puis appuie sur `R` pour reprendre.
+   > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+   > Citation: "To spawn N *independent* subagents, give each a unique `label` or vary the prompt"
+   > Fetched: 2026-10-11
 
-**Critère de réussite** : le run se met en pause après le plan et **avant** toute modification de fichier ; à la reprise, `spec-writer` et `plan-writer` ne sont pas relancés (leurs résultats sont rejoués depuis le journal), puis `coder` implémente le plan. L'orchestrateur `issue-to-code.agent.md` du module 208 n'est plus nécessaire pour exécuter la séquence.
+3. Écris dans `guards.mjs` une garde `checkReviews(reviews)` qui renvoie `{ ok: true }` seulement si les deux verdicts existent et commencent par `OK`. Un verdict `null` compte comme un échec : `ctx.parallel` transforme en `null` une tâche qui a échoué.
 
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "A workflow that reads `ctx.args` should declare `meta.argsSchema`"
-> Fetched: 2026-10-11
+   > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
+   > Citation: "A thunk that throws becomes `null` in the result array, so one failed item does not lose the rest."
+   > Fetched: 2026-10-11
+
+4. Si la garde échoue, renvoie **une seule fois** au `coder` les remarques des relecteurs, avec un label différent (`code-2`), puis relance les deux relectures (`review-securite-2`, `review-lisibilite-2`). Borne la boucle avec une constante `MAX_ROUNDS = 2`.
+5. Si le second passage échoue encore, appelle `askHuman('review-failed', …)` **depuis le flux principal** — jamais à l'intérieur de `ctx.parallel`.
+6. Ajoute deux tests en mémoire : (a) deux `OK` au premier passage → `done` sans second `coder` ; (b) un `KO` deux fois de suite → exactement deux appels à `coder`, puis une pause `review-failed`.
+
+Squelette de départ, à compléter :
+
+```js
+// extrait à ajouter dans runIssueToCode, après la boucle des STEPS
+// (runInParallel s'ajoute aux ports : { runAgent, setPhase, askHuman, log, runInParallel })
+const MAX_ROUNDS = 2
+setPhase('Review') // une seule fois, dans le flux principal — jamais dans les thunks
+for (let round = 1; round <= MAX_ROUNDS; round += 1) {
+  const suffix = round === 1 ? '' : `-${round}`
+  const reviews = await runInParallel([
+    () => runAgent({ agent: 'reviewer', label: `review-securite${suffix}`, prompt: /* TODO */ '' }),
+    () => runAgent({ agent: 'reviewer', label: `review-lisibilite${suffix}`, prompt: /* TODO */ '' }),
+  ])
+  // TODO : checkReviews(reviews) ; si ok → return done
+  // TODO : si round < MAX_ROUNDS → relancer coder avec label `code-${round + 1}` et les remarques
+}
+// TODO : askHuman('review-failed', …) puis return { status: 'blocked', … }
+```
+
+**Critère de réussite** : `node --test` passe avec les quatre tests ; sur une vraie issue, `/workflows` montre deux relecteurs actifs en même temps ; `coder` n'est jamais appelé plus de deux fois ; un double échec de relecture met le run en pause au checkpoint `review-failed` au lieu de boucler.
 
 ## Validation
 
 Tu peux passer au module suivant si :
 
-- [ ] Tu sais expliquer en une phrase pourquoi une séquence déterministe en prose coûte des tokens de raisonnement à chaque run.
+- [ ] Tu sais expliquer en une phrase pourquoi une séquence déterministe écrite en prose coûte du raisonnement à chaque run.
 - [ ] Tu sais distinguer Autopilot, `/fleet` et un dynamic workflow selon le critère « qui définit le processus ».
-- [ ] Tu sais citer les trois surfaces où les dynamic workflows sont disponibles, et dire pourquoi un second adaptateur est nécessaire pour Claude Code.
+- [ ] Tu sais citer les trois surfaces où les dynamic workflows sont disponibles, et expliquer pourquoi un second adaptateur est nécessaire pour Claude Code.
+- [ ] Ta fonction `runIssueToCode` se teste avec `node --test`, sans Copilot.
 - [ ] Ton extension `issue-to-code` apparaît quand tu demandes la liste des workflows disponibles.
-- [ ] Ton workflow teste le résultat de chaque `ctx.agent` contre `null` avant de l'utiliser.
-- [ ] Ton workflow se met en pause avec `ctx.pause` avant l'étape de code, et reprend sans relancer les étapes terminées.
+- [ ] Ta garde refuse `coder` quand le plan est absent ou vide, et le run s'arrête `blocked`.
+- [ ] Ton workflow se met en pause avec `ctx.pause` avant l'étape de code, et reprend sans relancer `spec-writer` ni `plan-writer`.
 - [ ] Tu sais dire quels hooks un dynamic workflow peut remplacer (ordre, handoff, rappel) et lesquels restent indispensables (écritures des agents, skills chargés, provenance).
-- [ ] Tu sais lancer un workflow avec `copilot workflow run <nom> --args '<json>'` et pourquoi il faut accorder les permissions avant.
+- [ ] Tu sais lancer un workflow avec `copilot workflow run <nom> --args '<json>' --allow-tool=…` et pourquoi il faut accorder les permissions avant.
+- [ ] Tu sais pourquoi la démo du checkpoint se lance depuis le chat : c'est dans la session interactive que `/workflows` + `R` reprend le run en pause.
 
 ## Pour aller plus loin
 
-- [Module 208 — Workflows](./208-workflows.md) : relis l'orchestrateur en prose après ce module ; tu verras ce qui relève du jugement et ce qui n'était que de la séquence.
+- [Module 208 — Workflows](./208-workflows.md) : relis l'orchestrateur en prose après ce module ; tu verras ce qui relevait du jugement et ce qui n'était que de la séquence.
 - [Module 105 — Hooks](../01-fondations/105-hooks.md) : les gardes qui restent des hooks, et le piège des hooks Node sur les événements fréquents.
-- [Module 210 — Copilot CLI](./210-copilot-cli.md) : la surface où tu lances et surveilles tes runs, y compris en script ou en CI.
+- [Module 210 — Copilot CLI](./210-copilot-cli.md) : le terminal comme surface de travail ; pour `copilot workflow run` en script ou en CI, voir la référence programmatique citée dans les sources.
 - [Module 317 — Orchestrer des subagents](../03-ingenierie-de-contexte/317-orchestrer-subagents.md) : les principes d'orchestration qui guident le découpage en agents.
 - [Module 311 — Tokens & fenêtre de contexte](../03-ingenierie-de-contexte/311-tokens-contexte.md) : pourquoi chaque token de raisonnement économisé compte.
-- La documentation du SDK détaille `ctx.parallel`, `ctx.pipeline`, `ctx.step` et les limites (`maxConcurrentSubagents`, `timeoutSeconds`, `maxAiCredits`) que ce module n'a fait qu'effleurer.
+- La documentation du SDK détaille `ctx.pipeline` (faire traverser une suite d'étapes à chaque élément d'une liste, sans attendre les autres), `ctx.step` et les limites (`maxConcurrentSubagents`, `timeoutSeconds`, `maxAiCredits`) que ce module n'a fait qu'effleurer.
 
 ## Sources
 
 - [GitHub Docs — Dynamic workflows (concepts)](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows)
 - [GitHub Docs — Using dynamic workflows (how-to)](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows)
 - [Copilot SDK — Dynamic Workflows (`nodejs/docs/workflows.md`)](https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md)
-- [SKRAFT — ADR-010 : The SKRAFT pipeline runs as code](https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md)
-- [SKRAFT — `pipeline-definition.mjs`](https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/plugins/skraft-framework/src/domain/pipeline/pipeline-definition.mjs) (introduit par le commit [`07214d4`](https://github.com/SebastienDegodez/skraft-plugin/commit/07214d4e1c8898fd6182e60f2ad21a89d3f20b32))
-- [SKRAFT — extension Copilot `skraft-pipeline/extension.mjs`](https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/plugins/skraft-framework/com.github.copilot/extensions/skraft-pipeline/extension.mjs)
-- [SKRAFT — Garde-fous (hooks), explication FR](https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/site/fr/explanation/hooks.md) (modifié par le commit [`e21ffbc`](https://github.com/SebastienDegodez/skraft-plugin/commit/e21ffbc4a1b352fa6581285aa6772aa973f6ae12))
-- [SKRAFT — RunPipeline, l'orchestrateur en code](https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/run-pipeline.md)
+- [GitHub Docs — Copilot CLI programmatic reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference)
+- [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference) — emplacements des agents personnalisés.
+- [GitHub Docs — Installing GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)
 - [Module 208 — Workflows](./208-workflows.md)
+- [Module 105 — Hooks](../01-fondations/105-hooks.md)
+- Inspiration de la démarche — SKRAFT (expérience / POC), branche `integration/v2` : retour d'expérience d'un pipeline passé de la prose au code. Lecture facultative, non nécessaire pour suivre ce module :
+  - [ADR-010 — le pipeline s'exécute en code](https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/adr/adr-010-pipeline-runs-as-code.md)
+  - [Garde-fous (hooks) — explication FR](https://github.com/SebastienDegodez/skraft-plugin/blob/integration/v2/docs/site/fr/explanation/hooks.md)
 
 ## Module suivant
 
