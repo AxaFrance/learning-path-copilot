@@ -331,6 +331,7 @@ exit 0
 - **Code de sortie mal géré** — Sans `set -euo pipefail`, un échec silencieux peut renvoyer un code `0` et laisser passer une action que tu voulais bloquer. Maîtrise tes codes de sortie (`0`, `2`, autre).
 - **`deny` trop large** — Un `PreToolUse` qui refuse trop de commandes rend l'agent inutilisable. Cible des motifs précis et préfère `ask` (confirmation) à `deny` quand le risque est modéré.
 - **Confondre machine et équipe** — Un hook dans `~/.copilot/hooks/` ne s'applique qu'à toi ; un hook dans `.github/hooks/` est commité et s'impose à toute l'équipe. Choisis la portée en conscience.
+- **Hook lancé avec `node` sur un événement fréquent** — *Retour d'expérience terrain.* Un hook `PreToolUse` ou `PostToolUse` s'exécute **à chaque appel d'outil**. Déclaré en `node hook.mjs`, il paie à chaque fois le démarrage d'un processus Node : ce surcoût, invisible sur un appel, s'additionne sur une session qui enchaîne des dizaines d'outils et ralentit nettement le système. Réserve Node aux événements rares (`SessionStart`, `Stop`), préfère un script shell léger ou un binaire compilé pour les événements par outil, restreins le périmètre du hook — ou, si la vérification ne concerne que l'ordre d'orchestration, déplace-la dans un dynamic workflow ([module 214](../02-composition/214-dynamic-workflows.md)).
 - **`jq` absent** — Les scripts d'exemple en dépendent. Vérifie `command -v jq` avant de déployer un hook sur une nouvelle machine.
 
 ## Exercice ⭐⭐
@@ -362,6 +363,7 @@ Tu peux passer au module suivant si :
 - [Module 103 — Skills](./103-skills.md) : les skills s'activent sur demande — les hooks s'activent sur événement. Les deux sont complémentaires.
 - [Module 209 — Plugins](../02-composition/209-plugins.md) : les plugins peuvent embarquer des hooks pré-configurés pour une équipe.
 - [Module 208 — Workflows](../02-composition/208-workflows.md) : combiner hooks + skills + agents dans un flux orchestré.
+- [Module 214 — Dynamic workflows](../02-composition/214-dynamic-workflows.md) : quand l'orchestration passe en code, certains hooks qui surveillaient un orchestrateur en prose deviennent des vérifications du workflow lui-même.
 - [Module 310 — Tester ses primitives](../03-ingenierie-de-contexte/310-evals.md) : tester qu'un hook se déclenche correctement avec des evals binaires.
 
 ## Sources

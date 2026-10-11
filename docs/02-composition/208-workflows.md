@@ -355,6 +355,7 @@ Tu peux passer au module suivant si :
 
 ## Pour aller plus loin
 
+- [Module 214 — Dynamic workflows — orchestrer en code](./214-dynamic-workflows.md) : la version « en code » de ce pattern — l'orchestrateur en prose devient un programme qui pilote les sous-agents, avec des points de reprise humains.
 - [Module 310 — Tester ses primitives](../03-ingenierie-de-contexte/310-evals.md) : mesurer objectivement que chaque sous-agent produit le bon résultat avec des `eval` binaires.
 - [Module 311 — Tokens, hallucinations et sobriété LLM](../03-ingenierie-de-contexte/311-tokens-contexte.md) : comprendre pourquoi la décomposition en sous-agents réduit la consommation de tokens.
 - [Module 314 — Autoresearch](../03-ingenierie-de-contexte/314-autoresearch.md) : appliquer la discipline d'évaluation itérative à chaque sous-agent du workflow.
@@ -362,4 +363,4 @@ Tu peux passer au module suivant si :
 
 ## Module suivant
 
-**Suivant** : [310 — Tester ses primitives (evals binaires)](../03-ingenierie-de-contexte/310-evals.md)
+**Suivant** : [214 — Dynamic workflows — orchestrer en code](./214-dynamic-workflows.md)
