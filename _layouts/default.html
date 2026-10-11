@@ -21,6 +21,7 @@
     {% assign bloc1 = all_docs | where_exp: "p", "p.path contains 'docs/01-fondations/'" %}
     {% assign bloc2 = all_docs | where_exp: "p", "p.path contains 'docs/02-composition/'" %}
     {% assign bloc3 = all_docs | where_exp: "p", "p.path contains 'docs/03-ingenierie-de-contexte/'" %}
+    {% assign bloc4 = all_docs | where_exp: "p", "p.path contains 'docs/04-surfaces-agentiques/'" %}
 
     <header class="axa-header">
       <a class="axa-header__brand" href="{{ "/" | relative_url }}">
@@ -71,6 +72,15 @@
               </li>
             {% endfor %}
           </ul>
+
+          <p class="axa-sidebar__section">Surfaces agentiques</p>
+          <ul class="axa-sidebar__list">
+            {% for item in bloc4 %}
+              <li>
+                <a href="{{ item.url | relative_url }}" class="{% if page.url == item.url %}is-active{% endif %}">{{ item.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
         </nav>
       </aside>
       {% endunless %}
@@ -108,6 +118,16 @@
               <p>Tokens, patterns de sobriété, évaluations et outils de réduction du contexte.</p>
               <ul class="track-card__modules">
                 {% for doc in bloc3 %}
+                <li><a href="{{ doc.url | relative_url }}">{{ doc.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+
+            <div class="track-card">
+              <h2>Bloc 4 — Surfaces agentiques</h2>
+              <p>Copilot CLI et GitHub Copilot app en pratique, sur le projet d'exemple Mon Sinistre (C#).</p>
+              <ul class="track-card__modules">
+                {% for doc in bloc4 %}
                 <li><a href="{{ doc.url | relative_url }}">{{ doc.title }}</a></li>
                 {% endfor %}
               </ul>

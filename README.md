@@ -46,6 +46,32 @@
 | 318 | Mesurer & optimiser sa consommation |
 | 319 | Chronicle expérimental — tirer parti de son historique de sessions |
 
+### Bloc 04 — Surfaces agentiques
+
+Bloc autonome : Copilot CLI et GitHub Copilot app en pratique, sur le projet d'exemple [`samples/mon-sinistre`](samples/mon-sinistre/README.md) (C# / .NET 10, données fictives).
+
+| # | Module |
+|---|--------|
+| 420 | Choisir sa surface Copilot |
+| 421 | Copilot CLI — installer et se connecter |
+| 422 | Copilot CLI — modes et slash commands |
+| 423 | Copilot CLI — contexte et conversations |
+| 424 | Copilot CLI — workflows de dev |
+| 425 | Copilot CLI — agents personnalisés et instructions |
+| 426 | Copilot CLI — skills |
+| 427 | Copilot CLI — serveurs MCP |
+| 428 | Copilot CLI — mode non interactif |
+| 429 | Copilot CLI — atelier de bout en bout |
+| 430 | Copilot app — installer et faire le tour |
+| 431 | Copilot app — modes, modèles et permissions |
+| 432 | Copilot app — sessions, worktrees et contexte |
+| 433 | Copilot app — boucle de développement |
+| 434 | Copilot app — workflows GitHub |
+| 435 | Copilot app — skills et agents personnalisés |
+| 436 | Copilot app — MCP et plugins |
+| 437 | Copilot app — canvases |
+| 438 | Copilot app — automations |
+
 ---
 
 ## Développement local
@@ -71,6 +97,8 @@ Le workflow [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-page
 ## Contribution
 
 Les modules sont dans `docs/<bloc>/`. Chaque fichier Markdown suit la convention `NNN-slug.md`.
+
+Les projets d'exemple sont dans `samples/` (exclus du site Jekyll). Avant de publier une modification de `samples/mon-sinistre`, lance `./samples/mon-sinistre/scripts/verify.sh` (ou `verify.ps1`).
 
 ### Agents dédiés (`.github/agents/`)
 
