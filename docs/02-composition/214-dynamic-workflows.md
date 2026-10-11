@@ -15,10 +15,6 @@ Durée estimée : 60 min
 
 Reprends l'orchestrateur `issue-to-code` du [module 208](./208-workflows.md). Sa séquence est fixe : `spec-writer`, puis `plan-writer`, puis `coder`. Pourtant, à chaque run, c'est un modèle de langage qui relit ces consignes, décide de l'étape suivante et recopie la sortie d'un sous-agent dans le prompt du suivant.
 
-> Source: [208 — Workflows](./208-workflows.md)
-> Citation: "C'est l'orchestrateur qui fait le pont : il récupère la sortie du sous-agent précédent et la transmet en entrée au sous-agent suivant."
-> Fetched: 2026-10-11
-
 Autrement dit, tu paies du raisonnement pour exécuter quelque chose qui ne demande aucun jugement : l'ordre `spec → plan → code` ne change jamais. Et comme rien n'empêche un modèle de sauter une étape ou d'oublier de transmettre le plan, on finit souvent par ajouter des hooks qui surveillent l'orchestrateur de l'extérieur.
 
 Un dynamic workflow inverse la logique. La séquence, les transmissions et les vérifications deviennent du code, exécuté à l'identique à chaque run. Les agents ne sont appelés que pour ce qui demande vraiment de l'analyse : écrire la spec, concevoir le plan, coder.
@@ -31,6 +27,8 @@ Un dynamic workflow inverse la logique. La séquence, les transmissions et les v
 - séparer la logique de pilotage de l'hôte qui l'exécute, pour la tester sans Copilot ;
 - identifier quels hooks un dynamic workflow rend inutiles, et lesquels restent indispensables ;
 - lancer un workflow depuis le chat ou depuis le terminal avec `copilot workflow run`.
+
+*Sources : [208 — Workflows](./208-workflows.md)*
 
 ## Pré-requis
 
@@ -46,33 +44,15 @@ Un dynamic workflow inverse la logique. La séquence, les transmissions et les v
 
 Un dynamic workflow est un **programme**. Il décrit comment une tâche se déroule : des étapes automatisées (lire un fichier, lancer une commande, appeler un service) et, entre elles, le travail d'un ou plusieurs agents.
 
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "A dynamic workflow is a program that defines how a task is carried out."
-> Fetched: 2026-10-11
-
 La répartition des rôles est explicite : le code décide des étapes et de l'usage des résultats ; les agents traitent ce qui demande analyse ou jugement.
-
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "Everything is defined in code: the steps, when to involve agents, and how to use their results."
-> Fetched: 2026-10-11
 
 Un workflow peut aussi s'arrêter à un **checkpoint** pour que tu relises les résultats, puis reprendre quand tu es prêt.
 
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "Pause at a checkpoint so that you can review results and resume the run when you're ready."
-> Fetched: 2026-10-11
-
 Concrètement, le workflow vit dans une **extension Copilot** : un fichier `extension.mjs` qui l'enregistre auprès de la session.
-
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "Dynamic workflows are defined in Copilot extensions."
-> Fetched: 2026-10-11
 
 Pour le partager avec ton équipe, tu places le dossier qui contient `extension.mjs` dans `.github/extensions/` du dépôt (ou dans `~/.copilot/extensions/` pour toi seul).
 
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "copy the directory containing the `extension.mjs` file into the `.github/extensions/` directory of your local copy of the repository."
-> Fetched: 2026-10-11
+*Sources : [Dynamic workflows (concepts)](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) · [Using dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows)*
 
 ### Autopilot, `/fleet` ou dynamic workflow ?
 
@@ -84,29 +64,15 @@ Les trois font travailler des agents, mais ils ne répartissent pas le contrôle
 | Qui définit le processus ? | Copilot décide des étapes suivantes | Copilot décide comment découper et coordonner | L'auteur du workflow définit étapes, conditions et transmissions |
 | Déroulement | Selon la tâche et les décisions de Copilot | Le travail indépendant peut être délégué en parallèle | Séquentiel, parallèle ou les deux, avec un ou plusieurs agents |
 
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "The workflow's author defines the steps, conditions, and handoffs."
-> Fetched: 2026-10-11
-
 Retiens aussi que le chat ne lance jamais un workflow de sa propre initiative : il faut le lui demander, ou qu'un skill ou une commande slash le fasse.
 
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "only creates or runs a dynamic workflow when you explicitly ask it to, or when a skill or slash command instructs it"
-> Fetched: 2026-10-11
+*Sources : [Dynamic workflows (concepts)](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows)*
 
 ### Prose (module 208) vs code (ce module)
 
 Dans le module 208, l'orchestrateur est un `.agent.md` dont l'outil clé est `runSubagent`, et qui transmet les résultats « en langage naturel ».
 
-> Source: [208 — Workflows](./208-workflows.md)
-> Citation: "L'orchestrateur n'a qu'un seul outil spécifique : `runSubagent`. Il coordonne la séquence et transmet le résultat d'un sous-agent au suivant."
-> Fetched: 2026-10-11
-
 Le dynamic workflow déplace exactement cette responsabilité dans du JavaScript. Le SDK fournit `ctx.agent(prompt, options)` pour lancer un sous-agent ; ses options permettent de cibler un agent nommé (`agent`), un modèle (`model`) ou d'exiger une sortie structurée (`schema`).
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Runs one workflow-owned subagent. Options are exactly `label`, `schema`, `model`, `agent`, `reasoningEffort`, and `contextTier`."
-> Fetched: 2026-10-11
 
 | | Orchestrateur en prose (208) | Dynamic workflow (214) |
 |---|---|---|
@@ -131,25 +97,7 @@ Le dynamic workflow déplace exactement cette responsabilité dans du JavaScript
 - **Plans :** les abonnés Copilot Pro et Pro+ restés sur un plan annuel à facturation par *premium requests* (ancien modèle) n'y ont pas accès.
 :::
 
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "Dynamic workflows are available in the Copilot app, Copilot CLI, and Copilot SDK."
-> Fetched: 2026-10-11
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "import { defineWorkflow, joinSession } from \"@github/copilot-sdk/extension\";"
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "except Copilot Pro and Copilot Pro+ subscribers on existing annual plans who remain on legacy premium request-based billing."
-> Fetched: 2026-10-11
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Dynamic Workflows are extension-authored, session-scoped workflows that coordinate subagents and durable steps. The API is experimental."
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "you must enable experimental features by running the CLI with the `--experimental` command-line option, or by using `/experimental on`"
-> Fetched: 2026-10-11
+*Sources : [208 — Workflows](./208-workflows.md) · [SDK — workflows](https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md) · [Dynamic workflows (concepts)](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) · [Using dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows)*
 
 ### Un dynamic workflow peut remplacer certains hooks
 
@@ -163,19 +111,13 @@ Quand c'est le code qui dispatche, ces vérifications deviennent de simples test
 
 **La limite est importante.** Le workflow ne voit que ce qu'il fait lui-même : choisir l'agent, composer le prompt, lire la réponse. Sans `schema`, `ctx.agent` lui rend seulement le texte final du sous-agent, pas le détail de son tour.
 
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Without a schema it resolves to the subagent's final text."
-> Fetched: 2026-10-11
-
 Ce qui se passe **à l'intérieur** du tour de l'agent — quels fichiers il écrit, quels skills il charge, quels autres agents il lance — échappe donc au code du workflow. Ces gardes-là restent des hooks, déclenchés au moment de l'appel d'outil.
+
+*Sources : [SDK — workflows](https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md)*
 
 ## Démonstration
 
 On convertit pas à pas l'orchestrateur `issue-to-code` du module 208. Le **contenu** des trois sous-agents (`spec-writer.agent.md`, `plan-writer.agent.md`, `coder.agent.md`) ne change pas, mais leur **emplacement**, si : le module 208 les range dans `.agents/`, alors que Copilot CLI ne cherche les agents personnalisés que dans `~/.copilot/agents/`, `.github/agents/` et `.claude/agents/`. Déplace-les dans `.github/agents/`, sinon `ctx.agent(prompt, { agent: 'spec-writer' })` ne les trouvera pas.
-
-> Source: [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
-> Citation: "2 | Project | `.github/agents/`, from the current working directory upward to the Git root"
-> Fetched: 2026-10-11
 
 Tout le code est montré en entier ; à la fin, ton dépôt contient :
 
@@ -192,6 +134,8 @@ Tout le code est montré en entier ; à la fin, ton dépôt contient :
   extension.mjs                 # étape 4 — l'adaptateur Copilot
   guards.mjs                    # étape 5 — les gardes d'ordre et de handoff
 ```
+
+*Sources : [CLI — référence des commandes](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)*
 
 ### Étape 1 — Point de départ : l'orchestrateur en prose, surveillé par un hook
 
@@ -265,15 +209,9 @@ fi
 }
 ```
 
-> Source: [105 — Hooks](../01-fondations/105-hooks.md)
-> Citation: "`permissionDecision` vaut `allow` (autorise), `deny` (refuse) ou `ask` (demande confirmation à l'utilisateur)."
-> Fetched: 2026-10-11
-
 Remarque le point clé : ce hook existe uniquement parce qu'**aucun code** ne se trouve entre la prose et un mauvais dispatch. Or un `PreToolUse` se déclenche avant l'exécution d'un outil, et la configuration ci-dessus ne le restreint à aucun outil : c'est le script lui-même qui écarte, après coup, tout ce qui n'est pas `runSubagent`. Conséquence directe de cette configuration : il est lancé avant chaque appel d'outil de la session, pour ne surveiller qu'une seule décision.
 
-> Source: [105 — Hooks](../01-fondations/105-hooks.md)
-> Citation: "Se déclenche *avant* l'exécution d'un outil (terminal, édition de fichier…)."
-> Fetched: 2026-10-11
+*Sources : [105 — Hooks](../01-fondations/105-hooks.md)*
 
 ### Étape 2 — Déclarer la séquence en code
 
@@ -388,15 +326,7 @@ Ce test passe dès maintenant. Il fixe le contrat : l'ordre des agents, la pause
 
 Côté SDK, le principe tient en deux appels : `defineWorkflow` déclare le workflow, `joinSession` l'enregistre dans la session.
 
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Use `defineWorkflow` and pass the returned handle to `joinSession`"
-> Fetched: 2026-10-11
-
 Les métadonnées contiennent un `name` stable, une `description`, les `phases` déclarées et, si le workflow lit `ctx.args`, un `argsSchema`.
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Workflow metadata contains a stable `name`, a human-readable `description`, declared `phases`, an optional `argsSchema`, and optional `limits`."
-> Fetched: 2026-10-11
 
 L'extension n'est qu'un **adaptateur** : elle traduit les quatre ports en appels au SDK, puis délègue tout à `runIssueToCode`.
 
@@ -443,39 +373,17 @@ Quatre comportements du SDK expliquent ce code.
 
 **1. `argsSchema` ne valide pas tout.** Le schéma contrôle la structure (types, propriétés requises), mais pas les contraintes fines ; le SDK recommande donc de revalider `ctx.args`. D'où le test `Number.isInteger(...) && > 0` en tête de `run`.
 
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "A workflow that reads `ctx.args` should still validate it rather than assume a shape"
-> Fetched: 2026-10-11
-
 **2. Un échec ordinaire de `ctx.agent` ne lève pas d'exception, il rend `null`.** Il faut donc toujours tester le résultat avant de l'utiliser — c'est ce que fera la garde de l'étape 5.
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "An ordinary failure resolves to `null` — it does not throw."
-> Fetched: 2026-10-11
 
 **3. `ctx.pause` est durable.** Au premier passage, le run enregistre le checkpoint et se met en pause. À la reprise, le workflow repart du début et le même checkpoint rend la main. Ne capture pas l'erreur levée par la pause dans un `try/catch` : c'est elle qui arrête proprement la première tentative.
 
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "When the run resumes, the workflow starts again and the same checkpoint returns so execution can continue."
-> Fetched: 2026-10-11
-
 Repartir du début ne relance pas `spec-writer` ni `plan-writer` : chaque appel à `ctx.agent` est journalisé selon son prompt et ses options, et un appel identique rend le résultat déjà enregistré.
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Each call is journaled by its canonical prompt and options, including `label`."
-> Fetched: 2026-10-11
 
 **4. `ctx.pause` ne s'appelle que depuis le flux principal**, jamais dans `ctx.parallel()` (plusieurs tâches lancées en même temps) ou `ctx.pipeline()` (une liste d'éléments qui traversent une suite d'étapes, chacun à son rythme). C'est le cas ici : `askHuman` est appelé dans la boucle de `runIssueToCode`, pas dans une tâche concurrente.
 
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Call it only from the main workflow flow, not inside `ctx.parallel()` or `ctx.pipeline()`."
-> Fetched: 2026-10-11
-
 Enfin, `ctx.phase` alimente l'affichage de la progression. C'est une valeur unique pour tout le run : on l'appelle à chaque changement d'étape, depuis le flux principal — d'où le port `setPhase`, distinct de `runAgent`. Le travail concurrent se distingue par son `label`, pas par une phase.
 
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Call it at run-level transitions and distinguish concurrent work by `label` instead."
-> Fetched: 2026-10-11
+*Sources : [SDK — workflows](https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md)*
 
 ### Étape 5 — Les gardes quittent le hook
 
@@ -577,10 +485,6 @@ Active les fonctionnalités expérimentales (`/experimental on`), redémarre la 
 What dynamic workflows are available?
 ```
 
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "Start a new session, or restart an existing session. When the session finishes loading, ask Copilot to list the available dynamic workflows"
-> Fetched: 2026-10-11
-
 Deux façons de démarrer le même workflow. Dans le chat, en langage naturel :
 
 ```text
@@ -595,10 +499,6 @@ copilot workflow run issue-to-code \
    --allow-tool='read, write, shell, github'
 ```
 
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "Use `--args` to supply inputs for the workflow as JSON."
-> Fetched: 2026-10-11
-
 Attention : en ligne de commande, aucune demande d'autorisation ne s'affiche. Accorde **avant** le lancement les permissions dont les agents ont besoin, avec `--allow-tool` (plusieurs valeurs : une liste entre guillemets, séparée par des virgules) :
 
 - `read` — lire les fichiers, pour `plan-writer` et `coder` ;
@@ -606,26 +506,6 @@ Attention : en ligne de commande, aucune demande d'autorisation ne s'affiche. Ac
 - `github` — si ton `spec-writer` lit l'issue via le serveur MCP GitHub, autorise ce serveur sous son nom configuré (ici `github`). Le module 208 déclare l'outil VS Code `githubRepo` : vérifie avec `/agent` quel outil ton agent obtient réellement sous la CLI, et ajuste cette valeur.
 
 Une demande qui ne peut pas être approuvée automatiquement est refusée. Pour serrer la vis, `shell` et `write` acceptent un filtre entre parenthèses, par exemple `shell(npm test)` pour n'autoriser que cette commande exacte.
-
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "Grant the permissions the workflow's agents need before starting, for example with `--allow-tool` or `--allow-url`."
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "Requests that cannot be approved automatically are denied."
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference
-> Citation: "Selectively grant permission for a specific tool. For multiple tools, use a quoted, comma-separated list."
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference
-> Citation: "MCP-SERVER | Invoking tools from a specific MCP server. Use the server's configured name as the identifier—for example, `github`."
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference
-> Citation: "`shell(npm test)` | Allow the exact command `npm test`."
-> Fetched: 2026-10-11
 
 Ton extension est une extension **de projet** (dans `.github/extensions/`). Si tu lances la commande dans un dossier que Copilot CLI n'a pas encore marqué comme approuvé, l'extension n'est pas chargée : ajoute `GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true` pour cette invocation. Cela autorise l'exécution du code d'extension du dépôt — **à n'utiliser que pour du code de confiance** — et ne dispense pas d'accorder les permissions des agents.
 
@@ -635,33 +515,9 @@ GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true copilot workflow run issue-to-code \
    --allow-tool='read, write, shell, github'
 ```
 
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "set `GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true` for that invocation. This allows repository extension code to run. Only use it for code you trust."
-> Fetched: 2026-10-11
-
 En ligne de commande, quand le run se met en pause ou s'arrête sans terminer, la commande rend la main en affichant le **statut** du run et son **run ID**. La documentation ne décrit pas de commande pour reprendre ce run depuis le terminal : ne compte pas dessus.
 
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "If it pauses or stops without completing, the command reports the run's status and run ID."
-> Fetched: 2026-10-11
-
 **Pour la démo du checkpoint, lance le run depuis le chat** d'une session interactive. C'est dans cette session que tu le suis et le reprends avec `/workflows` : tu y vois la phase courante, les sous-agents actifs et les crédits IA consommés (*AI credits*, l'unité de mesure d'usage commune à tout GitHub Copilot). Quand le run s'arrête au checkpoint `plan-approved`, relis le plan dans les messages de progression, ouvre `/workflows`, sélectionne le run en pause et appuie sur `R` pour le reprendre.
-
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "In an interactive session, enter `/workflows`."
-> Fetched: 2026-10-11
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "AI credits are GitHub Copilot's universal usage metric."
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "In an active run, press P to pause, X to cancel the run."
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "Press R to resume the run."
-> Fetched: 2026-10-11
 
 Et l'orchestrateur `issue-to-code.agent.md` ? Il ne décide plus rien. Le plus simple est de le supprimer. Si ton équipe a l'habitude de sélectionner cet agent, garde-le comme simple **lanceur** :
 
@@ -684,13 +540,11 @@ Et l'orchestrateur `issue-to-code.agent.md` ? Il ne décide plus rien. Le plus s
 + l'utilisateur de relire le plan puis de reprendre le run.
 ```
 
+*Sources : [Using dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows) · [CLI — référence programmatique](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference) · [SDK — workflows](https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md)*
+
 ## Pièges et anti-patterns
 
 - **Oublier que c'est une preview.** Fonctionnalité en *public preview*, API du SDK déclarée expérimentale : signatures et comportements peuvent changer. Épingle ta version de Copilot CLI et garde les tests de ta fonction de pilotage, qui eux ne dépendent pas du SDK.
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "The API is experimental."
-> Fetched: 2026-10-11
 
 - **Croire que le workflow sera portable.** Ni Claude Code ni (au moment de la rédaction) VS Code ne figurent dans la liste officielle de disponibilité ; l'encadré *Compatibilité* en déduit qu'il faut un second adaptateur pour Claude Code. Garde toute la logique dans `runIssueToCode` et `guards.mjs` pour que ce second adaptateur reste mince.
 
@@ -698,27 +552,13 @@ Et l'orchestrateur `issue-to-code.agent.md` ? Il ne décide plus rien. Le plus s
 
 - **Sous-estimer les permissions.** Les sous-agents du workflow héritent des autorisations de ta session : ce que tu as déjà accordé s'applique à eux. Et `copilot workflow run` n'affiche aucune demande d'approbation.
 
-> Source: https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows
-> Citation: "A dynamic workflow's subagents use the CLI's permission system and inherit the permission grants of the session that started them."
-> Fetched: 2026-10-11
-
-> Source: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows
-> Citation: "This command does not display permission approval prompts, even when you run it in a terminal."
-> Fetched: 2026-10-11
-
 - **Appeler deux fois `ctx.agent` avec le même prompt en attendant deux agents.** Les appels identiques sont mémoïsés en **un seul** sous-agent. Donne un `label` unique à chaque appel indépendant — c'est pourquoi l'adaptateur passe `label: step.id`.
-
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Identical calls are memoized into one subagent."
-> Fetched: 2026-10-11
 
 - **Fixer des limites au hasard.** Un plafond (`maxAiCredits`, `maxTotalSubagents`…) deviné coupe un run sain en plein milieu, après qu'il a déjà dépensé des crédits. Fais d'abord un run réduit, mesure, puis fixe la limite.
 
-> Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-> Citation: "Set a ceiling only from real knowledge of what the workflow costs, or because the user named one."
-> Fetched: 2026-10-11
-
 - **Garder en hook une vérification que le code peut faire.** *Retour d'expérience terrain, pas un fait documenté :* un hook `PreToolUse` ou `PostToolUse` est relancé **à chaque appel d'outil**. Déclaré en `node hook.mjs`, il paie à chaque fois le démarrage d'un processus Node ; sur une session qui enchaîne des dizaines d'outils, ce surcoût s'additionne et ralentit nettement le système. Si la vérification ne porte que sur l'ordre d'orchestration, elle a sa place dans le workflow, pas dans un hook. Le [module 105](../01-fondations/105-hooks.md) détaille ce piège et ses alternatives.
+
+*Sources : [SDK — workflows](https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md) · [Dynamic workflows (concepts)](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) · [Using dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows)*
 
 ## Exercice ⭐⭐
 
@@ -729,19 +569,7 @@ Et l'orchestrateur `issue-to-code.agent.md` ? Il ne décide plus rien. Le plus s
 1. Crée `.github/agents/reviewer.agent.md` sur le modèle des sous-agents du module 208 : outil `codebase` uniquement, aucune modification de fichier, et une sortie qui commence par `OK` ou `KO` suivie des remarques.
 2. Dans `run-issue-to-code.mjs`, après l'étape `code`, appelle **une fois** `setPhase('Review')` dans le flux principal (ajoute `{ title: 'Review' }` aux `phases` de l'extension), puis lance les deux relectures avec `ctx.parallel` (expose-le comme un cinquième port, par exemple `runInParallel`). Les *thunks* (des fonctions sans argument qui lancent chacune une tâche, par exemple `() => runAgent(…)`) passés à `runInParallel` n'appellent que `runAgent`, qui ne touche pas à la phase : appeler `ctx.phase` depuis des tâches concurrentes crée une course sur une valeur unique du run. Donne un `label` distinct à chaque appel (`review-securite`, `review-lisibilite`), sinon les deux appels seront mémoïsés en un seul agent.
 
-   > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-   > Citation: "This sets a single run-global value, so calling it from inside concurrent `parallel`/`pipeline` stages races."
-   > Fetched: 2026-10-11
-
-   > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-   > Citation: "To spawn N *independent* subagents, give each a unique `label` or vary the prompt"
-   > Fetched: 2026-10-11
-
 3. Écris dans `guards.mjs` une garde `checkReviews(reviews)` qui renvoie `{ ok: true }` seulement si les deux verdicts existent et commencent par `OK`. Un verdict `null` compte comme un échec : `ctx.parallel` transforme en `null` une tâche qui a échoué.
-
-   > Source: https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md
-   > Citation: "A thunk that throws becomes `null` in the result array, so one failed item does not lose the rest."
-   > Fetched: 2026-10-11
 
 4. Si la garde échoue, renvoie **une seule fois** au `coder` les remarques des relecteurs, avec un label différent (`code-2`), puis relance les deux relectures (`review-securite-2`, `review-lisibilite-2`). Borne la boucle avec une constante `MAX_ROUNDS = 2`.
 5. Si le second passage échoue encore, appelle `askHuman('review-failed', …)` **depuis le flux principal** — jamais à l'intérieur de `ctx.parallel`.
@@ -767,6 +595,8 @@ for (let round = 1; round <= MAX_ROUNDS; round += 1) {
 ```
 
 **Critère de réussite** : `node --test` passe avec les quatre tests ; sur une vraie issue, `/workflows` montre deux relecteurs actifs en même temps ; `coder` n'est jamais appelé plus de deux fois ; un double échec de relecture met le run en pause au checkpoint `review-failed` au lieu de boucler.
+
+*Sources : [SDK — workflows](https://github.com/github/copilot-sdk/blob/main/nodejs/docs/workflows.md)*
 
 ## Validation
 
