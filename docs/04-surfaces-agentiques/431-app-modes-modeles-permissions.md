@@ -44,8 +44,6 @@ Le mode définit **combien l'agent peut faire seul**.
 | **Plan** | L'agent propose un plan avant d'agir | Le problème est ambigu ou touche plusieurs fichiers |
 | **Autopilot** | L'agent exécute de bout en bout | La tâche est bien définie et le risque maîtrisé |
 
-> Source : [Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions), section « Choosing a session mode ».
-
 Pour un débutant, **Plan** est souvent le meilleur réflexe : il force Copilot à exposer son hypothèse, les fichiers concernés et les validations prévues avant le premier diff.
 
 ### Auto n'est pas Autopilot
@@ -150,7 +148,7 @@ Toujours sans modifier de fichier.
 - [432 — Sessions, worktrees et contexte](./432-app-sessions-worktrees-contexte.md)
 - [Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)
 
-## Source
+## Sources
 
 - [github/copilot-app-for-beginners — 01 Tour the App](https://github.com/github/copilot-app-for-beginners/blob/main/01-tour-the-app/README.md)
 - [GitHub Docs — Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)

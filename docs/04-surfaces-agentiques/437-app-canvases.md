@@ -15,8 +15,6 @@ description: "Utiliser les canvases de la GitHub Copilot app pour garder visible
 
 À la fin de ce module, tu sais créer un canvas de suivi avec `/create-canvas`, y faire apparaître un plan, un progrès et des preuves, puis l'utiliser pour piloter le correctif D2 de Mon Sinistre.
 
-> Source : [copilot-app-for-beginners — Chapter 06 « Canvases »](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md) et [Working with canvas extensions in the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-canvas-extensions)
-
 ## Ce que tu vas apprendre
 
 1. Quand un canvas vaut mieux qu'un fil de chat.
@@ -30,33 +28,21 @@ description: "Utiliser les canvases de la GitHub Copilot app pour garder visible
 
 Un canvas est une surface interactive dans le panneau latéral de l'app. Il est bidirectionnel : l'agent peut le mettre à jour pendant son travail, et tu peux modifier la même surface pour guider la suite.
 
-> Source : [copilot-app-for-beginners — Chapter 06 « A Canvas Is a Shared Control Panel »](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md) et [Working with canvas extensions — About canvas extensions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-canvas-extensions)
-
 Le cours conseille d'utiliser le chat pour une question courte, et un canvas quand le travail a de l'état visible, des étapes répétées ou des contrôles partagés entre humain et agent.
 
-> Source : [copilot-app-for-beginners — Chapter 06 « When to Use a Canvas »](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md)
-
 Dans Mon Sinistre, le défaut D2 est un bon cas : il faut comprendre la règle, écrire ou compléter des tests, corriger le calcul, vérifier la CLI et garder les preuves. Si tout reste dans le chat, le risque est de perdre le lien entre décision, test et résultat.
-
-> Source : [README Mon Sinistre — Défaut D2](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md#défauts-volontaires)
 
 ### Canvases communautaires et création locale
 
 Le cours présente d'abord un canvas communautaire installé via plugin, puis la création d'un canvas avec `/create-canvas`. Certains canvases viennent de plugins ; d'autres peuvent être générés pour un workflow personnel.
 
-> Source : [copilot-app-for-beginners — Chapter 06 « Try Your First Canvas »](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md) et [Working with canvas extensions — Discovering canvases](https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-canvas-extensions)
-
 Quand tu crées un canvas, tu peux choisir un périmètre utilisateur ou projet. Le cours privilégie le périmètre utilisateur pour les exercices, afin de ne pas committer d'extension expérimentale dans le dépôt.
-
-> Source : [copilot-app-for-beginners — Chapter 06 « Where canvas files live »](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md)
 
 Pour ce handbook, garde la même discipline : un canvas d'apprentissage peut vivre dans ton espace utilisateur. Le dépôt Mon Sinistre ne doit recevoir que les changements nécessaires au correctif, pas le code du canvas.
 
 ### Le tableau plan / progrès / preuves
 
 Le cœur d'un bon canvas n'est pas son apparence. C'est la règle de preuve. Une étape ne devient verte que si elle pointe vers une sortie réelle : test, build, diff, vérification CLI ou note de blocage.
-
-> Source : [copilot-app-for-beginners — Chapter 06 « Evidence on the board should come from actual terminal or browser output »](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md)
 
 Pour D2, un tableau minimal suffit :
 
@@ -67,8 +53,6 @@ Pour D2, un tableau minimal suffit :
 | Preuves | Test ajouté, `verify.sh`, sortie `show SIN-1004`, fichiers modifiés |
 
 Le défaut cible est précis : `SIN-1004`, du vendredi 2026-09-18 au vendredi 2026-09-25, doit être considéré dans le délai de 5 jours ouvrés, mais le code initial compte les jours calendaires.
-
-> Source : [README Mon Sinistre — Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md#défauts-volontaires)
 
 ### Un prompt de création de canvas
 
@@ -91,13 +75,9 @@ Règles :
 
 Cette demande suit la logique du Feature Workbench du cours : proposer, planifier, établir une base, implémenter, valider, puis afficher les preuves.
 
-> Source : [copilot-app-for-beginners — Chapter 06 « Create a Feature Workbench »](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md)
-
 ### Reprendre la main si le canvas dérive
 
 Les canvases générés peuvent être imparfaits. Le cours conseille des prompts de réparation ciblés : ajouter les parties manquantes, ne marquer que depuis les preuves, augmenter les délais des actions, ou continuer avec un fallback Markdown hors dépôt.
-
-> Source : [copilot-app-for-beginners — Chapter 06 « Repair prompts » et « Markdown fallback »](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md)
 
 Pour Mon Sinistre, une réparation utile est :
 
@@ -142,7 +122,7 @@ dotnet run --project src/MonSinistre.Cli -- show SIN-1004
 - [429 — Atelier CLI bout en bout](./429-cli-atelier-bout-en-bout.md) — autre exemple de boucle plan → code → tests.
 - [438 — Automations](./438-app-automations.md) — transformer un prompt répétitif en run enregistré.
 
-## Source
+## Sources
 
 - [github/copilot-app-for-beginners — Chapter 06](https://github.com/github/copilot-app-for-beginners/blob/main/06-canvases/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [Working with canvas extensions in the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-canvas-extensions)

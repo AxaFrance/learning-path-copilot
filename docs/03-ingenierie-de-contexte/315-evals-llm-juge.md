@@ -19,10 +19,6 @@ Mais elle a un angle mort. Beaucoup des qualités qui comptent vraiment dans une
 
 C'est exactement le problème qu'attaque la recherche sur l'évaluation des assistants conversationnels : les benchmarks classiques mesurent mal les préférences humaines sur des questions ouvertes.
 
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "Evaluating large language model (LLM) based chat assistants is challenging due to their broad capabilities and the inadequacy of existing benchmarks in measuring human preferences."
-> Fetched: 2026-06-10
-
 Deux outils répondent à ce vide, et ce module les enseigne tous les deux : les **métriques graduées** (un score sur une échelle, par exemple 1 à 5, au lieu d'un booléen) et le **LLM-juge** (*LLM-as-a-judge*) — un modèle qu'on charge d'attribuer ce score en suivant une grille. Tu vas aussi apprendre la partie que tout le monde oublie : un juge non calibré est une opinion, pas une mesure.
 
 À la fin de ce module, tu sais :
@@ -48,31 +44,15 @@ Une assertion binaire répond à une question fermée : *le format est-il respec
 
 Le problème commence quand la condition de réussite est un **jugement**. « Cette réponse est-elle empathique ? », « ce résumé est-il fidèle à l'article ? », « le ton est-il adapté à un public de support client ? » — ces questions n'ont pas de frontière nette. Tu peux tenter de les approximer avec des proxys binaires (« contient le mot *désolé* »), mais ces proxys sont fragiles et facilement contournables : un skill peut apprendre à insérer « désolé » sans être réellement empathique. La documentation d'Anthropic le formule directement quand elle distingue les notations mécaniques des notations qui exigent un véritable jugement.
 
-> Source: https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests
-> Citation: "LLM-based grading: Fast and flexible, scalable and suitable for complex judgement."
-> Fetched: 2026-06-10
-
 L'idée centrale du module : quand la qualité est subjective, on ne change pas seulement *qui* note (un modèle au lieu d'une regex) — on change *la forme du verdict*. On passe d'un booléen à un **score gradué**.
 
 ### Les métriques graduées : la grille (rubric)
 
 Une métrique graduée attribue un score sur une échelle continue ou ordinale au lieu d'un booléen. La plus courante est l'échelle de Likert 1–5, mais on trouve aussi des scores normalisés entre `0.0` et `1.0`. La documentation d'Anthropic recommande explicitement de demander au juge soit une classification binaire, soit une note sur une échelle 1–5 selon la dimension mesurée.
 
-> Source: https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests
-> Citation: "instruct the LLM to output only 'correct' or 'incorrect', or to judge from a scale of 1-5."
-> Fetched: 2026-06-10
-
 Ce qui fait la qualité d'une grille, ce n'est pas l'échelle — c'est la **description de chaque niveau**. Une grille vague (« note la clarté de 1 à 5 ») produit des scores instables : le juge n'a aucun point d'ancrage. Une bonne grille ancre chaque palier dans un comportement observable. La documentation de promptfoo illustre ce principe avec une grille où chaque niveau est défini par un repère concret.
 
-> Source: https://www.promptfoo.dev/docs/configuration/expected-outputs/model-graded/llm-rubric/
-> Citation: "Grade it on a scale of 0.0 to 1.0, where: Score of 0.1: Only a slight smile. Score of 0.5: Laughing out loud."
-> Fetched: 2026-06-10
-
 Anthropic insiste sur le même point : une grille doit être détaillée et sans ambiguïté pour produire des verdicts reproductibles.
-
-> Source: https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests
-> Citation: "Have detailed, clear rubrics"
-> Fetched: 2026-06-10
 
 Voici une grille graduée pour la dimension *fidélité* d'un skill de résumé, à poser à côté de tes fixtures binaires du module 310 :
 
@@ -92,33 +72,17 @@ threshold: 4   # une fixture passe si le score >= 4
 
 **Agrégation et seuil.** Un score gradué ne se lit pas seul : tu fixes un **seuil** (`threshold`) qui le retransforme en pass/fail au moment de décider si une fixture est verte, puis tu **agrèges** les scores du jeu (moyenne, médiane) pour suivre la qualité globale dans le temps. promptfoo formalise ce mécanisme : le seuil compare le score numérique à une valeur minimale.
 
-> Source: https://www.promptfoo.dev/docs/configuration/expected-outputs/model-graded/llm-rubric/
-> Citation: "the output must achieve a score greater than or equal to the threshold to pass"
-> Fetched: 2026-06-10
-
 Le seuil est ce qui réconcilie ce module avec le module 310 : en haut, tu raisonnes en scores gradués pour suivre des tendances fines ; en bas, le seuil redonne un verdict binaire pour ta CI. Tu gardes la rigueur du booléen tout en gagnant la granularité du score.
 
 ### Le LLM-juge : faire noter par un modèle
 
 Qui attribue le score gradué ? Pour une dimension subjective, ni une regex ni un humain à chaque exécution ne conviennent — l'un est trop bête, l'autre trop cher. La réponse est le **LLM-juge** : un modèle qu'on charge d'évaluer une sortie contre une grille. C'est précisément la proposition de Zheng et al. : utiliser de forts LLM comme juges sur des questions ouvertes.
 
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "we explore using strong LLMs as judges to evaluate these models on more open-ended questions."
-> Fetched: 2026-06-10
-
 Concrètement, un juge est un **agent** au sens du module 104 : un persona avec une seule mission — lire une sortie et la noter — défini dans un fichier `.agent.md`. C'est un *prompt de jugement* (*judge prompt*) qui contient la grille, la sortie à évaluer, et le format de réponse attendu (typiquement un JSON avec un score et une justification).
 
 promptfoo nomme ce patron *LLM as a judge* et le matérialise dans son assertion `llm-rubric`, un évaluateur générique piloté par une grille.
 
-> Source: https://www.promptfoo.dev/docs/configuration/expected-outputs/model-graded/llm-rubric/
-> Citation: "llm-rubric is promptfoo's general-purpose grader for \"LLM as a judge\" evaluation."
-> Fetched: 2026-06-10
-
 Le juge ne renvoie pas qu'un nombre : il renvoie un score **et** un *reason*, ce qui rend le verdict explicable et débogable.
-
-> Source: https://www.promptfoo.dev/docs/configuration/expected-outputs/model-graded/llm-rubric/
-> Citation: "\"reason\": \"<Analysis of the rubric and the output>\", \"score\": 0.5, // 0.0-1.0 \"pass\": true"
-> Fetched: 2026-06-10
 
 #### Trois manières de noter : pointwise, pairwise, reference-guided
 
@@ -126,39 +90,15 @@ Zheng et al. décrivent trois variantes de jugement, et le choix entre elles str
 
 **1. Pointwise (single answer grading).** Le juge note une seule sortie dans l'absolu, sur ton échelle. C'est le plus simple et celui qui se branche directement sur tes fixtures du module 310.
 
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "Single answer grading. Alternatively, an LLM judge is asked to directly assign a score to a single answer."
-> Fetched: 2026-06-10
-
 **2. Pairwise comparison.** Le juge reçoit deux réponses (par exemple `with_skill` vs `without_skill`) et désigne la meilleure, ou déclare une égalité. C'est exactement le delta du module 310, mais arbitré par un juge au lieu d'un compteur de `pass`.
-
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "An LLM judge is presented with a question and two answers, and tasked to determine which one is better or declare a tie."
-> Fetched: 2026-06-10
 
 **3. Reference-guided grading.** On fournit au juge une réponse de référence (un *golden output*) et il note la sortie par rapport à elle. Indispensable quand il existe une bonne réponse connue — calculs, extractions structurées, faits vérifiables.
 
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "Reference-guided grading. In certain cases, it may be beneficial to provide a reference solution if applicable."
-> Fetched: 2026-06-10
-
 Quand une réponse de référence existe en texte libre, tu peux aussi mesurer la proximité par des métriques de similarité plutôt que par un juge : OpenAI propose des *text similarity graders* pour exactement ce cas.
-
-> Source: https://platform.openai.com/docs/guides/graders
-> Citation: "text similarity graders ... evaluate how close the model-generated output is to the reference, scored with various evaluation frameworks."
-> Fetched: 2026-06-10
 
 Ces *graders* de similarité couvrent une famille de métriques classiques que tu peux combiner avec ton juge selon la dimension.
 
-> Source: https://platform.openai.com/docs/guides/graders
-> Citation: "fuzzy_match | bleu | gleu | meteor | cosine | rouge_1 | rouge_2 | rouge_3 | rouge_4 | rouge_5 | rouge_l"
-> Fetched: 2026-06-10
-
 **Choisir.** Pairwise est plus stable que pointwise (les scores absolus fluctuent plus que les comparaisons relatives) mais il passe mal à l'échelle : le nombre de paires croît de manière quadratique avec le nombre de candidats.
-
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "the pairwise comparison may lack scalability when the number of players increases, given that the number of possible pairs grows quadratically"
-> Fetched: 2026-06-10
 
 Règle pratique : **pointwise** pour suivre une qualité absolue en CI, **pairwise** pour départager deux versions d'un skill, **reference-guided** dès qu'un golden output existe.
 
@@ -166,15 +106,7 @@ Règle pratique : **pointwise** pour suivre une qualité absolue en CI, **pairwi
 
 Un juge qui crache un chiffre nu est instable. Le framework G-Eval montre qu'on obtient de bien meilleures corrélations avec l'humain en demandant au juge de **raisonner d'abord** (chain-of-thought) puis de **remplir un formulaire** de notation (form-filling).
 
-> Source: https://arxiv.org/abs/2303.16634
-> Citation: "G-Eval, a framework of using large language models with chain-of-thoughts (CoT) and a form-filling paradigm, to assess the quality of NLG outputs."
-> Fetched: 2026-06-10
-
 Sur la tâche de résumé, G-Eval avec GPT-4 atteint une corrélation de Spearman de 0,514 avec l'humain, surpassant nettement les métriques antérieures — la preuve qu'un juge bien construit approche le jugement humain.
-
-> Source: https://arxiv.org/abs/2303.16634
-> Citation: "G-Eval with GPT-4 as the backbone model achieves a Spearman correlation of 0.514 with human on summarization task, outperforming all previous methods by a large margin."
-> Fetched: 2026-06-10
 
 C'est pourquoi ton judge prompt demande toujours le *reason* avant le *score*.
 
@@ -182,49 +114,21 @@ C'est pourquoi ton judge prompt demande toujours le *reason* avant le *score*.
 
 Un LLM-juge n'est pas un instrument neutre. Zheng et al. cataloguent plusieurs biais systématiques qu'il faut connaître pour ne pas se mentir.
 
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "We examine the usage and limitations of LLM-as-a-judge, including position, verbosity, and self-enhancement biases, as well as limited reasoning ability."
-> Fetched: 2026-06-10
-
 **Biais de position** — en mode pairwise, le juge favorise une position (souvent la première) indépendamment du contenu.
-
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "Position bias is when an LLM exhibits a propensity to favor certain positions over others."
-> Fetched: 2026-06-10
 
 *Parade* : appeler le juge deux fois en inversant l'ordre, et ne déclarer un gagnant que s'il l'emporte dans les deux sens.
 
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "call a judge twice by swapping the order of two answers and only declare a win when an answer is preferred in both orders."
-> Fetched: 2026-06-10
-
 **Biais de verbosité** — le juge préfère les réponses longues, même quand elles sont moins claires ou moins exactes.
-
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "Verbosity bias is when an LLM judge favors longer, verbose responses, even if they are not as clear, high-quality, or accurate as shorter alternatives."
-> Fetched: 2026-06-10
 
 *Parade* : inscrire explicitement dans la grille que la longueur n'est pas un critère, et ajouter un palier qui pénalise le délayage.
 
 **Biais d'auto-préférence (self-preference)** — un juge tend à favoriser les réponses produites par lui-même ou par un modèle de sa famille.
 
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "describe the effect that LLM judges may favor the answers generated by themselves."
-> Fetched: 2026-06-10
-
 Le framework G-Eval observe le même travers de manière indépendante.
-
-> Source: https://arxiv.org/abs/2303.16634
-> Citation: "highlight the potential issue of LLM-based evaluators having a bias towards the LLM-generated texts."
-> Fetched: 2026-06-10
 
 *Parade* : utiliser comme juge un modèle d'une **famille différente** de celui qui produit la sortie évaluée.
 
 **Non-déterminisme** — un juge LLM échantillonne ; relancé sur la même sortie, il peut changer d'avis. *Parade* : noter à température basse, demander plusieurs votes et agréger, et fournir quelques exemples (*few-shot*) qui stabilisent le verdict.
-
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "the few-shot judge can significantly increase the consistency"
-> Fetched: 2026-06-10
 
 ### Calibrer le juge contre des labels humains
 
@@ -232,15 +136,7 @@ Voici la règle d'or que personne ne respecte assez : **un juge non calibré n'e
 
 Le bénéfice est démontré : sur MT-bench, l'accord entre GPT-4 et les humains atteint 85 %, soit davantage que l'accord entre humains eux-mêmes (81 %).
 
-> Source: https://arxiv.org/abs/2306.05685
-> Citation: "the agreement under setup S2 (w/o tie) between GPT-4 and humans reaches 85%, which is even higher than the agreement among humans (81%)."
-> Fetched: 2026-06-10
-
 Mais ce résultat n'est pas un chèque en blanc : il vaut pour *leur* tâche et *leur* grille. Sur la tienne, tu dois le re-démontrer. La consigne d'Anthropic est sans appel : on teste la fiabilité du juge avant de le déployer à grande échelle.
-
-> Source: https://docs.anthropic.com/en/docs/test-and-evaluate/develop-tests
-> Citation: "Test to ensure reliability first then scale."
-> Fetched: 2026-06-10
 
 **Quand faire confiance au juge ?** Quand son accord avec ton golden set dépasse un seuil que tu fixes (par exemple ≥ 80 % de concordance sur le pass/fail dérivé du seuil). En dessous, tu n'automatises pas : tu corriges d'abord la grille ou tu changes de modèle-juge.
 
@@ -259,10 +155,6 @@ evals/
 ```
 
 Le juge, lui, est un agent. Tu le déclares dans un `.agent.md` selon la convention du module 104 — un `name`, une `description`, et surtout une liste `tools` volontairement vide pour qu'il ne puisse **que** juger, jamais modifier de fichier.
-
-> Source: docs/01-fondations/104-agents.md
-> Citation: "Si tu spécifies une liste vide (`tools: []`), l'agent n'a accès à aucun outil — il ne peut que dialoguer."
-> Fetched: 2026-06-10
 
 ## Mise en pratique
 

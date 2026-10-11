@@ -15,8 +15,6 @@ description: "Créer une skill Copilot CLI pour rappeler les règles métier de 
 
 À la fin de ce module, tu sais créer une **skill** utilisable par Copilot CLI, comprendre quand elle se charge automatiquement, la gérer depuis le CLI, et l'appliquer au projet Mon Sinistre pour répéter la même checklist métier sans la recopier dans chaque prompt.
 
-> Source : [copilot-cli-for-beginners — Chapter 05: Skills System](https://github.com/github/copilot-cli-for-beginners/blob/main/05-skills/README.md) et [About agent skills](https://docs.github.com/copilot/concepts/agents/about-agent-skills)
-
 ## Ce que tu vas apprendre
 
 1. Ce qu'une skill ajoute par rapport aux instructions et agents
@@ -31,17 +29,11 @@ description: "Créer une skill Copilot CLI pour rappeler les règles métier de 
 
 Les skills sont des dossiers contenant des instructions, scripts et ressources que Copilot peut charger quand elles sont pertinentes pour la tâche. Elles servent aux travaux répétables : revue sécurité, génération de tests, préparation de PR, ou ici rappel des règles métier d'un domaine.
 
-> Source : [About agent skills](https://docs.github.com/copilot/concepts/agents/about-agent-skills) et [copilot-cli-for-beginners — Chapter 05, « Understanding Skills »](https://github.com/github/copilot-cli-for-beginners/blob/main/05-skills/README.md)
-
 La différence avec le module précédent est importante : `.github/copilot-instructions.md` reste toujours en contexte, tandis qu'une skill est chargée selon la description de la tâche ou invoquée directement avec une commande slash comme `/regles-gestion-sinistre`.
-
-> Source : [Adding agent skills for GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-skills)
 
 ### Emplacements et structure
 
 Pour Copilot CLI, une skill projet peut être placée dans `.github/skills/`, et une skill personnelle dans `~/.copilot/skills/`. Les docs GitHub indiquent aussi des emplacements compatibles comme `.claude/skills`, `.agents/skills` et `~/.agents/skills` ; dans ce bloc, garde `.github/skills/` pour un partage d'équipe simple.
-
-> Source : [Adding agent skills for GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-skills) et [copilot-cli-for-beginners — Chapter 05, « Skill Locations »](https://github.com/github/copilot-cli-for-beginners/blob/main/05-skills/README.md)
 
 Une skill minimale ressemble à ceci :
 
@@ -52,13 +44,9 @@ Une skill minimale ressemble à ceci :
 
 Le fichier doit s'appeler exactement `SKILL.md`. Il contient un front matter YAML avec au minimum `name` et `description`, puis un corps Markdown qui décrit la procédure.
 
-> Source : [Adding agent skills for GitHub Copilot CLI — Creating and adding a skill](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-skills)
-
 ### Chargement automatique et invocation directe
 
 Copilot décide d'utiliser une skill en comparant ton prompt avec sa description. Si tu demandes « vérifie les règles de gestion d'un sinistre », une skill bien décrite peut être injectée sans que tu tapes son nom.
-
-> Source : [copilot-cli-for-beginners — Chapter 05, « Skills are automatically triggered »](https://github.com/github/copilot-cli-for-beginners/blob/main/05-skills/README.md)
 
 Tu peux aussi forcer l'utilisation en mentionnant la skill comme commande slash :
 
@@ -66,8 +54,6 @@ Tu peux aussi forcer l'utilisation en mentionnant la skill comme commande slash 
 copilot
 > /regles-gestion-sinistre Vérifie la correction du délai de déclaration dans @samples/mon-sinistre/src/MonSinistre.Domain/DelaiDeclaration.cs
 ```
-
-> Source : [Adding agent skills for GitHub Copilot CLI — Using agent skills](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-skills)
 
 Les commandes utiles côté CLI sont :
 
@@ -78,8 +64,6 @@ Les commandes utiles côté CLI sont :
 | Voir le détail d'une skill | `/skills info NOM` |
 | Activer ou désactiver | `/skills` puis choisir l'action |
 
-> Source : [Adding agent skills for GitHub Copilot CLI — Skills commands in the CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-skills)
-
 ### Comparer instructions, agents et skills
 
 | Primitive | Activation | Bon usage dans Mon Sinistre |
@@ -88,17 +72,11 @@ Les commandes utiles côté CLI sont :
 | Agent | sélection explicite ou suggestion | « relis en lecture seule comme relecteur conformité » |
 | Skill | auto-détection ou `/nom-skill` | « applique la checklist règles métier + tests + verify » |
 
-> Source : [copilot-cli-for-beginners — Chapter 05, « Skills vs Agents vs MCP »](https://github.com/github/copilot-cli-for-beginners/blob/main/05-skills/README.md) et [copilot-cli-for-beginners — Chapter 07, « Best Practices »](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md)
-
 Dans Mon Sinistre, la skill `regles-gestion-sinistre` doit rappeler les règles stables : `Tiers` ne couvre pas les dommages propres, `TiersPlus` couvre bris de glace et vol, `TousRisques` couvre tout, l'indemnisation ne doit pas être négative, la déclaration se calcule en jours ouvrés, et les statuts `Indemnise` et `Refuse` sont définitifs.
-
-> Source : [Mon Sinistre — README, « Règles métier »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Garde-fous de validation
 
 Une bonne skill ne se limite pas à lister des règles. Elle décrit aussi la preuve attendue. Pour ce bloc, la preuve est toujours locale : `./scripts/verify.sh` depuis `samples/mon-sinistre`, ou `pwsh ./scripts/verify.ps1` sous PowerShell.
-
-> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ```mermaid
 flowchart LR
@@ -188,8 +166,9 @@ Si une règle doit être active dans **toutes** les conversations, elle appartie
 - [Module 425 — Agents et instructions CLI](./425-cli-agents-instructions.md) — socle toujours chargé.
 - [Module 427 — MCP CLI](./427-cli-mcp.md) — donner à Copilot des outils externes.
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners — Chapter 05](https://github.com/github/copilot-cli-for-beginners/blob/main/05-skills/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [github/copilot-cli-for-beginners — Chapter 07](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md) — distinction skills / agents / instructions.
 - [About agent skills](https://docs.github.com/copilot/concepts/agents/about-agent-skills) · [Adding agent skills for GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-skills)
+- [Mon Sinistre — README, « Règles métier »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

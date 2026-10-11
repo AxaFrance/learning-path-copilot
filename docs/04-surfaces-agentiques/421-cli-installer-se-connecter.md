@@ -34,14 +34,13 @@ description: "Installer GitHub Copilot CLI, l'authentifier, faire confiance au d
 
 ### Installer le binaire `copilot`
 
+:::caution Le CLI peut être désactivé par ton organisation
+Il faut un abonnement Copilot actif. Si ta licence Copilot vient d'une **organisation** ou d'une **entreprise**, l'owner ou l'admin peut **désactiver Copilot CLI** dans les policies Copilot. Dans ce cas, le CLI n'est pas disponible pour toi, même s'il est installé. Avant de commencer, vérifie auprès de ton équipe plateforme que la policy Copilot CLI est activée. Sinon, suis la série app (430 → 438) ou utilise la cible de session Copilot dans VS Code (module 420), si elles sont autorisées.
+:::
+
 GitHub Copilot CLI se lance avec la commande `copilot` et permet d'utiliser Copilot directement depuis le terminal.
 
-> Source : [GitHub Docs — GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
-
 Le cours GitHub propose plusieurs chemins d'installation : `npm`, Homebrew, WinGet et un script d'installation macOS/Linux. La documentation GitHub met aussi en avant `npm`, WinGet et Homebrew ; dans les deux cas, le principe est le même : installer le binaire `copilot`, puis ouvrir une session interactive.
-
-> Source : [copilot-cli-for-beginners — 00 Quick Start](https://github.com/github/copilot-cli-for-beginners/blob/main/00-quick-start/README.md)  
-> Source : [GitHub Docs — Getting started with GitHub Copilot CLI](https://docs.github.com/en/copilot/get-started/cli-quickstart)
 
 ```bash
 # npm, tous OS si Node.js est disponible
@@ -70,13 +69,9 @@ copilot help
 
 La référence officielle liste aussi `copilot help`, `copilot login`, `copilot completion`, `copilot config`, `copilot init`, `copilot plugin`, `copilot skill`, `copilot mcp`, `copilot update` et `copilot version`.
 
-> Source : [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
-
 ### Activer la complétion shell
 
 La commande `copilot completion SHELL` génère un script de complétion pour Bash, Zsh ou Fish. Elle complète les sous-commandes, options et certaines valeurs connues.
-
-> Source : [GitHub Docs — Copilot CLI command reference, Using copilot completion](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#using-copilot-completion)
 
 ```bash
 # Bash, session courante
@@ -94,13 +89,9 @@ copilot completion fish > ~/.config/fish/completions/copilot.fish
 
 Le cours précise que PowerShell peut exécuter Copilot CLI sur Windows, mais que la commande `copilot completion` couvre Bash, Zsh et Fish.
 
-> Source : [copilot-cli-for-beginners — 00 Quick Start](https://github.com/github/copilot-cli-for-beginners/blob/main/00-quick-start/README.md)
-
 ### Faire confiance au dossier
 
 Au premier lancement dans un projet, le CLI peut te demander si tu fais confiance aux fichiers du dossier courant. Cette étape compte : Copilot va lire du code et peut proposer d'exécuter des commandes ou de modifier des fichiers, mais la documentation de démarrage rappelle qu'il ne modifie pas tes fichiers sans ton approbation explicite.
-
-> Source : [GitHub Docs — Getting started with GitHub Copilot CLI](https://docs.github.com/en/copilot/get-started/cli-quickstart)
 
 Dans ce bloc, lance Copilot depuis le projet d'exemple :
 
@@ -111,8 +102,6 @@ copilot
 
 Le projet **Mon Sinistre** est une solution .NET 10 avec un domaine métier, un CLI, une application web, des tests xUnit et des scripts `verify.sh` / `verify.ps1`.
 
-> Source : [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 :::caution Dossier de travail
 Ne démarre pas une session au hasard dans ton répertoire personnel. Place-toi dans `samples/mon-sinistre` pour que les chemins `@src/...` soient courts, pertinents et limités au sample.
 :::
@@ -120,9 +109,6 @@ Ne démarre pas une session au hasard dans ton répertoire personnel. Place-toi 
 ### Se connecter : `/login`, navigateur ou device code
 
 Dans une session interactive, la commande `/login` déclenche l'authentification GitHub. En local, le flux recommandé ouvre le navigateur ; en terminal distant ou sans navigateur, le CLI utilise le device code et te demande d'entrer un code sur `github.com/login/device`.
-
-> Source : [copilot-cli-for-beginners — 00 Quick Start](https://github.com/github/copilot-cli-for-beginners/blob/main/00-quick-start/README.md)  
-> Source : [GitHub Docs — Copilot CLI command reference, copilot login options](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#copilot-login-options)
 
 Tu peux aussi forcer le flux :
 
@@ -132,8 +118,6 @@ copilot login --device-code
 ```
 
 La référence indique que `--web-flow` force le flux navigateur, que `--device-code` force le flux par code, et que les terminaux distants, Codespaces, dev containers ou CI basculent par défaut vers le device code.
-
-> Source : [GitHub Docs — Copilot CLI command reference, copilot login options](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#copilot-login-options)
 
 ### Premier prompt : lire le CLI Mon Sinistre
 
@@ -145,17 +129,11 @@ Que fait @src/MonSinistre.Cli/Program.cs ?
 
 La syntaxe `@` permet de référencer un fichier, un dossier ou plusieurs fichiers dans une conversation Copilot CLI.
 
-> Source : [copilot-cli-for-beginners — 02 Context and Conversations](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
-
 Le fichier `src/MonSinistre.Cli/Program.cs` charge le portefeuille depuis `data/sinistres.json` ou depuis `MON_SINISTRE_DATA`, expose les commandes `list`, `show` et `declare`, affiche les détails d'un sinistre, vérifie couverture et délai, puis calcule l'indemnisation via le domaine.
-
-> Source : [`samples/mon-sinistre/src/MonSinistre.Cli/Program.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
 
 ### Codespaces : zéro installation locale
 
 Le cours GitHub présente Codespaces comme une option « zero setup » : tu forks le dépôt de cours, tu crées un Codespace, puis tu ouvres le terminal déjà préparé.
-
-> Source : [copilot-cli-for-beginners — 00 Quick Start](https://github.com/github/copilot-cli-for-beginners/blob/main/00-quick-start/README.md)
 
 Pour ce handbook, l'équivalent est simple : ouvre ton fork du dépôt du handbook dans Codespaces, puis démarre dans `samples/mon-sinistre`. Tu devras quand même vérifier l'authentification et la confiance dossier.
 
@@ -191,6 +169,7 @@ Le module [210 — Copilot CLI](../02-composition/210-copilot-cli.md) parlait de
 
 ## Validation
 
+- [ ] Tu as vérifié que la policy Copilot CLI de ton organisation est activée.
 - [ ] `copilot version` ou `copilot help` répond dans ton terminal.
 - [ ] Tu sais expliquer si ton login a utilisé le navigateur ou un device code.
 - [ ] La session Copilot est ouverte depuis `samples/mon-sinistre`.
@@ -203,9 +182,14 @@ Le module [210 — Copilot CLI](../02-composition/210-copilot-cli.md) parlait de
 - [Module 422 — Copilot CLI : modes et slash commands](./422-cli-modes-slash-commands.md) — choisir entre interactive, plan et programmatic.
 - [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference) — référence complète.
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners — 00 Quick Start](https://github.com/github/copilot-cli-for-beginners/blob/main/00-quick-start/README.md) — cours GitHub sous licence MIT, adapté en français.
+- GitHub Docs — [Installing GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli)
+- GitHub Docs — [Managing policies and features for Copilot in your organization](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies)
 - [GitHub Docs — Getting started with GitHub Copilot CLI](https://docs.github.com/en/copilot/get-started/cli-quickstart)
 - [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
 - [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
+- [GitHub Docs — GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
+- [copilot-cli-for-beginners — 02 Context and Conversations](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
+- [`samples/mon-sinistre/src/MonSinistre.Cli/Program.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)

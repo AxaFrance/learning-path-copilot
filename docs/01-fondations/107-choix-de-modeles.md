@@ -37,10 +37,6 @@ description: "Comment choisir entre GPT-4.1, Claude, Gemini, MAI ou Kimi dans Gi
 
 GitHub Copilot donne accès à plusieurs modèles de langage intégrés, chacun optimisé pour un type de tâche différent. Tu peux changer de modèle pour le *chat*, les suggestions *inline*, et les tâches utilitaires.
 
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "Visual Studio Code gives you access to multiple built-in language models, each optimized for different tasks."
-> Fetched: 2026-05-28
-
 Cinq fournisseurs principaux alimentent Copilot :
 
 <!-- round 2 response — P2: gloss "contexte long" on first use -->
@@ -53,10 +49,6 @@ Cinq fournisseurs principaux alimentent Copilot :
 | Microsoft | MAI-Code-1-Flash | Raisonnement avancé, développé par Microsoft AI |
 | Moonshot AI | Kimi K2.7 | Compréhension et génération de code, fenêtre de contexte longue |
 
-> Source: https://docs.github.com/en/copilot/reference/ai-models/model-comparison
-> Citation: "GPT-4.1 — General-purpose coding and writing — Fast, accurate code completions and explanations"
-> Fetched: 2026-07-22
-
 ### Les quatre catégories de tâches
 
 La documentation officielle classe les modèles en quatre catégories de tâches. C'est ta grille de décision principale.
@@ -67,19 +59,11 @@ Modèles recommandés : GPT-5.3-Codex, GPT-5 mini.
 
 Cas d'usage : écrire ou relire des fonctions, générer de la documentation, expliquer des erreurs rapidement.
 
-> Source: https://docs.github.com/en/copilot/reference/ai-models/model-comparison
-> Citation: "Use these models for common development tasks that require a balance of quality, speed, and cost efficiency."
-> Fetched: 2026-05-28
-
 **2. Fast help with simple or repetitive tasks** — des modèles optimisés pour la vitesse et la réactivité.
 
 Modèle recommandé : Claude Haiku 4.5.
 
 Cas d'usage : éditer de petites fonctions, questions de syntaxe, prototypage rapide.
-
-> Source: https://docs.github.com/en/copilot/reference/ai-models/model-comparison
-> Citation: "Balances fast responses with quality output. Ideal for small tasks and lightweight code explanations."
-> Fetched: 2026-05-28
 
 **3. Deep reasoning and debugging** — les modèles conçus pour le raisonnement étape par étape et la prise de décision complexe.
 
@@ -87,17 +71,9 @@ Modèles recommandés : GPT-5 mini, GPT-5.5, Claude Sonnet 4.6, Claude Opus 4.7,
 
 Cas d'usage : debugger des problèmes complexes multi-fichiers, refactorer un codebase interconnecté, planifier des features ou de l'architecture, analyser des logs ou des performances.
 
-> Source: https://docs.github.com/en/copilot/reference/ai-models/model-comparison
-> Citation: "Debug complex issues with context across multiple files. Refactor large or interconnected codebases."
-> Fetched: 2026-05-28
-
 **4. Working with visuals** — pour les questions sur des captures d'écran, diagrammes, ou composants UI.
 
 Modèles recommandés : GPT-5 mini, Claude Sonnet 4.6, Gemini 3.1 Pro.
-
-> Source: https://docs.github.com/en/copilot/reference/ai-models/model-comparison
-> Citation: "Use these models when you want to ask questions about screenshots, diagrams, UI components, or other visual input."
-> Fetched: 2026-05-28
 
 En résumé, voici la matrice de décision rapide :
 
@@ -112,29 +88,13 @@ En résumé, voici la matrice de décision rapide :
 
 Pour changer de modèle, ouvre le *model picker* dans le champ de saisie du chat. Le sélecteur se trouve en bas de la vue chat.
 
-> Source: https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model
-> Citation: "At the bottom of the chat view, select the CURRENT-MODEL dropdown menu, then click the AI model of your choice."
-> Fetched: 2026-05-28
-
 Tu peux aussi gérer la visibilité des modèles via l'éditeur *Language Models*. Ouvre-le avec la commande `Chat: Manage Language Models` ou en cliquant sur l'icône engrenage dans le *model picker*.
 
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "The editor lists all models available to you, showing key information such as the model capabilities, context size, billing details, and visibility status."
-> Fetched: 2026-05-28
-
 Tu peux **épingler** tes modèles favoris pour les garder en haut du sélecteur, et **masquer** ceux que tu n'utilises jamais.
-
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "Pin models to keep them in a fixed position at the top of the model picker."
-> Fetched: 2026-05-28
 
 ### Le mode Auto
 
 Le mode *Auto* est le choix le plus simple : Copilot évalue la complexité de ta requête et la disponibilité des modèles en temps réel pour router chaque demande vers le modèle optimal.
-
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "VS Code evaluates task complexity and real-time model availability to route each request to the optimal model."
-> Fetched: 2026-05-28
 
 Pour l'activer, sélectionne **Auto** dans le *model picker*. Tu peux voir quel modèle a été utilisé en survolant la réponse dans le chat.
 
@@ -144,23 +104,11 @@ C'est un bon point de départ si tu ne sais pas quel modèle choisir. Mais dès 
 
 Certains modèles supportent un *thinking effort* configurable, qui contrôle la quantité de raisonnement appliquée à chaque requête.
 
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "Some models support configurable thinking effort, which controls how much reasoning the model applies to each request."
-> Fetched: 2026-05-28
-
 Les modèles non-raisonneurs (GPT-4.1, GPT-4o) n'affichent pas ce sous-menu. Pour les modèles qui le supportent (Claude Sonnet 4.6, Claude Opus 4.7, etc.), tu peux choisir un niveau d'effort.
-
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "Non-reasoning models, such as GPT-4.1 and GPT-4o, do not show the thinking effort submenu."
-> Fetched: 2026-05-28
 
 <!-- round 2 response — U2: add citation for adaptive reasoning default -->
 
 Par défaut, VS Code active le raisonnement adaptatif : le modèle détermine lui-même combien réfléchir en fonction de la complexité de la requête.
-
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "By default, VS Code sets recommended effort levels and has adaptive reasoning enabled, where the model dynamically determines how much to think based on the complexity of each request."
-> Fetched: 2026-05-28
 
 ### Forcer un modèle dans un agent
 
@@ -194,10 +142,6 @@ Et un agent architecte qui a besoin de raisonnement profond :
   ---
 ```
 
-> Source: docs/01-fondations/104-agents.md
-> Citation: "Spécifier un modèle est utile quand le rôle de l'agent exige un modèle particulier"
-> Fetched: 2026-05-28
-
 Si tu omets la clé `model`, l'agent utilise le modèle sélectionné dans le *model picker* global. C'est le comportement par défaut et souvent le plus flexible.
 
 ### Modèles pour les suggestions inline
@@ -208,31 +152,15 @@ Le modèle utilisé pour le *chat* et celui pour les suggestions *inline* sont i
 2. Sélectionne **Configure Inline Suggestions…**
 3. Choisis **Change Completions Model…**
 
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "To change the language model that is used for generating inline suggestions in the editor"
-> Fetched: 2026-05-28
-
 <!-- round 2 response — U3: add citation for inline model availability -->
 
 Les modèles disponibles pour les suggestions *inline* peuvent différer de ceux du chat — la liste évolue au fil du temps.
 
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "The models that are available for inline suggestions might evolve over time as we add support for more models."
-> Fetched: 2026-05-28
-
 Les complétions de code ne sont pas facturées en crédits AI — elles restent illimitées pour tous les plans payants.
-
-> Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
-> Citation: "Code completions and next edit suggestions are not billed in AI credits."
-> Fetched: 2026-05-28
 
 ### Comprendre les coûts
 
 À partir du 1er juin 2026, GitHub passe d'une facturation par requête à une facturation à l'usage basée sur les tokens.
-
-> Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
-> Citation: "Starting June 1, 2026, GitHub is moving Copilot from request-based billing to usage-based billing."
-> Fetched: 2026-05-28
 
 Le coût d'une interaction dépend de deux facteurs : le modèle utilisé et le nombre de tokens consommés (entrée, sortie, cache). Les tokens sont convertis en crédits AI, où 1 crédit = $0.01 USD.
 
@@ -249,22 +177,11 @@ Voici un extrait de la grille tarifaire (prix par million de tokens) :
 | Gemini 2.5 Pro | Powerful | $1.25 | $10.00 |
 | Gemini 3 Flash | Lightweight | $0.50 | $3.00 |
 
-> Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
-> Citation: "Each token is priced based on the model used, and the total is converted into AI credits, where 1 AI credit = $0.01 USD."
-> Fetched: 2026-05-28
-
 Pour le détail tarifaire des modèles Microsoft (`MAI-Code-1-Flash`) et Moonshot AI (`Kimi K2.7`), consulte directement la [grille tarifaire officielle](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing) — les tarifs de ces modèles peuvent évoluer.
-
-> Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
-> Fetched: 2026-07-22
 
 <!-- round 2 response — U1: fix 120× to 15× ($30/$2) and add citation -->
 
 La leçon est claire : un modèle *Powerful* comme GPT-5.5 coûte 15× plus en *output* qu'un GPT-5 mini ($30 vs $2 par million de tokens). Utiliser systématiquement le modèle le plus puissant pour des questions simples revient à prendre un semi-remorque pour aller chercher le pain.
-
-> Source: https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
-> Citation: "GPT-5.5 … Output: $30.00" / "GPT-5 mini … Output: $2.00"
-> Fetched: 2026-05-28
 
 ### Un seul modèle par session
 
@@ -276,15 +193,7 @@ Le *cache de prompt* réutilise les tokens d'entrée déjà traités d'une requ�
 
 Si tu veux utiliser un modèle qui n'est pas intégré nativement, ou contrôler l'hébergement, tu peux apporter ta propre clé API.
 
-> Source: https://code.visualstudio.com/docs/copilot/language-models
-> Citation: "you can bring your own language model API key (BYOK) to use models from other providers or to run models locally."
-> Fetched: 2026-05-28
-
 Pour les utilisateurs Copilot Business ou Enterprise, l'administrateur doit activer la politique *Bring Your Own Language Model Key in VS Code* dans les paramètres de politique Copilot sur GitHub.com.
-
-> Source: https://docs.github.com/en/copilot/how-tos/use-ai-models/change-the-chat-model
-> Citation: "the Bring Your Own Language Model Key in VS Code policy must be enabled."
-> Fetched: 2026-05-28
 
 ## Exercice
 

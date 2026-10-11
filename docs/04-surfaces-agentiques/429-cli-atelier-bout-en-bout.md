@@ -15,8 +15,6 @@ description: "Mener une fonctionnalité Mon Sinistre de bout en bout avec Copilo
 
 À la fin de ce module, tu sais mobiliser toute la série CLI pour livrer une petite évolution de Mon Sinistre : ajouter la formule `TousRisquesPlus`, écrire les tests associés, lancer `verify.sh`, relire le diff et préparer une PR. Le bonus te propose aussi de corriger le défaut D2 sur les jours ouvrés.
 
-> Source : [copilot-cli-for-beginners — Chapter 07: Putting It All Together](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md) et [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 ## Ce que tu vas apprendre
 
 1. Démarrer par le contexte et le plan
@@ -31,15 +29,9 @@ description: "Mener une fonctionnalité Mon Sinistre de bout en bout avec Copilo
 
 Le chapitre final du cours CLI propose une boucle complète : rassembler le contexte, planifier, implémenter, tester, relire, puis préparer une PR. Il rappelle aussi que les agents, skills et MCP ne sont pas obligatoires pour être productif, mais qu'ils deviennent utiles quand la tâche est assez structurée.
 
-> Source : [copilot-cli-for-beginners — Chapter 07, « Idea to Merged PR in One Session »](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md)
-
 Pour Mon Sinistre, tu vas appliquer cette boucle à une évolution métier d'atelier : ajouter `TousRisquesPlus`, une nouvelle formule demandée par l'exercice. Le dépôt de départ contient déjà les formules `Tiers`, `TiersPlus` et `TousRisques`, ce qui donne le point d'insertion naturel.
 
-> Source : [Mon Sinistre — Formule.cs](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/Formule.cs)
-
 La règle existante est : `Tiers` ne couvre pas les dommages propres, `TiersPlus` couvre bris de glace et vol, `TousRisques` couvre tout. L'évolution doit donc être ajoutée sans casser les tests existants.
-
-> Source : [Mon Sinistre — README, « Règles métier »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Réutiliser les modules 421 à 428
 
@@ -54,13 +46,9 @@ La règle existante est : `Tiers` ne couvre pas les dommages propres, `TiersPlus
 | 427 | GitHub MCP pour lire issue ou préparer PR |
 | 428 | appel non interactif éventuel pour une revue bornée |
 
-> Source : [copilot-cli-for-beginners — Chapter 07, « Integration Pattern »](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md)
-
 ### Plan avant code
 
 Commence par attacher les bons fichiers, puis demande un plan. Le plan doit identifier au minimum `Formule.cs`, `RegleCouverture.cs`, `CalculIndemnisation.cs`, les tests de couverture, les tests d'indemnisation et éventuellement les données d'exemple si tu veux démontrer la nouvelle formule dans une commande CLI.
-
-> Source : [GitHub Copilot CLI — Plan mode](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) et [copilot-cli-for-beginners — Chapter 01, « Plan Mode »](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
 
 Exemple de prompt de plan :
 
@@ -71,17 +59,11 @@ Règle : elle couvre tous les types de sinistres ; pour BrisDeGlace, la franchis
 Prévois les tests xUnit et la validation ./scripts/verify.sh. Ne modifie rien avant le plan.
 ```
 
-> Source : [copilot-cli-for-beginners — Chapter 07, « Best Practices: Start with Context Before Analysis »](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md)
-
 ### Implémenter petit et prouvé
 
 La modification naturelle commence par l'énumération `Formule`, puis la règle de couverture. Pour la franchise à 0 sur bris de glace, évite de dupliquer du formatage ou d'introduire des montants en euros dans le domaine : les montants restent des centimes.
 
-> Source : [Mon Sinistre — README, « Les montants sont stockés en centimes »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 Le test le plus important doit prouver que `TousRisquesPlus` couvre `BrisDeGlace`, `Vol` et `Collision`. Un autre test doit prouver que l'indemnisation d'un bris de glace avec `TousRisquesPlus` ne retire pas la franchise.
-
-> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Demande ensuite l'implémentation :
 
@@ -91,13 +73,9 @@ Implémente le plan de manière minimale. Ajoute les tests xUnit nécessaires. N
 
 Après chaque changement significatif, inspecte le diff. La revue humaine reste obligatoire, même si Copilot annonce que tout est terminé.
 
-> Source : [copilot-app-for-beginners — Troubleshooting Reference, « General rule »](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/troubleshooting-reference.md)
-
 ### Validation locale
 
 Le sample Mon Sinistre n'embarque pas de CI fournie. Le critère commun est `./scripts/verify.sh`, qui restaure, compile avec avertissements traités comme erreurs, puis lance les tests.
-
-> Source : [Mon Sinistre — README, « Pas de CI fournie »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md) et [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ```bash
 cd samples/mon-sinistre
@@ -106,13 +84,9 @@ cd samples/mon-sinistre
 
 Si la validation échoue, ne demande pas « corrige tout » sans contexte. Colle ou attache l'erreur pertinente, rappelle la règle métier, puis demande une correction ciblée.
 
-> Source : [copilot-cli-for-beginners — Chapter 03: Development Workflows](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md)
-
 ### Préparer la PR
 
 Quand le diff est relu et `verify.sh` vert, demande à Copilot de préparer un résumé de PR : contexte, changements, tests lancés, risques. Si tu utilises le serveur GitHub MCP, tu peux aussi demander la création de PR dans ton fork, mais garde le contrôle sur le titre et la description avant publication.
-
-> Source : [GitHub Copilot CLI — Tasks involving GitHub.com](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) et [copilot-cli-for-beginners — Chapter 07, « PR Description Generator »](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md)
 
 Exemple de demande :
 
@@ -130,11 +104,7 @@ Si ce sample devient un projet d'équipe, elle peut ajouter sa propre CI pour la
 
 Le défaut D2 indique que le délai de déclaration utilise des jours calendaires au lieu de jours ouvrés. Le symptôme donné est `SIN-1004` : du vendredi 2026-09-18 au vendredi 2026-09-25, le code affiche « Dans les délais : non » alors que cela représente 5 jours ouvrés.
 
-> Source : [Mon Sinistre — README, « Défauts volontaires »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 Si tu fais le bonus, traite-le comme une deuxième mini-PR logique : plan séparé, tests dédiés, correction de `DelaiDeclaration`, puis `verify.sh`. N'entremêle pas ce bonus avec `TousRisquesPlus` si ton objectif est une PR facile à relire.
-
-> Source : [copilot-cli-for-beginners — Chapter 07, « Keep Sessions Focused »](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md)
 
 ```mermaid
 flowchart TD
@@ -199,8 +169,10 @@ git diff -- samples/mon-sinistre
 - [Module 428 — Mode non interactif](./428-cli-non-interactif.md) — revue scriptée locale.
 - [Module 430 — Copilot app : installer et tour](./430-app-installer-tour.md) — refaire l'atelier côté app.
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners — Chapter 07](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [github/copilot-cli-for-beginners — Chapter 01](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md) et [Chapter 03](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md) — modes et boucle développement.
 - [GitHub Copilot CLI](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) · [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
+- [Mon Sinistre — Formule.cs](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/Formule.cs)
+- [copilot-app-for-beginners — Troubleshooting Reference, « General rule »](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/troubleshooting-reference.md)

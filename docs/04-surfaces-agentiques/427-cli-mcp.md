@@ -15,8 +15,6 @@ description: "Comprendre et gérer les serveurs MCP dans Copilot CLI, utiliser l
 
 À la fin de ce module, tu sais expliquer ce qu'un serveur MCP ajoute à Copilot CLI, lister les serveurs disponibles, utiliser le serveur GitHub intégré pour interroger ton fork Mon Sinistre, et décider quand ajouter un serveur de documentation plutôt que coller de longs extraits dans le prompt.
 
-> Source : [copilot-cli-for-beginners — Chapter 06: MCP Servers](https://github.com/github/copilot-cli-for-beginners/blob/main/06-mcp-servers/README.md) et [Adding MCP servers for GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers)
-
 ## Ce que tu vas apprendre
 
 1. Ce qu'un serveur MCP apporte au CLI
@@ -31,17 +29,11 @@ description: "Comprendre et gérer les serveurs MCP dans Copilot CLI, utiliser l
 
 Le Model Context Protocol est un standard qui permet à une application IA de connecter des outils et sources de données externes à un modèle. Dans Copilot CLI, un serveur MCP peut fournir des outils pour consulter GitHub, interroger de la documentation, accéder à des données ou appeler un service.
 
-> Source : [Adding MCP servers for GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers) et [copilot-cli-for-beginners — Chapter 06, « What Changes with MCP? »](https://github.com/github/copilot-cli-for-beginners/blob/main/06-mcp-servers/README.md)
-
 Sans MCP, tu dois souvent attacher explicitement le contexte avec `@` ou copier une information. Avec MCP, Copilot peut utiliser un outil configuré pour récupérer une issue, une PR, un statut d'action ou une page de documentation, selon les droits du serveur.
-
-> Source : [copilot-cli-for-beginners — Chapter 06, « What Changes with MCP? »](https://github.com/github/copilot-cli-for-beginners/blob/main/06-mcp-servers/README.md)
 
 ### Gérer les serveurs dans Copilot CLI
 
 En session interactive, `/mcp show` affiche les serveurs configurés et leur état. Tu peux ajouter un serveur avec `/mcp add` ou depuis le terminal avec `copilot mcp add`.
-
-> Source : [copilot-cli-for-beginners — Chapter 06, « The /mcp show Command »](https://github.com/github/copilot-cli-for-beginners/blob/main/06-mcp-servers/README.md) et [Adding MCP servers for GitHub Copilot CLI — Using the /mcp add command](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers)
 
 ```bash
 copilot
@@ -54,31 +46,19 @@ copilot mcp add context7 -- npx -y @upstash/context7-mcp
 copilot mcp add --transport http docs https://mcp.example.invalid/mcp
 ```
 
-> Source : [Adding MCP servers for GitHub Copilot CLI — Using the copilot mcp add subcommand](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers)
-
 Les configurations peuvent être personnelles ou projet. Le cours CLI cite `~/.copilot/mcp-config.json`, `.mcp.json` et `.github/mcp.json`; la documentation GitHub précise que `.mcp.json` et `.github/mcp.json` servent aux configurations par dépôt, avec précédence locale selon l'emplacement.
-
-> Source : [copilot-cli-for-beginners — Chapter 06, « MCP Configuration File »](https://github.com/github/copilot-cli-for-beginners/blob/main/06-mcp-servers/README.md) et [Adding MCP servers for GitHub Copilot CLI — Adding per-repository MCP servers](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers)
 
 ### Le serveur GitHub intégré
 
 Copilot CLI inclut déjà un serveur MCP GitHub. Une fois authentifié, il permet de travailler avec des ressources GitHub comme dépôts, issues, pull requests, recherche de code et statuts d'actions, sans ajouter de configuration GitHub supplémentaire.
 
-> Source : [copilot-cli-for-beginners — Chapter 06, « GitHub Server (Built-in) »](https://github.com/github/copilot-cli-for-beginners/blob/main/06-mcp-servers/README.md) et [Invoking custom agents — Add an MCP server](https://docs.github.com/copilot/how-tos/copilot-cli/use-copilot-cli/invoke-custom-agents)
-
 Pour Mon Sinistre, c'est suffisant pour l'exercice : `scripts/seed.sh` crée des issues et PR d'entraînement dans ton fork, avec le label `mon-sinistre`.
-
-> Source : [Mon Sinistre — README, « Script de seed »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### MCP ne remplace pas la vérification
 
 MCP donne accès à une source, mais ne rend pas automatiquement la réponse vraie. Tu dois inspecter l'activité d'outil, lire les liens ou objets retournés, et séparer ce que l'outil a réellement fourni de ce que l'agent déduit.
 
-> Source : [copilot-app-for-beginners — Chapter 05: MCP Servers and Plugins](https://github.com/github/copilot-app-for-beginners/blob/main/05-mcp-plugins/README.md)
-
 Cette règle vaut particulièrement pour les serveurs de documentation. Une bonne pratique consiste à poser une question générale au serveur externe, puis à comparer localement avec le code sans envoyer inutilement les chemins ou extraits du dépôt.
-
-> Source : [copilot-app-for-beginners — Chapter 05, « Check the Book App's Input Labels with Context7 »](https://github.com/github/copilot-app-for-beginners/blob/main/05-mcp-plugins/README.md)
 
 ```mermaid
 flowchart TD
@@ -96,11 +76,7 @@ flowchart TD
 
 Le chapitre CLI présente Context7 comme un serveur qui donne accès à de la documentation à jour pour des frameworks et bibliothèques. La documentation GitHub montre aussi les serveurs distants HTTP et les serveurs locaux STDIO.
 
-> Source : [copilot-cli-for-beginners — Chapter 06, « Context7 Server »](https://github.com/github/copilot-cli-for-beginners/blob/main/06-mcp-servers/README.md) et [Adding MCP servers for GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers)
-
 Dans Mon Sinistre, tu n'as pas besoin d'un serveur de documentation pour comprendre les règles métier : elles sont dans le README et les tests. Tu peux en ajouter un seulement si tu dois vérifier une API externe, par exemple une documentation .NET, et si ta politique d'organisation l'autorise.
-
-> Source : [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md) et [copilot-app-for-beginners — Chapter 05, « Keeping external question general »](https://github.com/github/copilot-app-for-beginners/blob/main/05-mcp-plugins/README.md)
 
 ## Exercice
 
@@ -153,8 +129,9 @@ Ne mets jamais de token ou secret dans un prompt ou un fichier commité. Si un s
 - [Module 209 — Plugins](../02-composition/209-plugins.md) — autre forme d'extension.
 - [Module 428 — Mode non interactif](./428-cli-non-interactif.md) — automatiser un appel CLI avec garde-fous.
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners — Chapter 06](https://github.com/github/copilot-cli-for-beginners/blob/main/06-mcp-servers/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [github/copilot-app-for-beginners — Chapter 05](https://github.com/github/copilot-app-for-beginners/blob/main/05-mcp-plugins/README.md) — vérification des outils MCP, adapté en français.
 - [Adding MCP servers for GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/add-mcp-servers) · [Invoking custom agents](https://docs.github.com/copilot/how-tos/copilot-cli/use-copilot-cli/invoke-custom-agents)
+- [Mon Sinistre — README, « Script de seed »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

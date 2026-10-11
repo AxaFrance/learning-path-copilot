@@ -44,8 +44,6 @@ La boucle de développement dans l'app suit toujours le même rythme :
 5. observer le comportement ;
 6. itérer si l'évidence contredit la réponse.
 
-> Source : [copilot-app-for-beginners — 03 Development Workflows](https://github.com/github/copilot-app-for-beginners/blob/main/03-development-workflows/README.md), section « Inner Loop ».
-
 Le point clé : **l'évidence gagne contre le texte de l'agent**. Si Copilot dit « les tests passent » mais que le terminal ne le montre pas, tu n'as pas encore de preuve.
 
 ### Diff : la première preuve
@@ -189,7 +187,7 @@ Arrête le serveur avec `Ctrl+C` quand tu as terminé.
 - [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 - [GitHub Docs — Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)
 
-## Source
+## Sources
 
 - [github/copilot-app-for-beginners — 03 Development Workflows](https://github.com/github/copilot-app-for-beginners/blob/main/03-development-workflows/README.md)
 - [samples/mon-sinistre/README.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

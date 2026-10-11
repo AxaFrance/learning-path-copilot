@@ -48,8 +48,6 @@ Elle rassemble dans une même fenêtre :
 | Voir le résultat | aperçu navigateur local |
 | Passer à GitHub | issue, PR, commentaires, état de validation |
 
-> Source : [copilot-app-for-beginners — 01 Tour the App](https://github.com/github/copilot-app-for-beginners/blob/main/01-tour-the-app/README.md), section « Why Use the GitHub Copilot app? ».
-
 L'app ne remplace donc pas VS Code, Visual Studio ou JetBrains. Elle te donne un **tableau de bord** pour lancer, suivre et relire le travail de l'agent. Depuis une session, tu peux toujours ouvrir le dossier dans VS Code quand tu veux reprendre la main avec un éditeur complet.
 
 ### Installer et se connecter
@@ -59,8 +57,6 @@ L'app ne remplace donc pas VS Code, Visual Studio ou JetBrains. Elle te donne un
 3. Connecte-toi avec le compte qui a accès à Copilot.
 4. Si ton organisation utilise Copilot Business ou Enterprise, vérifie que la politique **GitHub Copilot app** est activée.
 5. À l'onboarding, tu peux ignorer la sélection initiale de dépôts et ajouter ton fork ensuite.
-
-> Source : [Getting started with the GitHub Copilot app](https://docs.github.com/en/copilot/get-started/quickstart-copilot-app).
 
 ### Connecter ton fork
 
@@ -164,7 +160,7 @@ Ne modifie aucun fichier.
 - [Getting started with the GitHub Copilot app](https://docs.github.com/en/copilot/get-started/quickstart-copilot-app)
 - [Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)
 
-## Source
+## Sources
 
 - [github/copilot-app-for-beginners — 00 Setup](https://github.com/github/copilot-app-for-beginners/blob/main/00-setup/README.md)
 - [github/copilot-app-for-beginners — 01 Tour the App](https://github.com/github/copilot-app-for-beginners/blob/main/01-tour-the-app/README.md)
