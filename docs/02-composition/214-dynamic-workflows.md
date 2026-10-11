@@ -2,7 +2,7 @@
 id: dynamic-workflows
 title: "214 — Dynamic workflows — orchestrer en code"
 sidebar_position: 214
-description: "Passer d'un orchestrateur en prose (.agent.md + runSubagent) à un dynamic workflow Copilot : une séquence déterministe écrite en code, des agents là où il faut du jugement, des checkpoints humains et des gardes qui quittent les hooks."
+description: "Passer d'un orchestrateur en prose à un dynamic workflow Copilot : la séquence en code, les agents là où il faut du jugement, des checkpoints humains."
 ---
 
 # 214 — Dynamic workflows — orchestrer en code
