@@ -36,6 +36,8 @@ description: "Installer la GitHub Copilot app, connecter son fork et distinguer 
 
 Copilot dans l'IDE est très efficace quand tu travailles déjà dans un fichier. Copilot CLI est parfait quand tu veux piloter l'agent depuis le terminal. L'app répond à un autre besoin : **superviser un travail agentique complet**.
 
+Dans VS Code, la cible de session **Copilot** repose sur le même Copilot SDK que le CLI et l'app. VS Code peut d'ailleurs retrouver les sessions créées dans l'app : voir le [module 420](./420-choisir-sa-surface.md#dans-vs-code--la-cible-de-session-copilot-plutôt-que-local).
+
 Elle rassemble dans une même fenêtre :
 
 | Besoin | Ce que l'app apporte |
