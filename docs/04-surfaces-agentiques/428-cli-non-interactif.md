@@ -15,8 +15,6 @@ description: "Utiliser `copilot -p` dans un script local, encadrer les permissio
 
 À la fin de ce module, tu sais utiliser `copilot -p` pour une tâche ponctuelle, choisir des permissions d'outils adaptées, écrire un petit script local qui appelle Copilot puis `verify.sh`, et expliquer comment une équipe pourrait l'intégrer dans sa CI sans copier un workflow YAML complet.
 
-> Source : [copilot-cli-for-beginners — Chapter 01: First Steps, « Programmatic Mode »](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md) et [GitHub Copilot CLI](https://docs.github.com/copilot/concepts/agents/about-copilot-cli)
-
 ## Ce que tu vas apprendre
 
 1. Quand choisir le mode programmatique
@@ -31,35 +29,23 @@ description: "Utiliser `copilot -p` dans un script local, encadrer les permissio
 
 Copilot CLI propose une interface interactive et une interface programmatique. Avec `-p` ou `--prompt`, tu donnes une seule consigne en ligne de commande ; le CLI traite la demande, écrit sa sortie, puis termine.
 
-> Source : [GitHub Copilot CLI — Programmatic interface](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) et [copilot-cli-for-beginners — Chapter 01, « Mode 3: Programmatic Mode »](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
-
 ```bash
 copilot -p "Résume les règles métier de @samples/mon-sinistre/README.md en 5 puces."
 ```
 
 Ce mode est utile pour une vérification rapide, une synthèse, un script local ou une automatisation bornée. Il est moins adapté aux tâches floues qui nécessitent des clarifications, une revue de plan ou plusieurs décisions humaines.
 
-> Source : [copilot-cli-for-beginners — Chapter 01, « Which Mode Should I Start With? »](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
-
 ### Permissions : ne pas donner plus que nécessaire
 
 En mode interactif, Copilot peut demander confirmation avant de lire, exécuter ou modifier. En mode programmatique, il n'y a pas toujours un humain disponible pour approuver ; la documentation recommande donc d'utiliser des options d'approbation explicites quand tu veux autoriser des outils.
 
-> Source : [GitHub Copilot CLI — Programmatic interface](https://docs.github.com/copilot/concepts/agents/about-copilot-cli)
-
 Le cours montre `--allow-all` comme solution pratique pour scripts, mais avertit que cette option saute les demandes de permission. La documentation GitHub ajoute qu'une option d'approbation automatique donne à Copilot le même accès que toi aux fichiers et commandes autorisés par ton environnement.
 
-> Source : [copilot-cli-for-beginners — Chapter 01, « About --allow-all »](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md) et [GitHub Copilot CLI — Security considerations](https://docs.github.com/copilot/concepts/agents/about-copilot-cli)
-
 Préfère donc une règle simple : `--allow-all` uniquement dans un dépôt de confiance, sur un prompt écrit par toi, avec une portée courte, jamais avec un texte non fiable provenant d'une issue, d'une PR ou d'un ticket externe.
-
-> Source : [copilot-cli-for-beginners — Chapter 01, « About --allow-all »](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
 
 ### Script local : Copilot puis validation
 
 Pour Mon Sinistre, l'automatisation de base ne doit pas pousser, merger ou publier. Elle peut demander une revue ciblée, écrire un rapport dans la sortie standard, puis lancer la validation locale.
-
-> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Exemple de script à créer dans ton fork, par exemple `scripts/revue-copilot-locale.sh` à la racine de ton fork :
 
@@ -79,21 +65,13 @@ cd samples/mon-sinistre
 ./scripts/verify.sh
 ```
 
-> Source : [copilot-cli-for-beginners — Chapter 01, « Going Further: Using Programmatic Mode in Scripts »](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
-
 Même si le prompt demande de ne rien modifier, inspecte toujours `git status` après l'exécution. Un script local sûr doit rendre visibles les preuves : sortie Copilot, statut Git, puis résultat de `verify.sh`.
-
-> Source : [copilot-app-for-beginners — Troubleshooting Reference, « General rule »](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/troubleshooting-reference.md)
 
 ### Ouverture CI : explication seulement
 
 Le cours CLI contient un appendice qui montre des workflows GitHub Actions pour automatiser des revues Copilot sur pull request. Dans ce handbook, le projet Mon Sinistre est volontairement un sample sans CI fournie : tu expliques l'idée, mais tu ne fournis pas de workflow YAML complet.
 
-> Source : [copilot-cli-for-beginners — Appendix: CI/CD Integration](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/ci-cd-integration.md) et [Mon Sinistre — README, « Pas de CI fournie »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 Une équipe peut ajouter son propre workflow plus tard : checkout du dépôt, installation du SDK .NET, installation éventuelle du CLI, authentification conforme à sa politique, appel borné à Copilot, puis `./samples/mon-sinistre/scripts/verify.sh`. Mais ce module ne doit pas livrer ce YAML, car les permissions, secrets, runners et règles de sécurité dépendent de l'organisation.
-
-> Source : [copilot-cli-for-beginners — Appendix: CI/CD Integration, « Best Practices »](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/ci-cd-integration.md)
 
 :::note Une équipe peut ajouter son propre workflow
 Si Mon Sinistre devient un vrai projet, une équipe peut créer son propre workflow GitHub Actions pour lancer `verify.sh` et, si sa politique l'autorise, une revue Copilot bornée. Ici, tu gardes l'exercice local et tu ne copies pas de workflow complet.
@@ -108,8 +86,6 @@ Si Mon Sinistre devient un vrai projet, une équipe peut créer son propre workf
 | Validation oubliée | Chaîner `./scripts/verify.sh` dans le script |
 | Sortie trop large | Limiter les chemins `@samples/mon-sinistre/src/...` |
 | CI trop permissive | Définir outils, secrets et permissions dans la politique d'équipe |
-
-> Source : [GitHub Copilot CLI — Programmatic interface](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) et [copilot-cli-for-beginners — Appendix: CI/CD Integration](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/ci-cd-integration.md)
 
 ## Exercice
 
@@ -161,8 +137,10 @@ Ne construis pas un prompt `copilot -p` en injectant directement le corps d'une 
 - [Module 427 — MCP CLI](./427-cli-mcp.md) — outils externes en mode interactif.
 - [Module 429 — Atelier bout en bout](./429-cli-atelier-bout-en-bout.md) — mobiliser la série complète.
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners — Chapter 01](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [github/copilot-cli-for-beginners — Appendix: CI/CD Integration](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/ci-cd-integration.md) — patterns CI/CD, adaptés en explication uniquement.
 - [GitHub Copilot CLI](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) · [GitHub Copilot CLI command reference](https://docs.github.com/en/copilot/reference/cli-command-reference)
+- [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
+- [copilot-app-for-beginners — Troubleshooting Reference, « General rule »](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/troubleshooting-reference.md)

@@ -35,11 +35,13 @@ description: "Situer Copilot CLI et la GitHub Copilot app parmi les surfaces Cop
 | Surface | Où elle tourne | Idéale pour |
 |---|---|---|
 | **Copilot dans l'IDE** | VS Code, Visual Studio, JetBrains… | Chat, agent et suggestions au plus près du code ouvert. Dans VS Code, la cible de session **Copilot** exécute le même moteur que le CLI et l'app (voir ci-dessous) |
-| **Copilot CLI** | Ton terminal | Travail agentique au clavier, scripts, serveurs distants, mode non interactif |
+| **Copilot CLI** | Ton terminal | Travail agentique au clavier, scripts, serveurs distants, mode non interactif. Peut être désactivé par ton organisation (voir encadré) |
 | **GitHub Copilot app** | Application de bureau | Superviser plusieurs sessions d'agents : plans, diffs, aperçu navigateur, issues, PR, canvases, automations |
 | **Copilot cloud agent** | Environnement hébergé par GitHub | Travail en arrière-plan sur une issue, qui revient sous forme de PR |
 
-> Source : [github/copilot-cli-for-beginners — README](https://github.com/github/copilot-cli-for-beginners/blob/main/README.md) et [github/copilot-app-for-beginners — README](https://github.com/github/copilot-app-for-beginners/blob/main/README.md), sections « Understanding the GitHub Copilot Family ».
+:::caution Une surface peut être bloquée par ton organisation
+Avec une licence Copilot d'organisation ou d'entreprise, les admins choisissent les surfaces autorisées. En particulier, **Copilot CLI peut être désactivé** par une policy. Dans ce cas, `copilot` ne fonctionne pas, même s'il est installé. Vérifie ce qui est ouvert chez toi avant de choisir ta série : si le CLI est bloqué, passe directement à la série app ou à VS Code.
+:::
 
 Les Blocs 01 à 03 t'ont appris les **primitives** (instructions, prompts, skills, agents, MCP) et l'**ingénierie de contexte**. Ces primitives fonctionnent sur toutes les surfaces : ce bloc te montre **comment les utiliser concrètement** dans le CLI et dans l'app.
 
@@ -70,13 +72,9 @@ Attention au vocabulaire : **Local** est le *nom d'un harness*, pas « l'agent q
 Le SDK commun garantit un **comportement d'agent cohérent**, pas une synchronisation complète. Les outils, les modèles, les permissions et les réglages personnels peuvent encore différer entre VS Code, le CLI et l'app. Côté entreprise, les admins peuvent imposer la cible Copilot pour les nouvelles sessions de chat dans l'éditeur, via la policy `ChatEditorPreferCopilotHarness`.
 :::
 
-*Sources : [VS Code — Choose and use an agent harness](https://code.visualstudio.com/docs/agents/run/agent-harnesses) · [VS Code — Understand agent harnesses](https://code.visualstudio.com/docs/agents/concepts/agent-harnesses)*
-
 ### CLI ou app : comment choisir
 
 L'app ne remplace pas ton éditeur ni ton terminal. Elle répond à un problème précis : **superviser du travail d'agent de bout en bout** sans recoller soi-même le plan, le diff, les tests, l'aperçu et la PR qui sont éparpillés dans plusieurs outils.
-
-> Source : [copilot-app-for-beginners — Chapter 01 « Why Use the GitHub Copilot app? »](https://github.com/github/copilot-app-for-beginners/blob/main/01-tour-the-app/README.md)
 
 | Ta situation | Surface conseillée |
 |---|---|
@@ -164,8 +162,12 @@ Le script renvoie un code de sortie différent de 0 dès qu'une étape échoue. 
 - [Module 421 — Copilot CLI : installer et se connecter](./421-cli-installer-se-connecter.md) — début de la série CLI.
 - [Module 430 — GitHub Copilot app : installer et faire le tour](./430-app-installer-tour.md) — début de la série app.
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners](https://github.com/github/copilot-cli-for-beginners) et [github/copilot-app-for-beginners](https://github.com/github/copilot-app-for-beginners) — cours GitHub sous licence MIT, adaptés en français pour ce handbook.
+- GitHub Docs — [Installing GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/set-up-copilot-cli/install-copilot-cli) · [Managing policies and features for Copilot in your organization](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies)
 - [VS Code — Choose and use an agent harness](https://code.visualstudio.com/docs/agents/run/agent-harnesses) · [VS Code — Understand agent harnesses](https://code.visualstudio.com/docs/agents/concepts/agent-harnesses) · [github/copilot-sdk](https://github.com/github/copilot-sdk)
 - [About GitHub Copilot CLI](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) · [GitHub Copilot app](https://docs.github.com/copilot/concepts/agents/github-copilot-app)
+- [github/copilot-cli-for-beginners — README](https://github.com/github/copilot-cli-for-beginners/blob/main/README.md)
+- [github/copilot-app-for-beginners — README](https://github.com/github/copilot-app-for-beginners/blob/main/README.md)
+- [copilot-app-for-beginners — Chapter 01 « Why Use the GitHub Copilot app? »](https://github.com/github/copilot-app-for-beginners/blob/main/01-tour-the-app/README.md)

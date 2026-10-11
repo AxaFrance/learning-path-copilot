@@ -36,8 +36,6 @@ description: "Donner à Copilot CLI les bons fichiers avec @, gérer les convers
 
 Dans Copilot CLI, le symbole `@` sert à référencer des fichiers et dossiers dans un prompt. Le cours donne trois motifs de base : `@file.py`, `@folder/` et `@file1.py @file2.py`.
 
-> Source : [copilot-cli-for-beginners — 02 Context and Conversations, The @ Syntax](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
-
 Dans Mon Sinistre, tu peux commencer petit :
 
 ```text
@@ -54,15 +52,9 @@ Compare le formatage des montants. Y a-t-il une duplication ?
 
 Le défaut D4 du sample est justement une duplication de formatage entre `CalculIndemnisation.FormaterMontant` et la méthode `Lister` du CLI.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)  
-> Source : [`CalculIndemnisation.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)  
-> Source : [`Program.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
-
 ### Fichier, dossier ou plusieurs fichiers ?
 
 Le cours explique que l'analyse d'un seul fichier est utile, mais que l'analyse multi-fichiers révèle les flux de données, duplications et problèmes d'architecture invisibles isolément.
-
-> Source : [copilot-cli-for-beginners — 02 Context and Conversations, Cross-File Intelligence](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
 
 | Besoin | Prompt conseillé | Pourquoi |
 |---|---|---|
@@ -72,8 +64,6 @@ Le cours explique que l'analyse d'un seul fichier est utile, mais que l'analyse 
 | Chercher un défaut connu | fichiers ciblés + symptôme | Meilleur signal. |
 
 Le cours recommande d'être spécifique : charger le fichier utile plutôt qu'un dossier entier préserve le contexte.
-
-> Source : [copilot-cli-for-beginners — 02 Context and Conversations, Understanding Context Windows](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
 
 :::tip Lien avec le module 311
 Le module [311 — Tokens & contexte](../03-ingenierie-de-contexte/311-tokens-contexte.md) explique pourquoi chaque fichier ajouté consomme une partie de la fenêtre de contexte. Ici, tu appliques cette théorie dans le CLI : tu charges ce qui sert à la décision, pas tout ce qui existe.
@@ -96,18 +86,11 @@ Compare uniquement le formatage des montants :
 
 Dans `CalculIndemnisation.FormaterMontant`, le domaine convertit des centimes en euros avec culture `fr-FR`, virgule et suffixe `€`. Dans `Program.cs`, la méthode `Lister` refait localement une logique proche sur `MontantEstimeCentimes`.
 
-> Source : [`CalculIndemnisation.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)  
-> Source : [`Program.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
-
 Cette duplication ne casse pas `verify.sh`, car les défauts volontaires du sample ne sont pas tous couverts par les tests.
-
-> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Conversations multi-tours
 
 Le cours montre que la conversation devient puissante quand les prompts se construisent les uns sur les autres : analyse, amélioration, puis tests.
-
-> Source : [copilot-cli-for-beginners — 02 Context and Conversations, Context-Aware Conversations](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
 
 Exemple Mon Sinistre :
 
@@ -128,8 +111,6 @@ Le point important : Copilot garde le fil de ce qui a déjà été lu et discut�
 
 Les sessions Copilot CLI sont automatiquement sauvegardées. Tu peux reprendre la plus récente avec `copilot --continue`, choisir une session avec `copilot --resume`, ou reprendre par nom si tu l'as renommée.
 
-> Source : [copilot-cli-for-beginners — 02 Context and Conversations, Session Management](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
-
 ```bash
 copilot --name mon-sinistre-d4
 
@@ -144,13 +125,9 @@ copilot --continue
 
 Le cours précise que chaque terminal ouvert a sa propre session et que `/resume` peut aussi s'utiliser depuis une session active.
 
-> Source : [copilot-cli-for-beginners — 02 Context and Conversations, Session Management](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
-
 ### Gérer la fenêtre de contexte
 
 La commande `/context` affiche l'usage de la fenêtre de contexte ; `/compact` résume l'historique pour libérer de la place ; `/new` termine la session en la sauvegardant et démarre une nouvelle conversation ; `/clear` abandonne la session courante sans historique sauvegardé.
-
-> Source : [copilot-cli-for-beginners — 02 Context and Conversations, Check and Manage Context](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md)
 
 ```text
 /context
@@ -161,13 +138,9 @@ La commande `/context` affiche l'usage de la fenêtre de contexte ; `/compact` r
 
 La documentation GitHub indique aussi que Copilot CLI gère automatiquement la compaction quand la conversation approche la limite de tokens, et que `/context` permet de visualiser l'usage.
 
-> Source : [GitHub Docs — GitHub Copilot CLI, Automatic context management](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli#automatic-context-management)
-
 ### Permissions et contexte hors dossier
 
 Par défaut, le cours explique que Copilot accède aux fichiers du dossier courant. Pour un autre dossier, tu peux ajouter un accès avec `copilot --add-dir` ou `/add-dir`, afficher les dossiers avec `/list-dirs`, ou lever les restrictions avec `--allow-all-paths`.
-
-> Source : [copilot-cli-for-beginners — Appendix Additional Context, Permission Patterns](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/additional-context.md)
 
 Dans ce bloc, tu n'as normalement pas besoin d'ajouter de dossier : tout l'exercice vit dans `samples/mon-sinistre`.
 
@@ -220,9 +193,11 @@ Dans ce bloc, tu n'as normalement pas besoin d'ajouter de dossier : tout l'exerc
 - [Module 424 — Copilot CLI : workflows de développement](./424-cli-workflows-dev.md) — passer de l'analyse à la correction testée.
 - [GitHub Docs — Using GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/overview)
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners — 02 Context and Conversations](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [github/copilot-cli-for-beginners — Appendix Additional Context](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/additional-context.md) — cours GitHub sous licence MIT, adapté en français.
 - [GitHub Docs — GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
 - [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
+- [`CalculIndemnisation.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)
+- [`Program.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)

@@ -22,10 +22,6 @@ Le module a un double objectif. D'abord **guide contributeur** : si tu veux ajou
 - expliquer pourquoi le reviewer démarre en **FRESH CONTEXT** et ce que ça coûte de violer cette règle ;
 - contribuer un module en lançant le pipeline et en interprétant ses verdicts (`CERTIFY`, `REVISE`, `REJECT`).
 
-> Source : [docs/learning-path/02-composition/208-workflows.md](./208-workflows.md)
-> Citation : « un agent racine pilote le flux et délègue chaque étape à un sous-agent spécialisé via `runSubagent`. »
-> Fetched : 2026-05-28
-
 ## Ce que tu vas apprendre
 
 1. La topologie du pipeline : un orchestrateur, trois sous-agents, un dossier d'état.
@@ -41,10 +37,6 @@ Le module a un double objectif. D'abord **guide contributeur** : si tu veux ajou
 
 Le pipeline expose **un seul agent invocable par un humain** : `handbook-chapter-orchestrator`. C'est l'unique porte d'entrée. Les trois sous-agents — `handbook-chapter-architect`, `handbook-chapter-writer`, `handbook-chapter-reviewer` — ne sont pas invoqués directement par l'utilisateur ; ils sont *spawnés* par l'orchestrateur en mode forcé.
 
-> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
-> Citation : « You are the only entry point — the user must not invoke `handbook-chapter-architect`, `handbook-chapter-writer`, or `handbook-chapter-reviewer` directly. »
-> Fetched : 2026-05-28
-
 Chaque sous-agent a un *concern* unique et le refuse au-delà.
 
 | Agent | Concern unique | Sortie | Ce qu'il refuse |
@@ -54,61 +46,29 @@ Chaque sous-agent a un *concern* unique et le refuse au-delà.
 | `writer` | Rédiger avec citations | `docs/learning-path/<bloc>/<slug>.md` | Décider la place, juger ses propres faits |
 | `reviewer` | Vérifier chaque fait contre la source | `review-round-N.md` | Éditer le draft |
 
-> Source : [.spec-handbook-copilot/2026-05-27-initial-design/plan.md](../../../.spec-handbook-copilot/2026-05-27-initial-design/plan.md)
-> Citation : « orchestrator | Séquencer + persister état | Ne fetch pas, ne rédige pas »
-> Fetched : 2026-05-28
-
 C'est exactement l'application du pattern *outside-in* du module 208 : l'orchestrateur connaît le *quoi* (la séquence) ; chaque sous-agent connaît le *comment* de son étape.
 
 ### Le single-writer interlock sur l'état persistant
 
 Tous les artefacts d'un chapitre vivent sous `.spec-handbook-copilot/runtime/<slug>/`. Un seul agent y écrit : l'orchestrateur. Les sous-agents *retournent* leur sortie comme message final, et c'est l'orchestrateur qui la persiste.
 
-> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
-> Citation : « You are the **only** writer under `.spec-handbook-copilot/runtime/<slug>/`. Sub-agents return artifacts as their final message; you persist them to disk yourself. »
-> Fetched : 2026-05-28
-
 Cette discipline a un nom : *single-writer interlock*. Elle élimine deux classes de bugs typiques des pipelines multi-agents : les écritures concurrentes qui se marchent dessus, et la perte de trace d'audit quand on cherche après coup *qui* a produit quel artefact. Ici, la réponse est toujours la même : l'orchestrateur a persisté X qu'il a reçu de Y.
 
 L'architect et le reviewer sont d'ailleurs explicitement contraints à *ne pas écrire de fichiers eux-mêmes*.
 
-> Source : [.github/agents/handbook-chapter-architect.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-architect.agent.md)
-> Citation : « return your placement plan as your final message. The orchestrator persists it ... You do not write files yourself. »
-> Fetched : 2026-05-28
-
 Seul le writer, par exception, écrit lui-même dans `docs/learning-path/<bloc>/<slug>.md` — car le draft n'est pas un artefact d'état mais le produit publié final.
-
-> Source : [.github/agents/handbook-chapter-writer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-writer.agent.md)
-> Citation : « Writes allowed: `docs/learning-path/<bloc>/<slug>.md` (create or overwrite only). »
-> Fetched : 2026-05-28
 
 ### Le contrat FRESH CONTEXT du reviewer
 
 Le reviewer est *adversarial*. Sa règle de démarrage est dure : il **doit** ignorer les sorties des rounds précédents, les notes du writer, et tout commentaire passé par l'orchestrateur au-delà du slug et du numéro de round.
 
-> Source : [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
-> Citation : « You start cold. You MUST NOT read: `review-round-{N-1}.md` or any prior review of this slug. »
-> Fetched : 2026-05-28
-
 Pourquoi ? Parce que la valeur du fact-check vient de l'indépendance. Si le reviewer lit les notes du writer, il hérite des biais du writer : il « voit » la quote dans le contexte voulu par l'auteur au lieu de la chercher dans le contexte réel de la source. Le re-fetch d'une URL devient une formalité au lieu d'un test.
 
-> Source : [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
-> Citation : « Warm-context review is the failure mode this agent exists to prevent. »
-> Fetched : 2026-05-28
-
 Concrètement, pour chaque citation du draft, le reviewer **re-fetche** la source, localise le verbatim, et compare avec ce qu'affirme le draft. Cinq verdicts possibles par claim : `VERIFIED`, `CHERRY-PICKED`, `UNSUPPORTED`, `UNFETCHABLE`, `OUTDATED`. C'est cette table qui fonde le verdict global.
-
-> Source : [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
-> Citation : « Re-fetch the cited URL or path ... Use a fresh tool call; do not trust the writer's quoted snippet without re-fetching. »
-> Fetched : 2026-05-28
 
 ### La boucle d'alignement bornée
 
 Writer et reviewer ne dialoguent pas directement. Ils alternent, médiés par l'orchestrateur, dans une boucle bornée à **3 rounds maximum**.
-
-> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
-> Citation : « Writer ↔ Reviewer alignment loop (bounded, max 3 rounds) ... For each round N from 1 to 3 »
-> Fetched : 2026-05-28
 
 La sortie dépend du verdict reviewer :
 
@@ -117,15 +77,7 @@ La sortie dépend du verdict reviewer :
 - `REVISE` avec N == 3 → sortie en **B10 HUMAN CHECKPOINT** : on demande à l'humain quoi faire.
 - `REJECT` → sortie immédiate en HUMAN CHECKPOINT.
 
-> Source : [.github/agents/handbook-chapter-orchestrator.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-orchestrator.agent.md)
-> Citation : « `REJECT` -> exit loop immediately. Go to Phase 4 REJECT path. »
-> Fetched : 2026-05-28
-
 La borne `N == 3` n'est pas un nombre choisi au hasard. C'est l'expression d'une discipline : *toute boucle d'agent doit avoir une sortie déterministe vers l'humain*. Une boucle non bornée, c'est un agent qui s'auto-justifie indéfiniment. Avec un plafond, on garantit que soit la qualité converge, soit un humain est convoqué pour trancher.
-
-> Source : [.spec-handbook-copilot/2026-05-27-initial-design/plan.md](../../../.spec-handbook-copilot/2026-05-27-initial-design/plan.md)
-> Citation : « PROSE Safety Boundaries | OK (S4 entre stages, B10 sortie de boucle) »
-> Fetched : 2026-05-28
 
 ## Démonstration : le pipeline en action sur **ce** chapitre
 
@@ -148,10 +100,6 @@ L'utilisateur a écrit (verbatim) : *« On va construire dans ressources une exp
 + - Créé : 2026-05-28
 ```
 
-> Source : [.spec-handbook-copilot/runtime/pipeline-agents-handbook/plan.md](../../../.spec-handbook-copilot/runtime/pipeline-agents-handbook/plan.md)
-> Citation : « Slug : `pipeline-agents-handbook` ... Stage courant : `architect` ... Round : 0 »
-> Fetched : 2026-05-28
-
 Le prompt initial parle de `ressources`. Le cadrage humain a corrigé : on reste dans `learning-path`. Cette correction est elle-même tracée dans le plan, ce qui te permet, en lisant l'artefact aujourd'hui, de comprendre pourquoi le chapitre est dans `02-composition` et pas dans `docs/ressources/`.
 
 ### Étape 2 — L'architect émet `placement.md`
@@ -171,23 +119,11 @@ L'orchestrateur a *spawné* l'architect avec pour seule consigne : « plan place
 + `docs/learning-path/02-composition/211-pipeline-agents-handbook.md`
 ```
 
-> Source : [.spec-handbook-copilot/runtime/pipeline-agents-handbook/placement.md](../../../.spec-handbook-copilot/runtime/pipeline-agents-handbook/placement.md)
-> Citation : « **Verdict**: INSERT ... Inséré en fin du bloc `02-composition`, après `210-copilot-cli.md`. Slug `pipeline-agents-handbook`, numéro proposé `211`. »
-> Fetched : 2026-05-28
-
 Note la **discipline de scope** : l'architect a refusé d'écrire le moindre paragraphe du chapitre. Il a seulement décidé *où* et *avec quels prérequis*. Le slug, le numéro et le chemin sont **gelés** ; le writer n'a pas le droit de les changer.
-
-> Source : [.github/agents/handbook-chapter-architect.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-architect.agent.md)
-> Citation : « Any request to edit a module or to draft chapter content -> refusal: "Out of scope. I only emit placement plans. Use `handbook-chapter-writer` to draft." »
-> Fetched : 2026-05-28
 
 ### Étape 3 — Le writer rédige avec citations
 
 L'orchestrateur a alors *spawné* le writer en lui disant : « round 1 pour le slug `pipeline-agents-handbook` ». Le writer a rechargé `plan.md` et `placement.md`, listé son corpus (les quatre `.agent.md`, le design packet, le module 208), fait des `read_file` pour chaque source, puis écrit la prose. Chaque affirmation factuelle est suivie d'un bloc `> Source: / > Citation: / > Fetched:`. La page que tu lis est l'output de ce round.
-
-> Source : [.github/agents/handbook-chapter-writer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-writer.agent.md)
-> Citation : « No claim ships without a fetched source. Training recall is permitted to suggest what to look up — never to assert a fact. »
-> Fetched : 2026-05-28
 
 ### Étape 4 — Le reviewer fact-check à froid
 
@@ -201,10 +137,6 @@ Une fois le draft écrit, l'orchestrateur *spawne* le reviewer dans un **context
 | ...| ...      | ...              | ...                     | ...         |
 | U1 | uncited  | ## Démo          | -                       | UNCITED     |
 ```
-
-> Source : [.github/agents/handbook-chapter-reviewer.agent.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/.github/agents/handbook-chapter-reviewer.agent.md)
-> Citation : « 0 `UNSUPPORTED` AND 0 `CHERRY-PICKED` AND 0 `UNCITED` AND ≤ 2 `PEDAGOGICAL-GAP` AND ≤ 1 `OUTDATED` -> CERTIFY. »
-> Fetched : 2026-05-28
 
 Si le verdict est `CERTIFY`, l'orchestrateur sort et te dit que le draft est prêt. Sinon il relance un round. Si on a atteint 3 sans converger, ou si le verdict est `REJECT`, l'orchestrateur sort en HUMAN CHECKPOINT et te demande quoi faire.
 

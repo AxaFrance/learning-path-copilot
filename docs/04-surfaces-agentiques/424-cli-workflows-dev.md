@@ -36,8 +36,6 @@ description: "Utiliser Copilot CLI pour revue de code, debug, génération de te
 
 Le chapitre 03 du cours Copilot CLI organise les usages de développement en cinq workflows : revue de code, refactoring, debugging, génération de tests et intégration Git.
 
-> Source : [copilot-cli-for-beginners — 03 Development Workflows](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md)
-
 Sur Mon Sinistre, tu vas les enchaîner dans un seul fil :
 
 ```mermaid
@@ -52,13 +50,9 @@ flowchart LR
 
 Le sample Mon Sinistre demande que chaque exercice soit terminé quand le comportement est observable, que `./scripts/verify.sh` est vert, et que le diff proposé par Copilot a été relu.
 
-> Source : [Mon Sinistre — README, Critère de réussite des exercices](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 ### Revue de code : cibler le risque
 
 Le cours montre qu'une revue efficace nomme les catégories recherchées : validation, erreurs, cas limites, sécurité, maintenabilité. Il présente aussi `/review`, un agent spécialisé pour analyser les changements staged et unstaged.
-
-> Source : [copilot-cli-for-beginners — 03 Development Workflows, Code Review](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md)
 
 Avant de corriger D1, demande une revue focalisée :
 
@@ -76,13 +70,9 @@ Réponds avec une checklist priorisée.
 
 Le domaine stocke les montants en centimes (`long`) pour éviter les erreurs d'arrondi.
 
-> Source : [Mon Sinistre — README, Règles métier](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 ### Debug : partir du symptôme
 
 Le cours insiste sur le fait qu'un bon prompt de debug décrit le symptôme et l'attendu, plutôt qu'une demande vague « trouve les bugs ».
-
-> Source : [copilot-cli-for-beginners — 03 Development Workflows, Debugging](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md)
 
 Pour D1, le symptôme est observable :
 
@@ -92,11 +82,7 @@ dotnet run --project src/MonSinistre.Cli -- show SIN-1004
 
 Le défaut D1 indique que `show SIN-1004` affiche une indemnisation de **-80,00 €** parce que la franchise est appliquée sans plancher.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 Le fichier `CalculIndemnisation.Calculer` retourne aujourd'hui `sinistre.MontantEstimeCentimes - contrat.FranchiseCentimes` quand le sinistre est couvert.
-
-> Source : [`CalculIndemnisation.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)
 
 Prompt utile :
 
@@ -113,12 +99,7 @@ Explique la cause probable et propose d'abord le test xUnit minimal.
 
 Le cours recommande de préciser le framework quand tu demandes des tests, sinon l'outil peut générer une syntaxe qui ne correspond pas au projet.
 
-> Source : [copilot-cli-for-beginners — 03 Development Workflows, Test Generation](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md)
-
 Ici, le framework est xUnit et les tests existants vivent dans `tests/MonSinistre.Domain.Tests`.
-
-> Source : [Mon Sinistre — README, Structure](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)  
-> Source : [`CalculIndemnisationTests.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/tests/MonSinistre.Domain.Tests/CalculIndemnisationTests.cs)
 
 Demande :
 
@@ -132,17 +113,11 @@ Puis applique la correction minimale dans CalculIndemnisation.Calculer.
 
 La correction métier attendue est un plancher à zéro après déduction de la franchise, tout en conservant `0` pour les sinistres non couverts.
 
-> Source : [Mon Sinistre — README, Règles métier](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 ### D2 en bonus : délai en jours ouvrés
 
 D2 est le défaut où `SIN-1004` est déclaré du vendredi 2026-09-18 au vendredi 2026-09-25 et devrait être dans les délais car le délai métier est de 5 jours ouvrés.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 Le code actuel de `DelaiDeclaration.EstDansLesDelais` soustrait les `DayNumber`, donc compte des jours calendaires.
-
-> Source : [`DelaiDeclaration.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/DelaiDeclaration.cs)
 
 Pour le bonus, garde la même boucle :
 
@@ -159,8 +134,6 @@ Propose ensuite une correction minimale qui ignore samedi et dimanche.
 
 Le sample ne fournit pas de workflow GitHub Actions ; il s'appuie sur `verify.sh` ou `verify.ps1` en local.
 
-> Source : [Mon Sinistre — README, Pas de CI fournie](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 ```bash
 ./scripts/verify.sh
 # Windows
@@ -174,8 +147,6 @@ Une équipe peut ajouter son propre workflow GitHub Actions qui lance `./samples
 ### Relire le diff et préparer Git
 
 Le cours présente `/diff` pour visualiser les changements faits dans la session et `/review` pour analyser les changements staged ou unstaged. Il montre aussi l'usage de `git diff --staged` dans un prompt `copilot -p` pour générer un message de commit.
-
-> Source : [copilot-cli-for-beginners — 03 Development Workflows, Git Integration](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md)
 
 Boucle recommandée :
 
@@ -250,9 +221,12 @@ Ne laisse pas Copilot remplacer ta relecture : vérifie que le test échoue bien
 - [Module 428 — Copilot CLI non interactif](./428-cli-non-interactif.md) — automatiser prudemment avec `copilot -p`.
 - [Module 429 — Atelier bout en bout](./429-cli-atelier-bout-en-bout.md) — appliquer plan, code, tests et PR sur un changement plus large.
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners — 03 Development Workflows](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [GitHub Docs — GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
 - [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
 - [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
+- [`CalculIndemnisation.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)
+- [`CalculIndemnisationTests.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/tests/MonSinistre.Domain.Tests/CalculIndemnisationTests.cs)
+- [`DelaiDeclaration.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/DelaiDeclaration.cs)

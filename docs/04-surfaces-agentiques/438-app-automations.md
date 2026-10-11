@@ -15,8 +15,6 @@ description: "Créer une automation de rapport PR en lecture seule, commencer en
 
 À la fin de ce module, tu sais créer une automation de préparation des PR Mon Sinistre en lecture seule, la tester en local, puis décider prudemment si elle mérite un déclencheur Daily, CRON, événementiel ou cloud.
 
-> Source : [copilot-app-for-beginners — Chapter 07 « Automations »](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md) et [Using automations in the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/using-automations)
-
 ## Ce que tu vas apprendre
 
 1. Les quatre pièces d'une automation : trigger, prompt, outils, revue.
@@ -30,11 +28,7 @@ description: "Créer une automation de rapport PR en lecture seule, commencer en
 
 Une automation sauvegarde une tâche d'agent récurrente. Dans l'app, elle peut être lancée à la demande ou sur calendrier ; la documentation mentionne aussi des automations locales et cloud.
 
-> Source : [Using automations in the GitHub Copilot app — About automations](https://docs.github.com/en/copilot/how-tos/github-copilot-app/using-automations)
-
 Le cours résume une automation en quatre questions : qu'est-ce qui la déclenche, quel prompt exécuter, quels outils sont nécessaires, et où relire le résultat.
-
-> Source : [copilot-app-for-beginners — Chapter 07 « Automation Is a Saved Agent Run »](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md)
 
 ```mermaid
 flowchart LR
@@ -48,15 +42,9 @@ flowchart LR
 
 Le cours recommande de commencer par une automation manuelle et locale. Elle ne tourne que quand tu la démarres, ce qui permet de tester le prompt, inspecter le résultat, réduire le périmètre et éviter les exécutions surprises.
 
-> Source : [copilot-app-for-beginners — Chapter 07 « Start Manual and Local »](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md)
-
 Pour Mon Sinistre, l'automation de départ doit être un rapport de préparation des PR créées par `seed.sh`. Le script crée trois PR d'entraînement avec le label `mon-sinistre` : une prête à merger, une qui casse `verify.sh`, et une avec un commentaire de revue sur le formatage des montants.
 
-> Source : [README Mon Sinistre — Script de seed](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md#script-de-seed-modules-434-et-438) et [`samples/mon-sinistre/scripts/seed.sh`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/scripts/seed.sh)
-
 La première version doit être explicitement **lecture seule**. Elle peut lister les PR, résumer les statuts, repérer commentaires et échecs, mais ne doit pas poster de commentaire, changer de label, approuver ni merger.
-
-> Source : [copilot-app-for-beginners — Chapter 07 « Avoid first automations that write code, post comments, change labels, approve reviews, or merge pull requests »](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md)
 
 ### Prompt de rapport PR Mon Sinistre
 
@@ -80,8 +68,6 @@ Si une information manque, écris « non vérifié » au lieu d'inventer.
 
 Le projet Mon Sinistre n'embarque volontairement aucun workflow GitHub Actions. Quand le rapport parle de validation, il doit donc pointer vers `./samples/mon-sinistre/scripts/verify.sh` plutôt que prétendre qu'une CI existe.
 
-> Source : [README Mon Sinistre — Pas de CI fournie](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md#pas-de-ci-fournie)
-
 :::note Workflow d'équipe possible
 Une équipe peut ajouter son propre workflow GitHub Actions pour lancer `verify.sh` sur les PR. Ce module ne fournit pas de YAML : il se limite à la pratique app et au script local du sample.
 :::
@@ -90,33 +76,21 @@ Une équipe peut ajouter son propre workflow GitHub Actions pour lancer `verify.
 
 Une fois le rapport manuel utile, tu peux passer à un déclencheur Daily pour un résumé du matin, ou à CRON si tu as besoin d'une expression plus précise. L'app valide l'expression CRON locale et affiche une prévisualisation lisible.
 
-> Source : [Using automations in the GitHub Copilot app — Creating an automation](https://docs.github.com/en/copilot/how-tos/github-copilot-app/using-automations) et [copilot-app-for-beginners — Chapter 07 « The app also supports Hourly, Weekly, and CRON schedules »](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md)
-
 Si le rapport devient trop long, filtre : `label:mon-sinistre`, PR ouvertes seulement, branches `entrainement/*`, ou PR avec commentaire de revue. Une automation utile réduit l'attention nécessaire ; elle ne doit pas devenir une notification de plus.
 
 ### Event triggers et injection de prompt
 
 Les déclencheurs événementiels lancent l'automation quand un événement arrive, par exemple une issue ou une pull request. La documentation GitHub cite les triggers de planning, d'issue créée, de pull request ouverte et de pull request synchronisée pour les automations cloud.
 
-> Source : [About Copilot automations — Triggers](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-automations)
-
 Ces triggers lisent du texte potentiellement non fiable : titre de PR, description, commentaire, issue. C'est un contexte classique d'injection de prompt. La règle de départ est donc : lecture seule, filtre étroit, aucun outil d'écriture tant que plusieurs runs n'ont pas prouvé leur qualité.
-
-> Source : [copilot-app-for-beginners — Chapter 07 « Keeping Event Triggers Safe »](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md) et [About Copilot automations — Security and safety](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-automations)
 
 ### Cloud automations : utile, mais pas par défaut
 
 Une automation locale tourne depuis ta machine et dépend de l'app ouverte. Une automation cloud tourne sur l'infrastructure hébergée, donc elle peut s'exécuter quand ton ordinateur est fermé.
 
-> Source : [copilot-app-for-beginners — Chapter 07 « Local versus cloud automations »](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md) et [Using automations in the GitHub Copilot app — Local automations and Cloud automations](https://docs.github.com/en/copilot/how-tos/github-copilot-app/using-automations)
-
 GitHub indique que les automations cloud nécessitent notamment un dépôt privé ou interne, l'activation de Copilot cloud agent, et des autorisations d'organisation compatibles. Chaque run cloud démarre une session cloud agent qui consomme des minutes GitHub Actions et des crédits IA, facturés à la personne qui a créé l'automation.
 
-> Source : [About Copilot automations — Availability and permissions](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-automations) et [About Copilot automations — Billing](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-automations)
-
 Si tu passes ce rapport PR en cloud, sélectionne seulement les outils de lecture nécessaires : lister/rechercher/lire les PR, et éventuellement lire les checks. Ne sélectionne pas les outils de création de PR, push, labels, commentaires ou merge pour un rapport.
-
-> Source : [copilot-app-for-beginners — Chapter 07 « Select only the tools the task requires »](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md)
 
 ## Exercice
 
@@ -151,9 +125,10 @@ Si tu passes ce rapport PR en cloud, sélectionne seulement les outils de lectur
 - [437 — Canvases](./437-app-canvases.md) — suivre le progrès et les preuves dans une surface visible.
 - [105 — Hooks](../01-fondations/105-hooks.md) — comparer déclenchement local et automatisation.
 
-## Source
+## Sources
 
 - [github/copilot-app-for-beginners — Chapter 07](https://github.com/github/copilot-app-for-beginners/blob/main/07-automations/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [Using automations in the GitHub Copilot app](https://docs.github.com/en/copilot/how-tos/github-copilot-app/using-automations)
 - [About Copilot automations](https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-automations)
 - [README Mon Sinistre](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
+- [`samples/mon-sinistre/scripts/seed.sh`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/scripts/seed.sh)

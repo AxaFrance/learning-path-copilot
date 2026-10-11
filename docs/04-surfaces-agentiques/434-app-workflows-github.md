@@ -48,8 +48,6 @@ Le script crée :
 - 3 pull requests d'entraînement ;
 - des branches dédiées pour éviter de toucher ta branche par défaut.
 
-> Source : [`samples/mon-sinistre/scripts/seed.sh`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/scripts/seed.sh).
-
 ## Contenu pédagogique
 
 ### Issue → session
@@ -206,7 +204,7 @@ Compare le domaine et le CLI, propose une correction ciblée, puis valide avec v
 - [GitHub Actions — Quickstart](https://docs.github.com/en/actions/writing-workflows/quickstart)
 - [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
-## Source
+## Sources
 
 - [github/copilot-app-for-beginners — 03 Development Workflows](https://github.com/github/copilot-app-for-beginners/blob/main/03-development-workflows/README.md)
 - [`samples/mon-sinistre/README.md`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

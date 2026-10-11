@@ -35,11 +35,7 @@ description: "Choisir entre les modes Interactive, Plan et Programmatic, utilise
 
 GitHub Copilot CLI propose une interface interactive et une interface programmatique. Dans l'interface interactive, le mode par défaut sert à discuter et agir progressivement ; le mode Plan construit un plan avant d'écrire du code.
 
-> Source : [GitHub Docs — GitHub Copilot CLI, Modes of use](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli#modes-of-use)
-
 Le cours pour débutants présente trois usages : **Interactive** pour explorer et itérer, **Plan** pour cartographier une tâche complexe avant exécution, et **Programmatic** avec `-p` pour une réponse ponctuelle qui sort ensuite.
-
-> Source : [copilot-cli-for-beginners — 01 First Steps](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
 
 | Situation dans Mon Sinistre | Mode conseillé | Pourquoi |
 |---|---|---|
@@ -58,8 +54,6 @@ copilot
 
 Dans ce mode, chaque message enrichit la conversation : tu peux demander une analyse, répondre à une question, ajouter un fichier avec `@`, demander une reformulation, puis décider si tu acceptes une modification.
 
-> Source : [copilot-cli-for-beginners — 01 First Steps, Interactive Mode](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
-
 Exemple adapté :
 
 ```text
@@ -69,14 +63,9 @@ Explique les transitions autorisées et repère celles qui rendent un statut dé
 
 Le domaine Mon Sinistre définit `Indemnise` et `Refuse` comme des statuts définitifs dans son README métier.
 
-> Source : [Mon Sinistre — README, Règles métier](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
-
 ### Mode Plan : penser avant de coder
 
 Le mode Plan aide à produire une approche étape par étape avant toute écriture de code. Le cours indique qu'on peut l'activer avec `/plan`, avec `copilot --plan`, ou en cyclant les modes avec `Shift+Tab`.
-
-> Source : [copilot-cli-for-beginners — 01 First Steps, Plan Mode](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)  
-> Source : [GitHub Docs — GitHub Copilot CLI, Interactive interface](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli#interactive-interface)
 
 Pour une anomalie métier, Plan mode est le bon réflexe : tu demandes à Copilot d'identifier les fichiers, les tests à ajouter, la correction minimale, puis les commandes de validation. Tu ne demandes pas « corrige tout » au premier message.
 
@@ -90,14 +79,9 @@ Pour une anomalie métier, Plan mode est le bon réflexe : tu demandes à Copilo
 
 Le défaut D3 du sample est précisément que `TransitionStatut.EstAutorisee(Refuse, Indemnise)` renvoie `true`.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)  
-> Source : [`TransitionStatut.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/TransitionStatut.cs)
-
 ### Mode Programmatic : une question, une sortie
 
 Le mode programmatique s'utilise avec `-p` ou `--prompt`. La CLI traite la demande puis quitte.
-
-> Source : [GitHub Docs — GitHub Copilot CLI, Programmatic interface](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli#programmatic-interface)
 
 Exemples :
 
@@ -108,20 +92,13 @@ copilot -p "Donne la commande dotnet test pour cette solution"
 
 La documentation de démarrage indique aussi `-s` pour ne sortir que la réponse de Copilot, sans informations d'usage additionnelles.
 
-> Source : [GitHub Docs — Getting started with GitHub Copilot CLI](https://docs.github.com/en/copilot/get-started/cli-quickstart)
-
 :::caution Prudence avec l'approbation automatique
 La documentation avertit que les options d'approbation automatique donnent à Copilot les mêmes accès que toi sur ton ordinateur pour les fichiers et commandes autorisés. Ne les utilise que sur des prompts écrits par toi, dans un dossier de confiance.
 :::
 
-> Source : [GitHub Docs — GitHub Copilot CLI, Programmatic interface](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli#programmatic-interface)
-
 ### Slash commands essentielles par famille
 
 Les slash commands sont le tableau de bord de la session interactive. Le cours liste les commandes de base et la référence GitHub détaille les commandes disponibles.
-
-> Source : [copilot-cli-for-beginners — 01 First Steps, Essential Slash Commands](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)  
-> Source : [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
 
 | Famille | Commandes à retenir | Usage dans Mon Sinistre |
 |---|---|---|
@@ -135,13 +112,9 @@ Les slash commands sont le tableau de bord de la session interactive. Le cours l
 
 `/ask` pose une question sans polluer l'historique de la conversation en cours, tandis que `/clear` abandonne la session courante et repart à neuf.
 
-> Source : [copilot-cli-for-beginners — 01 First Steps, Essential Slash Commands](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
-
 ### Changer de modèle
 
 La commande `/model` affiche les modèles disponibles et permet de changer le modèle de la session courante. La commande `/config model` permet de définir un défaut persistant pour les sessions futures.
-
-> Source : [copilot-cli-for-beginners — 01 First Steps, Switching Models](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
 
 ```text
 /model
@@ -149,8 +122,6 @@ La commande `/model` affiche les modèles disponibles et permet de changer le mo
 ```
 
 Le cours précise que les modèles disponibles dépendent de ton abonnement et de ta région, et que `Auto` laisse Copilot choisir le modèle adapté.
-
-> Source : [copilot-cli-for-beginners — 01 First Steps, Switching Models](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md)
 
 Pour Mon Sinistre, garde une règle simple : modèle standard ou `Auto` pour expliquer un fichier ; modèle plus fort seulement si le plan devient transversal, ambigu ou risqué.
 
@@ -197,9 +168,11 @@ Pour Mon Sinistre, garde une règle simple : modèle standard ou `Auto` pour exp
 - [Module 423 — Copilot CLI : contexte et conversations](./423-cli-contexte-conversations.md) — donner les bons fichiers à Copilot.
 - [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
 
-## Source
+## Sources
 
 - [github/copilot-cli-for-beginners — 01 First Steps](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [GitHub Docs — GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
 - [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
 - [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
+- [`TransitionStatut.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/TransitionStatut.cs)
+- [GitHub Docs — Getting started with GitHub Copilot CLI](https://docs.github.com/en/copilot/get-started/cli-quickstart)

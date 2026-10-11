@@ -42,8 +42,6 @@ Un **git worktree** est un autre dossier de travail connecté au même dépôt G
 | **Branche** | Ligne de travail Git dédiée à une correction ou une exploration |
 | **Worktree** | Dossier séparé lié au même dépôt, souvent associé à une branche de session |
 
-> Source : [copilot-app-for-beginners — appendices/git-worktrees.md](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/git-worktrees.md).
-
 Avec un worktree, ton dossier principal peut rester propre pendant qu'une session corrige D1 et qu'une autre analyse D4. Les diffs, terminaux et aperçus restent attachés à la bonne session.
 
 ### Où la session travaille
@@ -149,7 +147,7 @@ Propose un plan de factorisation et les validations à lancer. Ne modifie aucun 
 - [Git worktrees — appendice du cours GitHub](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/git-worktrees.md)
 - [Slash commands for the GitHub Copilot app](https://docs.github.com/en/copilot/reference/github-copilot-app-reference/slash-commands)
 
-## Source
+## Sources
 
 - [github/copilot-app-for-beginners — 02 Sessions, Worktrees, and Context](https://github.com/github/copilot-app-for-beginners/blob/main/02-sessions-worktrees-context/README.md)
 - [github/copilot-app-for-beginners — Git Worktrees appendix](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/git-worktrees.md)
