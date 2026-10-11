@@ -329,3 +329,7 @@ Pour creuser :
 - [Module 207 — APM](./207-apm.md) — manifeste et lockfile.
 - [Module 209 — Plugins](./209-plugins.md) — scopes d'installation et sécurité d'un plugin.
 - [Module 105 — Hooks](../01-fondations/105-hooks.md) — déclencheurs et cycle de vie.
+
+## Module suivant
+
+**Suivant** : [214 — Dynamic workflows — orchestrer en code](./214-dynamic-workflows.md)

@@ -29,6 +29,8 @@
 | 210 | Copilot CLI |
 | 211 | Pipeline agents handbook |
 | 212 | LSP |
+| 213 | Distribuer ses primitives |
+| 214 | Dynamic workflows |
 
 ### Bloc 03 — Ingénierie de contexte
 
