@@ -150,7 +150,7 @@ Toujours sans modifier de fichier.
 - [432 — Sessions, worktrees et contexte](./432-app-sessions-worktrees-contexte.md)
 - [Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)
 
-## Sources
+## Source
 
 - [github/copilot-app-for-beginners — 01 Tour the App](https://github.com/github/copilot-app-for-beginners/blob/main/01-tour-the-app/README.md)
 - [GitHub Docs — Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)

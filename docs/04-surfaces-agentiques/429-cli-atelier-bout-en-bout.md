@@ -15,7 +15,7 @@ description: "Mener une fonctionnalité Mon Sinistre de bout en bout avec Copilo
 
 À la fin de ce module, tu sais mobiliser toute la série CLI pour livrer une petite évolution de Mon Sinistre : ajouter la formule `TousRisquesPlus`, écrire les tests associés, lancer `verify.sh`, relire le diff et préparer une PR. Le bonus te propose aussi de corriger le défaut D2 sur les jours ouvrés.
 
-> Source : [copilot-cli-for-beginners — Chapter 07: Putting It All Together](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md) et [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+> Source : [copilot-cli-for-beginners — Chapter 07: Putting It All Together](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md) et [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ## Ce que tu vas apprendre
 
@@ -35,11 +35,11 @@ Le chapitre final du cours CLI propose une boucle complète : rassembler le cont
 
 Pour Mon Sinistre, tu vas appliquer cette boucle à une évolution métier d'atelier : ajouter `TousRisquesPlus`, une nouvelle formule demandée par l'exercice. Le dépôt de départ contient déjà les formules `Tiers`, `TiersPlus` et `TousRisques`, ce qui donne le point d'insertion naturel.
 
-> Source : [Mon Sinistre — Formule.cs](../../samples/mon-sinistre/src/MonSinistre.Domain/Formule.cs)
+> Source : [Mon Sinistre — Formule.cs](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/Formule.cs)
 
 La règle existante est : `Tiers` ne couvre pas les dommages propres, `TiersPlus` couvre bris de glace et vol, `TousRisques` couvre tout. L'évolution doit donc être ajoutée sans casser les tests existants.
 
-> Source : [Mon Sinistre — README, « Règles métier »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Règles métier »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Réutiliser les modules 421 à 428
 
@@ -77,11 +77,11 @@ Prévois les tests xUnit et la validation ./scripts/verify.sh. Ne modifie rien a
 
 La modification naturelle commence par l'énumération `Formule`, puis la règle de couverture. Pour la franchise à 0 sur bris de glace, évite de dupliquer du formatage ou d'introduire des montants en euros dans le domaine : les montants restent des centimes.
 
-> Source : [Mon Sinistre — README, « Les montants sont stockés en centimes »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Les montants sont stockés en centimes »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Le test le plus important doit prouver que `TousRisquesPlus` couvre `BrisDeGlace`, `Vol` et `Collision`. Un autre test doit prouver que l'indemnisation d'un bris de glace avec `TousRisquesPlus` ne retire pas la franchise.
 
-> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Demande ensuite l'implémentation :
 
@@ -97,7 +97,7 @@ Après chaque changement significatif, inspecte le diff. La revue humaine reste 
 
 Le sample Mon Sinistre n'embarque pas de CI fournie. Le critère commun est `./scripts/verify.sh`, qui restaure, compile avec avertissements traités comme erreurs, puis lance les tests.
 
-> Source : [Mon Sinistre — README, « Pas de CI fournie »](../../samples/mon-sinistre/README.md) et [Mon Sinistre — README, « Critère de réussite des exercices »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Pas de CI fournie »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md) et [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ```bash
 cd samples/mon-sinistre
@@ -130,7 +130,7 @@ Si ce sample devient un projet d'équipe, elle peut ajouter sa propre CI pour la
 
 Le défaut D2 indique que le délai de déclaration utilise des jours calendaires au lieu de jours ouvrés. Le symptôme donné est `SIN-1004` : du vendredi 2026-09-18 au vendredi 2026-09-25, le code affiche « Dans les délais : non » alors que cela représente 5 jours ouvrés.
 
-> Source : [Mon Sinistre — README, « Défauts volontaires »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Défauts volontaires »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Si tu fais le bonus, traite-le comme une deuxième mini-PR logique : plan séparé, tests dédiés, correction de `DelaiDeclaration`, puis `verify.sh`. N'entremêle pas ce bonus avec `TousRisquesPlus` si ton objectif est une PR facile à relire.
 
@@ -203,4 +203,4 @@ git diff -- samples/mon-sinistre
 
 - [github/copilot-cli-for-beginners — Chapter 07](https://github.com/github/copilot-cli-for-beginners/blob/main/07-putting-it-together/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [github/copilot-cli-for-beginners — Chapter 01](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md) et [Chapter 03](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md) — modes et boucle développement.
-- [GitHub Copilot CLI](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) · [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+- [GitHub Copilot CLI](https://docs.github.com/copilot/concepts/agents/about-copilot-cli) · [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

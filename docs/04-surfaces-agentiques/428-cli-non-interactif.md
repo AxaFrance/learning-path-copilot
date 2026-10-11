@@ -59,7 +59,7 @@ Préfère donc une règle simple : `--allow-all` uniquement dans un dépôt de c
 
 Pour Mon Sinistre, l'automatisation de base ne doit pas pousser, merger ou publier. Elle peut demander une revue ciblée, écrire un rapport dans la sortie standard, puis lancer la validation locale.
 
-> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Exemple de script à créer dans ton fork, par exemple `scripts/revue-copilot-locale.sh` à la racine de ton fork :
 
@@ -89,7 +89,7 @@ Même si le prompt demande de ne rien modifier, inspecte toujours `git status` a
 
 Le cours CLI contient un appendice qui montre des workflows GitHub Actions pour automatiser des revues Copilot sur pull request. Dans ce handbook, le projet Mon Sinistre est volontairement un sample sans CI fournie : tu expliques l'idée, mais tu ne fournis pas de workflow YAML complet.
 
-> Source : [copilot-cli-for-beginners — Appendix: CI/CD Integration](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/ci-cd-integration.md) et [Mon Sinistre — README, « Pas de CI fournie »](../../samples/mon-sinistre/README.md)
+> Source : [copilot-cli-for-beginners — Appendix: CI/CD Integration](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/ci-cd-integration.md) et [Mon Sinistre — README, « Pas de CI fournie »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Une équipe peut ajouter son propre workflow plus tard : checkout du dépôt, installation du SDK .NET, installation éventuelle du CLI, authentification conforme à sa politique, appel borné à Copilot, puis `./samples/mon-sinistre/scripts/verify.sh`. Mais ce module ne doit pas livrer ce YAML, car les permissions, secrets, runners et règles de sécurité dépendent de l'organisation.
 

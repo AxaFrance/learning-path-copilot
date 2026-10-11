@@ -162,7 +162,7 @@ Ne modifie aucun fichier.
 - [Getting started with the GitHub Copilot app](https://docs.github.com/en/copilot/get-started/quickstart-copilot-app)
 - [Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)
 
-## Sources
+## Source
 
 - [github/copilot-app-for-beginners — 00 Setup](https://github.com/github/copilot-app-for-beginners/blob/main/00-setup/README.md)
 - [github/copilot-app-for-beginners — 01 Tour the App](https://github.com/github/copilot-app-for-beginners/blob/main/01-tour-the-app/README.md)

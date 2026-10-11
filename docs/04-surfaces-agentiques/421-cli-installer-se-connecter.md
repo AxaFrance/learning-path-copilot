@@ -111,7 +111,7 @@ copilot
 
 Le projet **Mon Sinistre** est une solution .NET 10 avec un domaine métier, un CLI, une application web, des tests xUnit et des scripts `verify.sh` / `verify.ps1`.
 
-> Source : [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 :::caution Dossier de travail
 Ne démarre pas une session au hasard dans ton répertoire personnel. Place-toi dans `samples/mon-sinistre` pour que les chemins `@src/...` soient courts, pertinents et limités au sample.
@@ -149,7 +149,7 @@ La syntaxe `@` permet de référencer un fichier, un dossier ou plusieurs fichie
 
 Le fichier `src/MonSinistre.Cli/Program.cs` charge le portefeuille depuis `data/sinistres.json` ou depuis `MON_SINISTRE_DATA`, expose les commandes `list`, `show` et `declare`, affiche les détails d'un sinistre, vérifie couverture et délai, puis calcule l'indemnisation via le domaine.
 
-> Source : [`samples/mon-sinistre/src/MonSinistre.Cli/Program.cs`](../../samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
+> Source : [`samples/mon-sinistre/src/MonSinistre.Cli/Program.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
 
 ### Codespaces : zéro installation locale
 
@@ -208,4 +208,4 @@ Le module [210 — Copilot CLI](../02-composition/210-copilot-cli.md) parlait de
 - [github/copilot-cli-for-beginners — 00 Quick Start](https://github.com/github/copilot-cli-for-beginners/blob/main/00-quick-start/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [GitHub Docs — Getting started with GitHub Copilot CLI](https://docs.github.com/en/copilot/get-started/cli-quickstart)
 - [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
-- [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+- [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

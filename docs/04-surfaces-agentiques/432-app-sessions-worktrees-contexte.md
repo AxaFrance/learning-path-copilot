@@ -149,7 +149,7 @@ Propose un plan de factorisation et les validations à lancer. Ne modifie aucun 
 - [Git worktrees — appendice du cours GitHub](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/git-worktrees.md)
 - [Slash commands for the GitHub Copilot app](https://docs.github.com/en/copilot/reference/github-copilot-app-reference/slash-commands)
 
-## Sources
+## Source
 
 - [github/copilot-app-for-beginners — 02 Sessions, Worktrees, and Context](https://github.com/github/copilot-app-for-beginners/blob/main/02-sessions-worktrees-context/README.md)
 - [github/copilot-app-for-beginners — Git Worktrees appendix](https://github.com/github/copilot-app-for-beginners/blob/main/appendices/git-worktrees.md)

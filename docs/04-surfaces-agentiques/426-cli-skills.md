@@ -92,13 +92,13 @@ Les commandes utiles côté CLI sont :
 
 Dans Mon Sinistre, la skill `regles-gestion-sinistre` doit rappeler les règles stables : `Tiers` ne couvre pas les dommages propres, `TiersPlus` couvre bris de glace et vol, `TousRisques` couvre tout, l'indemnisation ne doit pas être négative, la déclaration se calcule en jours ouvrés, et les statuts `Indemnise` et `Refuse` sont définitifs.
 
-> Source : [Mon Sinistre — README, « Règles métier »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Règles métier »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Garde-fous de validation
 
 Une bonne skill ne se limite pas à lister des règles. Elle décrit aussi la preuve attendue. Pour ce bloc, la preuve est toujours locale : `./scripts/verify.sh` depuis `samples/mon-sinistre`, ou `pwsh ./scripts/verify.ps1` sous PowerShell.
 
-> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Critère de réussite des exercices »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ```mermaid
 flowchart LR
