@@ -46,7 +46,7 @@ Les emplacements utiles sont les suivants :
 
 Pour Mon Sinistre, le défaut D5 est précisément l'absence de `.github/copilot-instructions.md`. Le projet sait déjà dans son README que les montants sont stockés en centimes (`long`) et que le vocabulaire métier est en français, mais Copilot ne reçoit pas encore ces règles comme contexte automatique.
 
-> Source : [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Ce fichier doit rester court et opérationnel : il ne remplace pas le README, il extrait les règles que l'agent doit appliquer pendant qu'il lit ou modifie le code. Plus une règle est stable, plus elle mérite d'être écrite ici plutôt que répétée dans un prompt.
 

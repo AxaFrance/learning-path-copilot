@@ -69,7 +69,7 @@ Explique les transitions autorisées et repère celles qui rendent un statut dé
 
 Le domaine Mon Sinistre définit `Indemnise` et `Refuse` comme des statuts définitifs dans son README métier.
 
-> Source : [Mon Sinistre — README, Règles métier](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, Règles métier](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Mode Plan : penser avant de coder
 
@@ -90,8 +90,8 @@ Pour une anomalie métier, Plan mode est le bon réflexe : tu demandes à Copilo
 
 Le défaut D3 du sample est précisément que `TransitionStatut.EstAutorisee(Refuse, Indemnise)` renvoie `true`.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](../../samples/mon-sinistre/README.md)  
-> Source : [`TransitionStatut.cs`](../../samples/mon-sinistre/src/MonSinistre.Domain/TransitionStatut.cs)
+> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)  
+> Source : [`TransitionStatut.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/TransitionStatut.cs)
 
 ### Mode Programmatic : une question, une sortie
 
@@ -202,4 +202,4 @@ Pour Mon Sinistre, garde une règle simple : modèle standard ou `Auto` pour exp
 - [github/copilot-cli-for-beginners — 01 First Steps](https://github.com/github/copilot-cli-for-beginners/blob/main/01-setup-and-first-steps/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [GitHub Docs — GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
 - [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
-- [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+- [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

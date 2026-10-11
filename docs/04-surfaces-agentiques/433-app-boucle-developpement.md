@@ -186,10 +186,10 @@ Arrête le serveur avec `Ctrl+C` quand tu as terminé.
 ## Pour aller plus loin
 
 - [434 — Workflows GitHub](./434-app-workflows-github.md)
-- [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+- [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 - [GitHub Docs — Working with agent sessions](https://docs.github.com/en/copilot/how-tos/github-copilot-app/agent-sessions)
 
-## Sources
+## Source
 
 - [github/copilot-app-for-beginners — 03 Development Workflows](https://github.com/github/copilot-app-for-beginners/blob/main/03-development-workflows/README.md)
-- [samples/mon-sinistre/README.md](../../samples/mon-sinistre/README.md)
+- [samples/mon-sinistre/README.md](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

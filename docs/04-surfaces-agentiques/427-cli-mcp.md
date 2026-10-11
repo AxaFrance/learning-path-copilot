@@ -68,7 +68,7 @@ Copilot CLI inclut déjà un serveur MCP GitHub. Une fois authentifié, il perme
 
 Pour Mon Sinistre, c'est suffisant pour l'exercice : `scripts/seed.sh` crée des issues et PR d'entraînement dans ton fork, avec le label `mon-sinistre`.
 
-> Source : [Mon Sinistre — README, « Script de seed »](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, « Script de seed »](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### MCP ne remplace pas la vérification
 
@@ -100,7 +100,7 @@ Le chapitre CLI présente Context7 comme un serveur qui donne accès à de la do
 
 Dans Mon Sinistre, tu n'as pas besoin d'un serveur de documentation pour comprendre les règles métier : elles sont dans le README et les tests. Tu peux en ajouter un seulement si tu dois vérifier une API externe, par exemple une documentation .NET, et si ta politique d'organisation l'autorise.
 
-> Source : [Mon Sinistre — README](../../samples/mon-sinistre/README.md) et [copilot-app-for-beginners — Chapter 05, « Keeping external question general »](https://github.com/github/copilot-app-for-beginners/blob/main/05-mcp-plugins/README.md)
+> Source : [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md) et [copilot-app-for-beginners — Chapter 05, « Keeping external question general »](https://github.com/github/copilot-app-for-beginners/blob/main/05-mcp-plugins/README.md)
 
 ## Exercice
 

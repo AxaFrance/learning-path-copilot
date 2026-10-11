@@ -54,9 +54,9 @@ Compare le formatage des montants. Y a-t-il une duplication ?
 
 Le défaut D4 du sample est justement une duplication de formatage entre `CalculIndemnisation.FormaterMontant` et la méthode `Lister` du CLI.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](../../samples/mon-sinistre/README.md)  
-> Source : [`CalculIndemnisation.cs`](../../samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)  
-> Source : [`Program.cs`](../../samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
+> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)  
+> Source : [`CalculIndemnisation.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)  
+> Source : [`Program.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
 
 ### Fichier, dossier ou plusieurs fichiers ?
 
@@ -96,12 +96,12 @@ Compare uniquement le formatage des montants :
 
 Dans `CalculIndemnisation.FormaterMontant`, le domaine convertit des centimes en euros avec culture `fr-FR`, virgule et suffixe `€`. Dans `Program.cs`, la méthode `Lister` refait localement une logique proche sur `MontantEstimeCentimes`.
 
-> Source : [`CalculIndemnisation.cs`](../../samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)  
-> Source : [`Program.cs`](../../samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
+> Source : [`CalculIndemnisation.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)  
+> Source : [`Program.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Cli/Program.cs)
 
 Cette duplication ne casse pas `verify.sh`, car les défauts volontaires du sample ne sont pas tous couverts par les tests.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Conversations multi-tours
 
@@ -225,4 +225,4 @@ Dans ce bloc, tu n'as normalement pas besoin d'ajouter de dossier : tout l'exerc
 - [github/copilot-cli-for-beginners — 02 Context and Conversations](https://github.com/github/copilot-cli-for-beginners/blob/main/02-context-conversations/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [github/copilot-cli-for-beginners — Appendix Additional Context](https://github.com/github/copilot-cli-for-beginners/blob/main/appendices/additional-context.md) — cours GitHub sous licence MIT, adapté en français.
 - [GitHub Docs — GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
-- [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+- [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)

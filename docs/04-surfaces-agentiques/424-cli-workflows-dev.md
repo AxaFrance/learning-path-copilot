@@ -52,7 +52,7 @@ flowchart LR
 
 Le sample Mon Sinistre demande que chaque exercice soit terminé quand le comportement est observable, que `./scripts/verify.sh` est vert, et que le diff proposé par Copilot a été relu.
 
-> Source : [Mon Sinistre — README, Critère de réussite des exercices](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, Critère de réussite des exercices](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Revue de code : cibler le risque
 
@@ -76,7 +76,7 @@ Réponds avec une checklist priorisée.
 
 Le domaine stocke les montants en centimes (`long`) pour éviter les erreurs d'arrondi.
 
-> Source : [Mon Sinistre — README, Règles métier](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, Règles métier](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### Debug : partir du symptôme
 
@@ -92,11 +92,11 @@ dotnet run --project src/MonSinistre.Cli -- show SIN-1004
 
 Le défaut D1 indique que `show SIN-1004` affiche une indemnisation de **-80,00 €** parce que la franchise est appliquée sans plancher.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Le fichier `CalculIndemnisation.Calculer` retourne aujourd'hui `sinistre.MontantEstimeCentimes - contrat.FranchiseCentimes` quand le sinistre est couvert.
 
-> Source : [`CalculIndemnisation.cs`](../../samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)
+> Source : [`CalculIndemnisation.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/CalculIndemnisation.cs)
 
 Prompt utile :
 
@@ -117,8 +117,8 @@ Le cours recommande de préciser le framework quand tu demandes des tests, sinon
 
 Ici, le framework est xUnit et les tests existants vivent dans `tests/MonSinistre.Domain.Tests`.
 
-> Source : [Mon Sinistre — README, Structure](../../samples/mon-sinistre/README.md)  
-> Source : [`CalculIndemnisationTests.cs`](../../samples/mon-sinistre/tests/MonSinistre.Domain.Tests/CalculIndemnisationTests.cs)
+> Source : [Mon Sinistre — README, Structure](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)  
+> Source : [`CalculIndemnisationTests.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/tests/MonSinistre.Domain.Tests/CalculIndemnisationTests.cs)
 
 Demande :
 
@@ -132,17 +132,17 @@ Puis applique la correction minimale dans CalculIndemnisation.Calculer.
 
 La correction métier attendue est un plancher à zéro après déduction de la franchise, tout en conservant `0` pour les sinistres non couverts.
 
-> Source : [Mon Sinistre — README, Règles métier](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, Règles métier](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ### D2 en bonus : délai en jours ouvrés
 
 D2 est le défaut où `SIN-1004` est déclaré du vendredi 2026-09-18 au vendredi 2026-09-25 et devrait être dans les délais car le délai métier est de 5 jours ouvrés.
 
-> Source : [Mon Sinistre — README, Défauts volontaires](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, Défauts volontaires](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 Le code actuel de `DelaiDeclaration.EstDansLesDelais` soustrait les `DayNumber`, donc compte des jours calendaires.
 
-> Source : [`DelaiDeclaration.cs`](../../samples/mon-sinistre/src/MonSinistre.Domain/DelaiDeclaration.cs)
+> Source : [`DelaiDeclaration.cs`](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/src/MonSinistre.Domain/DelaiDeclaration.cs)
 
 Pour le bonus, garde la même boucle :
 
@@ -159,7 +159,7 @@ Propose ensuite une correction minimale qui ignore samedi et dimanche.
 
 Le sample ne fournit pas de workflow GitHub Actions ; il s'appuie sur `verify.sh` ou `verify.ps1` en local.
 
-> Source : [Mon Sinistre — README, Pas de CI fournie](../../samples/mon-sinistre/README.md)
+> Source : [Mon Sinistre — README, Pas de CI fournie](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
 
 ```bash
 ./scripts/verify.sh
@@ -255,4 +255,4 @@ Ne laisse pas Copilot remplacer ta relecture : vérifie que le test échoue bien
 - [github/copilot-cli-for-beginners — 03 Development Workflows](https://github.com/github/copilot-cli-for-beginners/blob/main/03-development-workflows/README.md) — cours GitHub sous licence MIT, adapté en français.
 - [GitHub Docs — GitHub Copilot CLI](https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli)
 - [GitHub Docs — Copilot CLI command reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference)
-- [Mon Sinistre — README](../../samples/mon-sinistre/README.md)
+- [Mon Sinistre — README](https://github.com/AxaFrance/learning-path-copilot/blob/main/samples/mon-sinistre/README.md)
