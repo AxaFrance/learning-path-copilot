@@ -11,8 +11,10 @@ set -euo pipefail
 command -v gh >/dev/null || { echo "gh (GitHub CLI) est requis." >&2; exit 1; }
 command -v git >/dev/null || { echo "git est requis." >&2; exit 1; }
 
-depot="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
-parent="$(gh repo view --json parent -q '.parent.nameWithOwner // ""')"
+# Le dépôt cible est toujours celui du remote "origin" (ton fork), jamais un éventuel "upstream".
+url_origin="$(git remote get-url origin)"
+depot="$(gh repo view "$url_origin" --json nameWithOwner -q .nameWithOwner)"
+parent="$(gh repo view "$depot" --json parent -q '.parent.nameWithOwner // ""')"
 if [[ -z "$parent" ]]; then
   echo "⚠️  $depot n'est pas un fork. Lance ce script dans TON fork pour ne pas polluer le dépôt d'origine." >&2
   read -r -p "Continuer quand même ? [o/N] " reponse
@@ -26,7 +28,7 @@ fi
 
 racine="$(git rev-parse --show-toplevel)"
 sample="samples/mon-sinistre"
-branche_defaut="$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)"
+branche_defaut="$(gh repo view "$depot" --json defaultBranchRef -q .defaultBranchRef.name)"
 branche_initiale="$(git rev-parse --abbrev-ref HEAD)"
 cd "$racine"
 trap 'git checkout --quiet "$branche_initiale"' EXIT
@@ -34,16 +36,16 @@ trap 'git checkout --quiet "$branche_initiale"' EXIT
 git fetch --quiet origin "$branche_defaut"
 
 echo "==> Labels"
-gh label create "mon-sinistre" --color 00008F --description "Exercices du projet d'exemple Mon Sinistre" --force >/dev/null
+gh label create --repo "$depot" "mon-sinistre" --color 00008F --description "Exercices du projet d'exemple Mon Sinistre" --force >/dev/null
 
 echo "==> Issues"
-gh issue create --label mon-sinistre --assignee "@me" \
+gh issue create --repo "$depot" --label mon-sinistre --assignee "@me" \
   --title "[Mon Sinistre] L'indemnisation peut être négative" \
   --body "Le sinistre SIN-1004 (franchise 300 €, montant 220 €) affiche une indemnisation de -80 €. L'indemnisation ne doit jamais être négative."
-gh issue create --label mon-sinistre --assignee "@me" \
+gh issue create --repo "$depot" --label mon-sinistre --assignee "@me" \
   --title "[Mon Sinistre] Le délai de déclaration doit compter les jours ouvrés" \
   --body "Le délai de 5 jours est calculé en jours calendaires. SIN-1004 (vendredi → vendredi suivant) est signalé hors délai alors qu'il est dans les 5 jours ouvrés."
-gh issue create --label mon-sinistre --assignee "@me" \
+gh issue create --repo "$depot" --label mon-sinistre --assignee "@me" \
   --title "[Mon Sinistre] Un sinistre refusé ne doit pas pouvoir être indemnisé" \
   --body "TransitionStatut autorise Refuse → Indemnise. Cette transition doit être interdite."
 
@@ -53,7 +55,7 @@ creer_pr() {
   git add -A "$sample"
   git commit --quiet -m "$titre"
   git push --quiet --force -u origin "$branche"
-  gh pr create --base "$branche_defaut" --head "$branche" --label mon-sinistre --title "$titre" --body "$corps"
+  gh pr create --repo "$depot" --base "$branche_defaut" --head "$branche" --label mon-sinistre --title "$titre" --body "$corps"
 }
 
 echo "==> PR 1 : prête à merger"
@@ -80,7 +82,7 @@ public static class FormatMontant
 CS
 creer_pr entrainement/montants "[Entraînement] Ajouter un utilitaire de formatage" \
   "PR d'entraînement : elle compile, mais duplique encore le formatage des montants. Fais-la relire."
-numero_pr="$(gh pr view entrainement/montants --json number -q .number)"
-gh pr comment "$numero_pr" --body "Revue : il existe déjà \`CalculIndemnisation.FormaterMontant\` (et une copie dans le CLI). Peut-on factoriser plutôt que d'ajouter une troisième version ?"
+numero_pr="$(gh pr view --repo "$depot" entrainement/montants --json number -q .number)"
+gh pr comment --repo "$depot" "$numero_pr" --body "Revue : il existe déjà \`CalculIndemnisation.FormaterMontant\` (et une copie dans le CLI). Peut-on factoriser plutôt que d'ajouter une troisième version ?"
 
 echo "✅ Seed terminé sur $depot : 3 issues et 3 PR avec le label 'mon-sinistre'."
