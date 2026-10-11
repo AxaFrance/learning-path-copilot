@@ -1,0 +1,14 @@
+{
+  "contrats": [
+    { "numero": "CTR-001", "assure": "Camille Martin", "formule": "Tiers", "franchiseCentimes": 0 },
+    { "numero": "CTR-002", "assure": "Lucas Bernard", "formule": "TiersPlus", "franchiseCentimes": 15000 },
+    { "numero": "CTR-003", "assure": "Inès Petit", "formule": "TousRisques", "franchiseCentimes": 30000 }
+  ],
+  "sinistres": [
+    { "numero": "SIN-1001", "numeroContrat": "CTR-002", "type": "BrisDeGlace", "dateSurvenance": "2026-09-01", "dateDeclaration": "2026-09-02", "montantEstimeCentimes": 48000, "statut": "Indemnise" },
+    { "numero": "SIN-1002", "numeroContrat": "CTR-003", "type": "Collision", "dateSurvenance": "2026-09-10", "dateDeclaration": "2026-09-12", "montantEstimeCentimes": 250000, "statut": "EnExpertise" },
+    { "numero": "SIN-1003", "numeroContrat": "CTR-001", "type": "Collision", "dateSurvenance": "2026-09-15", "dateDeclaration": "2026-09-16", "montantEstimeCentimes": 120000, "statut": "Refuse" },
+    { "numero": "SIN-1004", "numeroContrat": "CTR-003", "type": "BrisDeGlace", "dateSurvenance": "2026-09-18", "dateDeclaration": "2026-09-25", "montantEstimeCentimes": 22000, "statut": "Declare" },
+    { "numero": "SIN-1005", "numeroContrat": "CTR-002", "type": "Vol", "dateSurvenance": "2026-10-02", "dateDeclaration": "2026-10-05", "montantEstimeCentimes": 900000, "statut": "Declare" }
+  ]
+}

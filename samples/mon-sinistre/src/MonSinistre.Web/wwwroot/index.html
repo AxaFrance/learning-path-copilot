@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon Sinistre — exemple pédagogique</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header>
+    <h1>Mon Sinistre</h1>
+    <p>Projet d'exemple pédagogique — toutes les données sont fictives.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Sinistres</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Numéro</th><th>Contrat</th><th>Formule</th><th>Type</th><th>Survenance</th>
+            <th>Déclaration</th><th>Dans les délais</th><th>Montant estimé</th><th>Indemnisation</th><th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="sinistres"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Déclarer un sinistre</h2>
+      <form id="declaration">
+        <label>Contrat <input name="numeroContrat" required placeholder="CTR-002"></label>
+        <label>Type
+          <select name="type">
+            <option value="BrisDeGlace">Bris de glace</option>
+            <option value="Vol">Vol</option>
+            <option value="Collision">Collision</option>
+          </select>
+        </label>
+        <label>Date de survenance <input name="dateSurvenance" type="date" required></label>
+        <label>Montant estimé (€) <input name="montantEstimeEuros" type="number" min="0" step="0.01" required></label>
+        <button type="submit">Déclarer</button>
+        <p id="message" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

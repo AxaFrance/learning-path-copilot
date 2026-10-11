@@ -1,0 +1,11 @@
+/* Style volontairement sobre : une équipe peut le remplacer par le design system AXA. */
+body { font-family: system-ui, sans-serif; margin: 0; color: #1a1a1a; background: #f7f7f9; }
+header { background: #00008f; color: #fff; padding: 1rem 2rem; }
+header p { margin: 0; opacity: .85; }
+main { padding: 1rem 2rem; }
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { border: 1px solid #ddd; padding: .4rem .6rem; text-align: left; font-size: .9rem; }
+th { background: #eef; }
+form { display: grid; gap: .6rem; max-width: 24rem; }
+label { display: grid; gap: .2rem; }
+button { padding: .5rem; background: #00008f; color: #fff; border: 0; cursor: pointer; }
