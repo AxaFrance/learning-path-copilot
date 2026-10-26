@@ -9,6 +9,8 @@ description: "Installer et utiliser GitHub Copilot depuis le terminal avec gh co
 
 Durée estimée : 30 min · Complexité : ⭐ · Pré-requis : [Module 100 — Setup & posture](../01-fondations/100-setup-posture.md)
 
+> ℹ️ Ce module couvre l'extension `gh copilot`. Le nouveau Copilot CLI (commande `copilot`, agent dans le terminal) est traité dans le Bloc 04, à partir du [module 421](../04-surfaces-agentiques/421-cli-installer-se-connecter.md). Attention : ton organisation peut désactiver Copilot CLI par policy, il n'est donc pas forcément disponible.
+
 > Tu connais Copilot dans VS Code. Mais que se passe-t-il quand tu n'as pas d'IDE — juste un terminal, un script CI, ou un serveur distant en SSH ? Ou quand ton IDE n'a pas encore rattrapé les dernières fonctionnalités de Copilot ?
 
 ## Pourquoi ce module

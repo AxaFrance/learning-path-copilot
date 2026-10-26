@@ -34,6 +34,7 @@ exclude:
   - docs/specs
   - docs/plans
   - docs/ressources
+  - samples
   - "**/_category.json"
   - .spec-handbook-copilot
   - .agents
